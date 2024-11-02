@@ -1,15 +1,16 @@
 import { Navigate } from "react-router-dom";
 import  Login  from "../pages/auth/Login";
 import { ResetPassword } from "../pages/auth/ResetPassword";
-import { RequestPasswordReset } from "../pages/auth/RequestPasswordReset";
+import { ForgotPassword } from "../pages/auth/ForgotPassword";
 import { IModuleRouter } from "./index";
-import OnboardingLayout from "../pages/auth/layout/onboardingLayout";
+import SignUp from "../pages/auth/SignUp";
+import AuthLayout from "../pages/auth/layout/AuthLayout";
 
 export const AuthRouter: IModuleRouter = {
   key: "auth",
   guard: (loggedIn) => !loggedIn,
   // @ts-ignore
-  layout: OnboardingLayout,
+  layout: AuthLayout,
   routes: [
     // {
     //   index: true,
@@ -24,12 +25,16 @@ export const AuthRouter: IModuleRouter = {
       element: <Login />,
     },
     {
+      path: "/sign-up",
+      element: <SignUp />,
+    },
+    {
       path: "/reset-password",
       element: <ResetPassword />,
     },
     {
-      path: "/request-password-reset",
-      element: <RequestPasswordReset />,
+      path: "/forgot-password",
+      element: <ForgotPassword />,
     },
     {
       path: "*",
