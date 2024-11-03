@@ -11,12 +11,6 @@ import Truck from '../../icons/reusables/Truck'
 const Dashboard = () => {
   return (
     <div>
-      <div className='w-full flex justify-between items-center bg-gray-200 py-4 px-6 text-xl'>
-        <div className='flex items-center gap-3 '>
-          <img src='/icons/sidebar/dashboard.svg' />
-          <h3 className='text-[#470E81] font-bold'>Dashboard</h3>
-        </div>
-      </div>
       <div className='md:px-6 py-6 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 px-2 items-center gap-3 justify-center'>
         <InfoCard header='Total Sales' value='500,000.00' iconBg='#470E81' iconName='naira' percentage='12%' />
         <InfoCard header='Product Sales' value='500,000.00' iconBg='#470E81' iconName='store' percentage='12%' />

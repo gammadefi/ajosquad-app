@@ -16,8 +16,8 @@ const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AdminDashRouter];
 
 export const AppRouter = () => {
   const [router, setRouter] = useState<IModuleRouter | null>(null);
-  const isLoggedIn: boolean = useAuth(s => !!s.token)
-  // const isLoggedIn: boolean = true;
+  // const isLoggedIn: boolean = useAuth(s => !!s.token)
+  const isLoggedIn: boolean = true;
   useEffect(() => {
     const routeToRender = ModuleRouters.find((rtr) => rtr.guard(isLoggedIn));
     if (routeToRender) {

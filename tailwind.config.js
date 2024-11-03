@@ -21,6 +21,9 @@ content: [
           active: "#0052cc",        // Active color for default
         },
       },
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(90deg, #23454F 0%, #222834 0%, #0066FF 69.76%, #1EB7CF 100%)',
+      },
     },
   },
   plugins: [],

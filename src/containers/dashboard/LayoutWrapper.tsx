@@ -17,7 +17,7 @@ export const AppFallback = (props: { screen?: boolean }) => {
         " grid place-content-center place-items-center bg-transparent"
       )}
     >
-      <img src={"/images/logo-purple.svg"} className="animate-pulse h-32 w-32" alt="logo" />
+      <img src={"/logo.svg"} className="animate-pulse h-32 w-32" alt="logo" />
     </div>
   );
 };

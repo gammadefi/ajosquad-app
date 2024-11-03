@@ -4,13 +4,12 @@ import { ChevronRightIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import { useRef, useState, useContext } from "react";
 import { useSingleState } from "../../hooks/useSingleState";
 import { LogoutContext } from "../../context/LogoutContext";
-import { sidebar } from "../../pages/dashboard/layout/AdminLayout";
+import { sidebar, sidebarEnd, sidebarMid } from "../../pages/dashboard/layout/AdminLayout";
 
 
 
 
 export const DashboardSidebar = ({ items }: { items: SideItem[] }) => {
-  const logout: any = useContext(LogoutContext)
   const collapsed = useSingleState(false);
   const hovered = useSingleState(false);
   const throttledHover = useRef(false);
@@ -23,23 +22,23 @@ export const DashboardSidebar = ({ items }: { items: SideItem[] }) => {
   return (
     <aside
       className={clsx(
-        "h-full md:flex hidden transition-[width,padding] text-white duration-300 flex-col overflow-y-hidden overflow-x-hidden bg-[#470E81] relative",
-        "w-[300px]" 
+        "h-full md:flex hidden border-r text-sm transition-[width,padding] text-[#5A5C5E] duration-300 flex-col overflow-y-hidden overflow-x-hidden bg-white relative",
+        "w-[250px]"
       )}
     >
       <div
         className={clsx(
-          " py-8 transition-[padding] border-b border-gray-500",
+          " py-8 transition-[padding] ",
           isCollapsed ? "" : "px-4 w-full"
         )}
       >
         <img
-          src={isCollapsed ? "/images/icon-logo.svg" : "/images/logo.svg"}
+          src={isCollapsed ? "/logo.png" : "/logo.svg"}
           className={clsx(
-            isCollapsed ? "w-[72px]" : "w-[109px]",
-            "transition-[width] h-[25px] "
+            "w-[50px]",
+            "transition-[width]  "
           )}
-          alt="yep_logo"
+
         />
       </div>
       <nav
@@ -63,24 +62,11 @@ export const DashboardSidebar = ({ items }: { items: SideItem[] }) => {
       >
 
         <SidebarItem />
+        <SidebarMidItem />
 
+        <div className="flex flex-col mt-auto mb-0 items-end ">
+          <SidebarEndItem />
 
-        <div className="absolute w-full bottom-0 h-16 pl-4 gap-3.5 bg-[#470E81] flex items-center">
-          <div className="w-full flex cursor-pointer items-center gap-3.5">
-            <img
-              src={`/icons/sidebar/logout.svg`}
-              className={clsx("h-6 w-6")}
-              alt="log_out"
-            />
-
-            <span
-              onClick={() => logout?.toggleLogout()}
-              className={`whitespace-nowrap pc-text-danger ${isCollapsed ? "hidden" : ""
-                }`}
-            >
-              Log Out
-            </span>
-          </div>
         </div>
       </nav>
     </aside>
@@ -101,49 +87,161 @@ export const SidebarItem = ({
 }) => {
   const { pathname } = useLocation()
   return (
-    <div className="mb-8">
+    <div className="mb-6">
       {sidebar.map((items, index) =>
-        <div className="py-8 w-full border-b border-gray-500 px-3">
-          {items.children ?
-            <div>
-              <h3 className="uppercase mb-2">{items.name}</h3>
-              {items.children.map((item) =>
-                <>
-                  <NavLink to={item.path ?? "/"} className={({ isActive }) =>
-                    clsx(
-                      "flex items-center gap-3 text-white px-3 py-2",
-                      isActive ? "bg-white text-[#470E81] " : ""
+        <div className="py-2 w-full px-3">
 
-                    )
-                  }>
-                    {({ isActive }) => <>
-                      <img className={clsx(
-                        isActive ? "" : "invert-[100%] brightness-0"
-                      )} src={`/icons/sidebar/${item.iconName}.svg`} /> <h3  className={clsx("capitalize", isActive ? "text-[#470E81] " : "")}>{item.name}</h3>
-                    </>}
+          <NavLink to={items.path ?? "/"} className={({ isActive }) =>
+            clsx(
+              "flex items-center gap-3 text-[#5A5C5E] px-3 py-2",
+              isActive ? "bg-white border-primary-darker border rounded-md text-transparent bg-clip-text" : ""
 
-                  </NavLink>
-                </>
-              )}
+            )
+          }>
+            {({ isActive }) => <>
+              <div
+                className={clsx(
+                  "w-5 h-5",
+                  isActive ? "gradient-icon" : "invert-[100%] brightness-0"
+                )}
+                style={
+                  isActive
+                    ? {
+                      WebkitMaskImage: `url(/sidebar-icons/${items.iconName}.svg)`,
+                      maskImage: `url(/sidebar-icons/${items.iconName}.svg)`,
+                      WebkitMaskRepeat: "no-repeat",
+                      maskRepeat: "no-repeat",
+                      background: "linear-gradient(90deg, #23454F 0%, #222834 0%, #0066FF 69.76%, #1EB7CF 100%)",
+                      WebkitMaskSize: "cover",
+                      maskSize: "cover",
+                    }
+                    : {
+                      backgroundImage: `url(/sidebar-icons/${items.iconName}.svg)`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "cover",
+                      filter: "invert(100%) brightness(0)", // Make the icon grayscale when inactive
+                    }
+                }
+              ></div> <h3 className={clsx("capitalize", isActive ? "bg-custom-gradient font-semibold text-transparent bg-clip-text" : "")}>{items.name}</h3>
+            </>}
 
-            </div> :
-            <NavLink to={items.path ?? "/"} className={({ isActive }) =>
-              clsx(
-                "flex items-center gap-3 text-white px-3 py-2",
-                isActive ? "bg-white text-[#470E81] " : ""
-
-              )
-            }>
-              {({ isActive }) => <>
-                <img className={clsx(
-                  isActive ? "" : "invert-[100%] brightness-0"
-                )} src={`/icons/sidebar/${items.iconName}.svg`} /> <h3  className={clsx("capitalize", isActive ? "text-[#470E81] " : "")}>{items.name}</h3>
-              </>}
-
-            </NavLink>}
+          </NavLink>
 
         </div>
       )}
+
+    </div>
+
+
+  );
+};
+
+
+export const SidebarMidItem = ({
+  className
+}: {
+  className?: any;
+}) => {
+  const { pathname } = useLocation()
+  return (
+    <div className="mb-8 pt-2 border-t">
+      {sidebarMid.map((items, index) =>
+        <div className="py-2 w-full px-3">
+
+          <NavLink to={items.path ?? "/"} className={({ isActive }) =>
+            clsx(
+              "flex items-center gap-3 text-[#5A5C5E] px-3 py-2",
+              isActive ? "bg-white border-primary-darker border rounded-md text-transparent bg-clip-text" : ""
+
+            )
+          }>
+            {({ isActive }) => <>
+              <div
+                className={clsx(
+                  "w-5 h-5",
+                  isActive ? "gradient-icon" : "invert-[100%] brightness-0"
+                )}
+                style={
+                  isActive
+                    ? {
+                      WebkitMaskImage: `url(/sidebar-icons/${items.iconName}.svg)`,
+                      maskImage: `url(/sidebar-icons/${items.iconName}.svg)`,
+                      WebkitMaskRepeat: "no-repeat",
+                      maskRepeat: "no-repeat",
+                      background: "linear-gradient(90deg, #23454F 0%, #222834 0%, #0066FF 69.76%, #1EB7CF 100%)",
+                      WebkitMaskSize: "cover",
+                      maskSize: "cover",
+                    }
+                    : {
+                      backgroundImage: `url(/sidebar-icons/${items.iconName}.svg)`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "cover",
+                      filter: "invert(100%) brightness(0)", // Make the icon grayscale when inactive
+                    }
+                }
+              ></div> <h3 className={clsx("capitalize", isActive ? "bg-custom-gradient text-transparent bg-clip-text" : "")}>{items.name}</h3>
+            </>}
+
+          </NavLink>
+
+        </div>
+      )}
+
+    </div>
+
+
+  );
+};
+
+export const SidebarEndItem = ({
+  className
+}: {
+  className?: any;
+}) => {
+  const { pathname } = useLocation()
+  const logout: any = useContext(LogoutContext)
+
+  return (
+    <div className="mb-0 mt-12 pt-2 w-full">
+      {sidebarEnd.map((items, index) =>
+        <div className="py-2 w-full px-3">
+
+          <NavLink to={items.path ?? "/"} className={({ isActive }) =>
+            clsx(
+              "flex items-center gap-3 text-[#5A5C5E] px-3 py-2",
+              isActive ? "bg-white" : ""
+
+            )
+          }>
+            {({ isActive }) => <>
+              <img
+                src={`/sidebar-icons/${items.iconName}.svg`}
+                className={clsx(
+                  "w-5 h-5",
+                )}
+
+              /> <h3 className={clsx("capitalize", isActive ? "bg-custom-gradient text-transparent bg-clip-text" : "")}>{items.name}</h3>
+            </>}
+
+          </NavLink>
+
+        </div>
+      )}
+
+      <div className="w-full px-6 py-2 flex cursor-pointer items-center gap-3.5">
+        <img
+          src={`/sidebar-icons/logout.svg`}
+          className={clsx("h-5 w-5")}
+          alt="log_out"
+        />
+
+        <span
+          onClick={() => logout?.toggleLogout()}
+          className={`whitespace-nowrap text-red-500`}
+        >
+          Log Out
+        </span>
+      </div>
 
     </div>
 
