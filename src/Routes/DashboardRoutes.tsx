@@ -12,6 +12,10 @@ export const AdminDashRouter: IModuleRouter = {
       index: true,
       element: <Navigate to="/dashboard" />,
     },
+    {
+      path: "/",
+      element: <Navigate to="/dashboard" />,
+    },
     LazyRoute(
       {
         path: "/dashboard",
