@@ -8,6 +8,8 @@ import DashboardHeader from "./Header";
 // import Loader from "../Loader";
 import { DashboardSidebar, SideItem } from "./Sidebar";
 import { useAuth } from "../../zustand/auth.store";
+import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 // import { DashboardTopBar } from "./TopBar";
 
 export const DashboardWrapper = ({
@@ -18,11 +20,15 @@ export const DashboardWrapper = ({
   children: React.ReactNode;
 }) => {
   const logout: any = React.useContext(LogoutContext);
+  const { pathname } = useLocation()
+
+
+
   return (
-    <section className="flex relative h-screen w-full pc-bg-gray text-[15px]">
+    <section className="flex relative h-screen w-full bg-white text-[15px]">
       <DashboardSidebar items={sidebar} />
       <section className="flex-1 flex flex-col">
-        <DashboardHeader />
+        <DashboardHeader title={sidebar.find((items,) => items.path === pathname)?.name} />
         <main className="flex-1 grid overflow-y-auto  relative">
           <Modal onClick={logout.closeLogout} open={logout.isLogoutOpen}>
             <div className="w-[300px] p-5">
@@ -48,6 +54,7 @@ export const DashboardWrapper = ({
                     onClick={() => {
                       useAuth.getState().logout();
                       logout.closeLogout();
+                      toast.success("Logout successful")
                     }}
                   />
                 </div>
@@ -59,7 +66,7 @@ export const DashboardWrapper = ({
               <Loader type={"bar"} />
             </div>
           )} */}
-          <div className="h-full bg-gray-100 w-full flex flex-col overflow-x-auto">
+          <div className="h-full bg-white w-full flex flex-col overflow-x-auto">
             <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </main>

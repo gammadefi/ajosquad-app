@@ -5,7 +5,6 @@ import PhoneInput from "react-phone-input-2";
 interface TextInputProps extends FieldAttributes<any> {
   label?: string;
   name: string;
-  leftIcon?: any;
   rightIcon?: any;
   wrapperClass?: string;
   onRightIconClick?: () => void;
@@ -30,22 +29,17 @@ const TextInput = ({
     helpers.setTouched(true);
   };
   return (
-    <div className={`flex flex-col ${wrapperClass}`}>
+    <div className={`flex flex-col ${wrapperClass} w-full text-xs md:text-sm lg:text-base`}>
       {label && (
         <label
           htmlFor={restProps?.id || name}
-          className='text-xs font-normal font-satoshiRegular capitalize'
+          className='font-normal font-satoshiRegular capitalize mb-1.5'
         >
           {label}
         </label>
       )}
 
       <div className='relative'>
-        {leftIcon && (
-          <i className='absolute top-1/2 -translate-y-1/2 left-2.5'>
-            {leftIcon}
-          </i>
-        )}
         {name === "phone" ? (
           <PhoneInput
             country={"ng"}
@@ -70,12 +64,10 @@ const TextInput = ({
           />
         ) : (
           <input
-            className={`w-full text-xs h-12 py-2.5 focus:outline-none ${
-              leftIcon ? "pl-11" : "pl-3"
-            } ${rightIcon ? "pr-11" : "pr-3"} rounded bg-white border ${
+            className={`w-full h-12 py-2.5 focus:outline-none ${rightIcon ? "pr-11 pl-3" : "px-3"} rounded-lg bg-white border ${
               meta.touched && meta.error
                 ? "border-red-600"
-                : "border-[#470e812b]"
+                : "border-[#D0D5DD]"
             }`}
             {...field}
             {...restProps}
@@ -92,7 +84,7 @@ const TextInput = ({
         )}
       </div>
       {meta.touched && meta.error ? (
-        <small className='text-xs text-red-600'>{meta.error}</small>
+        <small className='text-red-600 mt-1 text-xs md:text-sm'>{meta.error}</small>
       ) : null}
     </div>
   );
