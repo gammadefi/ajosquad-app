@@ -9,6 +9,7 @@ import DashboardHeader from "./Header";
 import { DashboardSidebar, SideItem } from "./Sidebar";
 import { useAuth } from "../../zustand/auth.store";
 import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 // import { DashboardTopBar } from "./TopBar";
 
 export const DashboardWrapper = ({
@@ -53,6 +54,7 @@ export const DashboardWrapper = ({
                     onClick={() => {
                       useAuth.getState().logout();
                       logout.closeLogout();
+                      toast.success("Logout successful")
                     }}
                   />
                 </div>

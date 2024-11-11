@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { MdOutlineFacebook } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
@@ -6,11 +6,13 @@ import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { FaArrowRight } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
-import { useLocation, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import usePasswordToggle from "../../hooks/usePasswordToggle";
 import TextInput from "../../components/FormInputs/TextInput2";
 import Modal from "../../components/Modal/Modal";
-import { ResetPassword } from "./ResetPassword";
+import axiosInstance from "../../api/axiosInstance";
+import { useAuth } from "../../zustand/auth.store";
+import VerifyAccount from "./VerifyAccount";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -25,16 +27,32 @@ const validationSchema = Yup.object({
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState('ajosquad');
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
-  const router = useLocation();
+  const { setLoggedIn, setToken, setUserProfile, setUserRoleType } = useAuth()
 
-  // const [isLoading, setIsLoading] = useState(false);
-
-  // Login detail
-  const userSignUpInfo = {
+  const initialUserData = {
     email: "",
     password: ""
   };
+
+  const sendOTPRequest = async (email: string) => {
+    try {
+      const res = await axiosInstance.post('/auth/send-otp',
+        {
+          "email_address": email
+        }
+      )
+      return res.data;
+    } catch (error) {
+      console.error(error)
+      toast.error("Error making response")
+    }
+  }
 
   return (
     <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 lg:shadow-[0_8px_16px_0px_rgba(0,0,0,0.08)]'>
@@ -53,16 +71,56 @@ export default function Login() {
         </button>
       </div>
       <Formik
-        initialValues={userSignUpInfo}
+        initialValues={initialUserData}
         validationSchema={validationSchema}
-        onSubmit={(values, formikActions) => {
+        onSubmit={async (values, formikActions) => {
           if (values) {
-            // handleSubmit(values);
-            console.log(values)
+            setEmail(values.email)
+            setIsSubmitting(true);
+
+            try {
+              const res = await axiosInstance.post('/auth/login',
+                {
+                  "email_address": values.email,
+                  "password": values.password
+                }
+              );
+              // console.log(res)
+              if (res) {
+                // TODO: Update zustand state with user details and token
+                const { data } = res;
+                setUserProfile(data.data);
+                setToken(data.accessToken);
+                setLoggedIn(true);
+                setIsSubmitting(false);
+                toast.success("Login successful");
+                navigate('/dashboard');
+              }
+            } catch (error: any) {
+              console.log(error.status)
+              const { status, data } = error.response;
+              if (status === 401) {
+                if (data.message === 'Incorrect email or password!') {
+                  toast.error(error.response.data.message);
+                  setIsSubmitting(false);
+                }
+                if (data.message === 'Please verify your email address!') {
+                  toast.error(error.response.data.message);
+                  const res = await sendOTPRequest(values.email);
+                  if (res) {
+                    setOpenModal(true);
+                    setIsSubmitting(false);
+                  }
+                }
+              } else {
+                toast.error(error.response.data.message);
+                setIsSubmitting(false);
+              }
+            }
           }
         }}
       >
-        {({ errors }) => {
+        {() => {
           return (
             <Form className='w-full flex flex-col gap-4'>
               <TextInput
@@ -87,18 +145,19 @@ export default function Login() {
               />
               <div className='flex justify-end'>
                 <Link to='/forgot-password'>
-                  <a className='text-xs text-primary font-satoshiBold'>
+                  <span className='text-xs text-primary font-satoshiBold'>
                     Forgot password?
-                  </a>
+                  </span>
                 </Link>
               </div>
               <button
                 type='submit'
-                disabled={false}
+                disabled={isSubmitting}
                 className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
               >
-
-                Login
+                {
+                  isSubmitting ? "Logging in" : "Login"
+                }
                 <FaArrowRight />
               </button>
             </Form>
@@ -122,6 +181,9 @@ export default function Login() {
         <a className='text-primary font-bold'>Sign Up</a>
       </Link>
       </p>
+      <Modal onClick={() => setOpenModal(!openModal)} open={openModal}>
+        <VerifyAccount email={email} handleSendOTPCode={sendOTPRequest} />
+      </Modal>
     </main>
   );
 }

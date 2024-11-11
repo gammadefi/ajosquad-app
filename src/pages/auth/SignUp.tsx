@@ -6,11 +6,12 @@ import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { FaArrowRight } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
-import { useLocation, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import usePasswordToggle from "../../hooks/usePasswordToggle";
 import TextInput from "../../components/FormInputs/TextInput2";
 import Modal from "../../components/Modal/Modal";
-import VerifyEmail from "./VerifyEmail";
+import axiosInstance from "../../api/axiosInstance";
+import VerifyAccount from "./VerifyAccount";
 
 // regex pattern
 const regexPatterns = {
@@ -50,10 +51,10 @@ export default function SignUp() {
   const [email, setEmail] = useState<string>("")
 
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
-  const router = useLocation();
+  const navigate = useNavigate();
 
 
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Login detail
   const initialUserSignUpInfo = {
@@ -64,6 +65,20 @@ export default function SignUp() {
     confirmPassword: ""
   };
 
+  const sendOTPRequest = async (email: string) => {
+    console.log(email)
+    try {
+      const res = await axiosInstance.post('/auth/send-otp',
+        {
+          "email_address": email
+        }
+      )
+      return res.data;
+    } catch (error) {
+      console.error(error)
+      toast.error("Error making response")
+    }
+  }
 
 
   return (
@@ -85,12 +100,30 @@ export default function SignUp() {
       <Formik
         initialValues={initialUserSignUpInfo}
         validationSchema={validationSchema}
-        onSubmit={(values, formikActions) => {
+        onSubmit={async (values, formikActions) => {
           if (values) {
-            // handleSubmit(values);
-            setEmail(values.email)
-            setOpenModal(!openModal)
-            console.log(values)
+            setIsSubmitting(true);
+
+            const data = {
+              "firstName": values.firstName,
+              "lastName": values.lastName,
+              "email_address": values.email,
+              "password": values.password
+            }
+
+            try {
+              const res = await axiosInstance.post('/auth/signup', data);
+              if (res) {
+                toast.success("Sign up successful")
+                setEmail(values.email);
+                setOpenModal(!openModal);
+                setIsSubmitting(false);
+              }
+            } catch (error: any) {
+              console.log(error);
+              setIsSubmitting(false);
+              toast.error(error.response.data.message);
+            }
           }
         }}
       >
@@ -184,11 +217,12 @@ export default function SignUp() {
                   </div> */}
               <button
                 type='submit'
-                disabled={false}
+                disabled={isSubmitting}
                 className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
               >
-
-                Create Account
+                {
+                  isSubmitting ? "Creating Account" : "Create Account"
+                }
                 <FaArrowRight />
               </button>
             </Form>
@@ -212,9 +246,15 @@ export default function SignUp() {
         <a className='text-primary font-bold'>Sign in</a>
       </Link>
       </p>
-      <Modal onClick={() => setOpenModal(!openModal)} open={openModal}>
-        <VerifyEmail email={email} />
+      <Modal
+        onClick={() => {
+          setOpenModal(!openModal)
+          navigate('/login')
+        }}
+        open={openModal}
+      >
+        <VerifyAccount email={email} handleSendOTPCode={sendOTPRequest} />
       </Modal>
-    </main>
+    </main >
   );
 }
