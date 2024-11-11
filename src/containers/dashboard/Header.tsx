@@ -3,6 +3,7 @@ import NotificationIcon from "../../components/common/NotificationIcon";
 import NotificationSidebar from "../../components/common/NotificationSidebar";
 import SearchInput from "../../components/FormInputs/SearchInput";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../zustand/auth.store";
 
 const _extractInitials = (val: string) => {
   const _first = val.split(" ")[0].slice(0, 1);
@@ -12,6 +13,7 @@ const _extractInitials = (val: string) => {
 
 const DashboardHeader = ({ title = "" }: { title?: any }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const profile:any = useAuth((s) => s.profile);
 
   const _openNav = () => {
     setIsNotificationOpen(true);
@@ -47,7 +49,7 @@ const DashboardHeader = ({ title = "" }: { title?: any }) => {
                 {_extractInitials(`${"Demilade"} `)}
               </span>
               <div>
-                <h3 className="text-xs font-medium">Hello, Favi Design</h3>
+                <h3 className="text-xs font-medium">Hello, {profile.firstName} {profile.lastName}</h3>
                 <h5 className="text-[10px] text-[#5A5C5E]">Good day</h5>
               </div>
             </Link>
