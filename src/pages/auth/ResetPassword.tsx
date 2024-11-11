@@ -7,8 +7,8 @@ import Modal from "../../components/Modal/Modal";
 import usePasswordToggle from "../../hooks/usePasswordToggle";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axiosInstance";
 import toast from "react-hot-toast";
+import { authServices } from "../../services/auth";
 
 // regex pattern
 const regexPatternsForPassword = {
@@ -34,7 +34,6 @@ const validationSchema = Yup.object({
 
 export const ResetPassword = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
   const navigate = useNavigate();
@@ -62,31 +61,31 @@ export const ResetPassword = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async (values) => {
-          setIsSubmitting(true);
+        onSubmit={async (values, { setSubmitting }) => {
+          setSubmitting(true);
           if (values) {
             try {
-              const res = await axiosInstance.post('/auth/reset-password',
+              const response = await authServices.resetPassword(
                 {
                   "email_address": localStorage.getItem("userEmail"),
                   "password": values.password,
                   "otp": localStorage.getItem("resetOTPCode")
                 }
               );
-              if (res) {
+              if (response) {
                 toast.success("Password reset successful");
-                setIsSubmitting(false);
+                setSubmitting(false);
                 setOpenModal(true);
               }
             } catch (error: any) {
               console.error(error)
-              setIsSubmitting(false);
+              setSubmitting(false);
               toast.error(error.response.data.message)
             }
           }
         }}
       >
-        {({ values }) => {
+        {({ values, isSubmitting }) => {
           return (
             <Form className='flex flex-col gap-3'>
               <div>

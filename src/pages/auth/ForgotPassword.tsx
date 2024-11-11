@@ -1,12 +1,12 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextInput from "../../components/FormInputs/TextInput2";
 import { FaArrowRight } from "react-icons/fa6";
 import Modal from "../../components/Modal/Modal";
 import toast from "react-hot-toast";
-import axiosInstance from "../../api/axiosInstance";
 import VerifyResetOTP from "./VerifyResetOTP";
+import { authServices } from "../../services/auth";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -17,7 +17,6 @@ const validationSchema = Yup.object({
 
 export const ForgotPassword = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const initialValues = {
     email: ""
@@ -32,28 +31,24 @@ export const ForgotPassword = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async (values) => {
+        onSubmit={async (values, { setSubmitting }) => {
           localStorage.setItem("userEmail", values.email)
-          setIsSubmitting(true);
+          setSubmitting(true);
           try {
-            const res = await axiosInstance.post('/auth/forgot-password',
-              {
-                "email_address": values.email
-              }
-            );
-            if (res) {
+            const response = await authServices.forgotPassword({ "email_address": values.email });
+            if (response) {
               setOpenModal(true)
-              setIsSubmitting(false);
+              setSubmitting(false);
               toast.success("Reset password OTP sent");
             }
           } catch (error: any) {
             console.log(error);
             toast.error(error.response.data.message);
-            setIsSubmitting(false);
+            setSubmitting(false);
           }
         }}
       >
-        {() => {
+        {({ isSubmitting }) => {
           return (
             <Form className='w-full flex flex-col gap-4'>
               <TextInput

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { MdOutlineFacebook } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
@@ -10,8 +10,8 @@ import { Link, useNavigate } from "react-router-dom";
 import usePasswordToggle from "../../hooks/usePasswordToggle";
 import TextInput from "../../components/FormInputs/TextInput2";
 import Modal from "../../components/Modal/Modal";
-import axiosInstance from "../../api/axiosInstance";
 import VerifyAccount from "./VerifyAccount";
+import { authServices } from "../../services/auth";
 
 // regex pattern
 const regexPatterns = {
@@ -53,10 +53,6 @@ export default function SignUp() {
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
   const navigate = useNavigate();
 
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Login detail
   const initialUserSignUpInfo = {
     firstName: "",
     lastName: "",
@@ -66,14 +62,9 @@ export default function SignUp() {
   };
 
   const sendOTPRequest = async (email: string) => {
-    console.log(email)
     try {
-      const res = await axiosInstance.post('/auth/send-otp',
-        {
-          "email_address": email
-        }
-      )
-      return res.data;
+      const response = await authServices.sendOtp({ "email_address": email });
+      return response;
     } catch (error) {
       console.error(error)
       toast.error("Error making response")
@@ -100,11 +91,11 @@ export default function SignUp() {
       <Formik
         initialValues={initialUserSignUpInfo}
         validationSchema={validationSchema}
-        onSubmit={async (values, formikActions) => {
+        onSubmit={async (values, { setSubmitting }) => {
           if (values) {
-            setIsSubmitting(true);
+            setSubmitting(true);
 
-            const data = {
+            const payload = {
               "firstName": values.firstName,
               "lastName": values.lastName,
               "email_address": values.email,
@@ -112,22 +103,22 @@ export default function SignUp() {
             }
 
             try {
-              const res = await axiosInstance.post('/auth/signup', data);
-              if (res) {
+              const response = await authServices.signUp(payload);
+              if (response) {
                 toast.success("Sign up successful")
                 setEmail(values.email);
                 setOpenModal(!openModal);
-                setIsSubmitting(false);
+                setSubmitting(false);
               }
             } catch (error: any) {
               console.log(error);
-              setIsSubmitting(false);
+              setSubmitting(false);
               toast.error(error.response.data.message);
             }
           }
         }}
       >
-        {({ values }) => {
+        {({ values, isSubmitting }) => {
           return (
             <Form className='flex flex-col gap-3'>
               <div className='flex flex-col gap-3'>
@@ -198,23 +189,6 @@ export default function SignUp() {
                   onRightIconClick={handleClickShowPassword}
                 />
               </div>
-              {/* <div className='flex justify-between'>
-                    <div className='flex items-center gap-2 rounded'>
-                      <input
-                        id='remember-me'
-                        type='checkbox'
-                        className='w-5 h-5'
-                      />
-                      <label htmlFor='remember-me' className='text-xs'>
-                        Remember me
-                      </label>
-                    </div>
-                    <Link to='/forgot-password'>
-                      <a className='text-xs text-primary font-satoshiBold'>
-                        Forgot password?
-                      </a>
-                    </Link>
-                  </div> */}
               <button
                 type='submit'
                 disabled={isSubmitting}
@@ -243,7 +217,7 @@ export default function SignUp() {
         </button>
       </div>
       <p>Already have an account? <Link to='/login'>
-        <a className='text-primary font-bold'>Sign in</a>
+        <span className='text-primary font-bold'>Sign in</span>
       </Link>
       </p>
       <Modal

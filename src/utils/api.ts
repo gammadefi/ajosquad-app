@@ -4,7 +4,7 @@ import { AuthActions, useAuth } from "../zustand/auth.store";
 
 export const createApiClient = (auth = true) => {
   const http = axios.create({
-    baseURL: Config.apiUrl,
+    baseURL: Config.apiBaseUrl,
 
   });
 

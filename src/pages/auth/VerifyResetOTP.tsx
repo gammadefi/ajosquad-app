@@ -4,7 +4,7 @@ import useCountdownTimer from "../../hooks/useCountDownTimer";
 import { OtpInput } from "reactjs-otp-input";
 import { FaArrowRight } from "react-icons/fa6";
 import toast from "react-hot-toast";
-import axiosInstance from "../../api/axiosInstance";
+import { authServices } from "../../services/auth";
 
 export default function VerifyResetOTP({ email }: { email: string }) {
   const [code, setCode] = useState<string>("");
@@ -23,12 +23,12 @@ export default function VerifyResetOTP({ email }: { email: string }) {
 
   const handleResendOTPCode = async () => {
     try {
-      const res = await axiosInstance.post('/auth/send-otp',
+      const response = await authServices.sendOtp(
         {
           "email_address": email
         }
       );
-      if (res) {
+      if (response) {
         toast.success("OTP code sent. Please check your email");
         reset();
       }

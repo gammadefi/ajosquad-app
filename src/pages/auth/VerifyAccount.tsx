@@ -4,7 +4,7 @@ import { OtpInput } from 'reactjs-otp-input';
 import useCountdownTimer from '../../hooks/useCountDownTimer';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import axiosInstance from '../../api/axiosInstance';
+import { authServices } from '../../services/auth';
 
 export default function VerifyAccount({ email, handleSendOTPCode }: { email: string, handleSendOTPCode: (email: string) => any }) {
   const [code, setCode] = useState<string>("");
@@ -41,13 +41,13 @@ export default function VerifyAccount({ email, handleSendOTPCode }: { email: str
     }
     setIsSubmitting(true)
     try {
-      const res = await axiosInstance.post('/auth/verify-otp',
+      const response = await authServices.verifyOtp(
         {
           "email_address": email,
           "otp": code
         }
       );
-      if (res) {
+      if (response) {
         setIsSubmitting(false);
         setIsVerified(true);
       }

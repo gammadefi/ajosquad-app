@@ -10,9 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import usePasswordToggle from "../../hooks/usePasswordToggle";
 import TextInput from "../../components/FormInputs/TextInput2";
 import Modal from "../../components/Modal/Modal";
-import axiosInstance from "../../api/axiosInstance";
 import { useAuth } from "../../zustand/auth.store";
 import VerifyAccount from "./VerifyAccount";
+import { authServices } from "../../services/auth";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -29,11 +29,10 @@ export default function Login() {
   const [activeTab, setActiveTab] = useState('ajosquad');
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
-  const { setLoggedIn, setToken, setUserProfile, setUserRoleType } = useAuth()
+  const { setLoggedIn, setToken, setUserProfile } = useAuth()
 
   const initialUserData = {
     email: "",
@@ -42,15 +41,11 @@ export default function Login() {
 
   const sendOTPRequest = async (email: string) => {
     try {
-      const res = await axiosInstance.post('/auth/send-otp',
-        {
-          "email_address": email
-        }
-      )
-      return res.data;
+      const response = await authServices.sendOtp({ "email_address": email });
+      return response;
     } catch (error) {
       console.error(error)
-      toast.error("Error making response")
+      toast.error("Error while making request")
     }
   }
 
@@ -73,54 +68,50 @@ export default function Login() {
       <Formik
         initialValues={initialUserData}
         validationSchema={validationSchema}
-        onSubmit={async (values, formikActions) => {
+        onSubmit={async (values, { setSubmitting }) => {
           if (values) {
             setEmail(values.email)
-            setIsSubmitting(true);
+            setSubmitting(true);
 
             try {
-              const res = await axiosInstance.post('/auth/login',
-                {
-                  "email_address": values.email,
-                  "password": values.password
-                }
-              );
-              // console.log(res)
+              const res = await authServices.login({
+                "email_address": values.email,
+                "password": values.password
+              })
               if (res) {
-                // TODO: Update zustand state with user details and token
-                const { data } = res;
-                setUserProfile(data.data);
-                setToken(data.accessToken);
+                // TODO: Update zustand state with user details and tres
+                setUserProfile(res.data);
+                setToken(res.accessToken);
                 setLoggedIn(true);
-                setIsSubmitting(false);
+                setSubmitting(false);
                 toast.success("Login successful");
                 navigate('/dashboard');
               }
             } catch (error: any) {
-              console.log(error.status)
+              console.log(error)
               const { status, data } = error.response;
               if (status === 401) {
                 if (data.message === 'Incorrect email or password!') {
                   toast.error(error.response.data.message);
-                  setIsSubmitting(false);
+                  setSubmitting(false);
                 }
                 if (data.message === 'Please verify your email address!') {
                   toast.error(error.response.data.message);
                   const res = await sendOTPRequest(values.email);
                   if (res) {
                     setOpenModal(true);
-                    setIsSubmitting(false);
+                    setSubmitting(false);
                   }
                 }
               } else {
                 toast.error(error.response.data.message);
-                setIsSubmitting(false);
+                setSubmitting(false);
               }
             }
           }
         }}
       >
-        {() => {
+        {({ isSubmitting }) => {
           return (
             <Form className='w-full flex flex-col gap-4'>
               <TextInput
