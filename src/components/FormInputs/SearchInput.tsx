@@ -22,7 +22,7 @@ const SearchInput = ({
 
 	return (
 		<div
-			className="h-10 hidden relative border-[#52198baf]  bg-white px-3 border shadow-sm rounded-md md:w-full md:flex items-center"
+			className="h-10 hidden relative border-[#C8CCD0]  bg-[#F5F5F9] px-3 border-[0.4px] shadow-sm rounded-md md:w-full md:flex items-center"
 		>
 			<img
 				src="/icons/close.svg"
@@ -33,8 +33,8 @@ const SearchInput = ({
 			/>
 			<div className="flex flex-1 h-full items-center">
 				<img
-					src="/icons/search.svg"
-					className="w-5 mr-1"
+					src="/icons/search-normal.svg"
+					className="w-4 mr-1"
 					alt=""
 				/>
 				<input
@@ -43,7 +43,7 @@ const SearchInput = ({
 					value={value}
 					type="text"
 					onSubmit={onSubmit}
-					className="flex-1 h-full md:w-72 outline-none border-none hover:sh focus:border-none focus:shadow-none focus:outline-none text-sm placeholder-gray-400 text-gray-400 focus:ring-0 py-1 px-2"
+					className="flex-1 h-full md:w-72 outline-none bg-transparent border-none hover:sh focus:border-none focus:shadow-none focus:outline-none text-sm placeholder-gray-400 text-gray-400 focus:ring-0 py-1 px-2"
 				/>
 			</div>
 			

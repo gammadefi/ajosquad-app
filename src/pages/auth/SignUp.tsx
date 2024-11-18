@@ -73,21 +73,14 @@ export default function SignUp() {
 
 
   return (
-    <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 lg:shadow-[0_8px_16px_0px_rgba(0,0,0,0.08)]'>
+    <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 '>
       <h2 className='text-2xl lg:text-3xl font-semibold text-black mb-2'>
         Create Account
       </h2>
       <p className='text-sm mb-6 lg:text-base'>
         Provide all required information to set up your account
       </p>
-      <div className="text-sm md:text-base flex justify-between items-center mb-4 gap-5">
-        <button onClick={() => setActiveTab('ajosquad')} className={`${activeTab === "ajosquad" ? "font-semibold bg-primary text-white" : "border border-primary"} rounded-3xl p-3 w-full`}>
-          <span>Register to Ajosquad</span>
-        </button>
-        <button onClick={() => setActiveTab('ajohome')} className={`${activeTab === "ajohome" ? "font-semibold bg-primary text-white" : "border border-primary"} rounded-3xl p-3 w-full`}>
-          <span>Register to Ajohome</span>
-        </button>
-      </div>
+     
       <Formik
         initialValues={initialUserSignUpInfo}
         validationSchema={validationSchema}
@@ -155,7 +148,7 @@ export default function SignUp() {
                     }
                     onRightIconClick={handleClickShowPassword}
                   />
-                  <div className="flex flex-wrap gap-1 lg:gap-2 text-[10px] md:text-sm mt-1 md:mt-3">
+                  <div className="flex flex-wrap gap-1 lg:gap-2 text-[10px] text-xs mt-1 md:mt-3">
                     <span className={`p-1 rounded border ${values.password === "" ? "border-[#C8CCD0]" : (values.password.length < 8) ? "border-red-600 text-red-600" : "border-green-500 text-green-500"}`}>
                       8 Character Min
                     </span>

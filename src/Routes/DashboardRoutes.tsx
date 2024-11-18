@@ -3,7 +3,7 @@ import { AdminLayout } from "../pages/dashboard/layout/AdminLayout";
 import { LazyRoute } from "../utils/helpers";
 import { IModuleRouter } from "./index";
 
-export const AdminDashRouter: IModuleRouter = {
+export const AjosquadDashRouter: IModuleRouter = {
   key: "dashboard",
   guard: (loggedIn) => loggedIn,
   layout: AdminLayout,
@@ -21,6 +21,18 @@ export const AdminDashRouter: IModuleRouter = {
         path: "/dashboard",
       },
       () => import("../pages/dashboard/Dashboard")
+    ),
+    LazyRoute(
+      {
+        path: "/payment",
+      },
+      () => import("../pages/dashboard/Payment")
+    ),
+    LazyRoute(
+      {
+        path: "/payout",
+      },
+      () => import("../pages/dashboard/Payout")
     ),
     {
       path: "*",

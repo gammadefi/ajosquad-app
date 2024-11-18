@@ -1,9 +1,10 @@
 import { Suspense, useEffect, useState } from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
 import { AuthRouter } from "./AuthRoutes";
-import { AdminDashRouter } from "./DashboardRoutes";
+import { AjosquadDashRouter } from "./DashboardRoutes";
 import { AppFallback } from "./Layout";
 import { useAuth } from "../zustand/auth.store";
+import { ProductRouter, VerificationRouter } from "./VerificationRoutes";
 
 export interface IModuleRouter {
   guard: (loggedIn: boolean) => boolean;
@@ -12,20 +13,31 @@ export interface IModuleRouter {
   key: string;
 }
 
-const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AdminDashRouter];
+const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter];
 
 export const AppRouter = () => {
   const [router, setRouter] = useState<IModuleRouter | null>(null);
   const isLoggedIn: boolean = useAuth(s => !!s.token);
+  const product = useAuth(s => s.product);
+  const isVerified: boolean = useAuth(s => s.verified);
   // const isLoggedIn: boolean = false;
   useEffect(() => {
-    const routeToRender = ModuleRouters.find((rtr) => rtr.guard(isLoggedIn));
-    if (routeToRender) {
-      setRouter(routeToRender);
+    if (isLoggedIn && isVerified && product) {
+      if (product === "AjoSquad") {
+        setRouter(ModuleRouters[1]);
+      }
+
+    } else if (isLoggedIn && (!isVerified || !product)) {
+      if(isVerified && !product){
+        setRouter(ModuleRouters[2]);
+      }else{
+        setRouter(ModuleRouters[3]);
+      }
+
     } else {
-      setRouter(null);
+      setRouter(ModuleRouters[0]);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, isVerified, product]);
 
   const Layout = router?.layout ?? AppFallback;
   const routerView = useRoutes([

@@ -23,7 +23,7 @@ const Dashboard = () => {
 }
 
 
-const Verification = ({kycVerified, activeSquad} = {kycVerified: false, activeSquad: false}) => {
+const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activeSquad: false }) => {
   const profile: any = useAuth((s) => s.profile);
   return (
     <div className='px-3 py-20 md:px-12'>
@@ -44,8 +44,8 @@ const Verification = ({kycVerified, activeSquad} = {kycVerified: false, activeSq
               <h3 className=" text-lg font-bold md:text-2xl">Complete Account  KYC & Agreement</h3>
             </div>
 
-            <h5 className='text-xs md:text-sm mt-3'>Get access to all features when you<br/>
-            complete your account KYC and User agreement.</h5>
+            <h5 className='text-xs md:text-sm mt-3'>Get access to all features when you<br />
+              complete your account KYC and User agreement.</h5>
 
             <button className={clsx('px-5 max-w-[165px] py-2 border border-white rounded-md mt-auto',
 

@@ -102,38 +102,32 @@ export function Table<TRow extends {}>({
       {/* <Filter open={filter} onClose={() => setFilter(false)} /> */}
       <div
         className={clsx([
-          "flex flex-col relative overflow-y-hidden overflow-x-auto w-full h-full bg-white rounded-lg",
+          "flex flex-col relative overflow-y-hidden overflow-x-auto w-full bg-white rounded-lg",
         ])}
       >
         {/* <!-- body --> */}
-        <div className="flex-1 overflow-hidden relative px-4">
+        <div className="overflow-hidden relative md:px-4">
           {props.loading && (
             <div className="absolute top-0 w-full  z-10 text-center">
               {/* <Loader type="bar" /> */}
               <Spinner />
             </div>
           )}
-          <div className="flex justify-between py-6">
-            <h4 className="my-auto text-2xl text-landingPagePrimary font-bold">{props.tableName}</h4>
-            <div className="flex">
 
-              <SearchInput placeholder="search here" />
-            </div>
-          </div>
           <div>
             {props.tabs &&
               <div className="px-3">
                 <TabBar tabs={props.tabs} />
               </div>}
           </div>
-          <div className="h-full w-full overflow-x-hidden hover:overflow-x-auto custom-scrollbar relative">
+          <div className=" w-full overflow-x-hidden hover:overflow-x-auto custom-scrollbar relative">
             <table className="table  table-auto w-full border-collapse pc-bg-gray-2 ">
-              <thead className={`sticky top-0  border-b ${props.tabs && `border-t`}`}>
+              <thead className={`sticky top-0 text-white bg-[#002459] border-b ${props.tabs && `border-t`}`}>
                 <tr className="py-1 h-[4.5rem]">
                   {props.bulkAction && <th></th>}
-                  <th className="px-4 mx-2  w-0">
+                  {/* <th className="px-4 mx-2  w-0">
                     <h3>S/N</h3>
-                  </th>
+                  </th> */}
                   {columns.map((col: any) => {
                     const view = data[0] && col.view(data[0], 0);
                     const isAnObject =
@@ -155,7 +149,7 @@ export function Table<TRow extends {}>({
                     return (
                       <th
                         key={`${col.header}-head`}
-                        className="text-mid-night-80 text-[14px] text-center px-5 py-3 whitespace-nowrap    max-w-sm"
+                        className=" text-[14px] text-center px-5 py-3 whitespace-nowrap    max-w-sm"
                       >
                         <h3>{col.header}</h3>
                       </th>
@@ -165,7 +159,7 @@ export function Table<TRow extends {}>({
                     props.rowActions({} as any, 0).length > 0 && (
                       <th
                         className="text-mid-night-80 text-[14px] font-normal text-right px-6 py-3 whitespace-nowrap
-                    pc-bg-gray-2  first:rounded-tl-lg last:rounded-tr-lg max-w-sm"
+                       first:rounded-tl-lg last:rounded-tr-lg max-w-sm"
                       >
                         {hideActionName ? "" : "Action"}
                       </th>
@@ -191,19 +185,19 @@ export function Table<TRow extends {}>({
                   <tr
                     key={`row-${rowIndex}`}
                     className={clsx(
-                      "px-5 py-1 h-[4.5rem]",
+                      "px-5 odd:bg-[#F4F5FA] py-1 h-[4.5rem]",
                       "text-sm text-center",
                       noDivider
                         ? ""
                         : "border-b last:border-b-0 pc-border-gray",
                       "bg-white ",
                       props.clickRowAction &&
-                      "hover:bg-fara-blue/10 cursor-pointer"
+                      "hover:bg-[#0066FF] rounded/10 cursor-pointer"
                     )}
                   >
-                    <td className="px-4">
+                    {/* <td className="px-4">
                       {rowIndex + 1}
-                    </td>
+                    </td> */}
                     {columns.map((col, colIndex) => (
                       <TableCol
                         key={`row-${rowIndex} + col-${colIndex}`}
@@ -314,40 +308,32 @@ const Pagination = ({
   loading: boolean;
   withNumber: boolean;
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+    };
+
+    handleResize(); // Set initial state
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const pageStart = pageSize * (page - 1);
   const lastPage = Math.ceil(totalRows / pageSize);
+
   return (
     <div className="flex items-center justify-center h-full px-4 py-1 text-sm text-gm-blue-main">
-      {/* <div className="mr-10">
-        <span className="">Items per page</span>
-        <select
-          className="border border-fara-blue/30 w-12 ml-2 h-8 bg-transparent"
-          value={pageSize}
-          onChange={(e) => setPageSize?.(+e.target.value)}
-        >
-          {[10, 20, 25, 30, 40, 50, 100].map((size) => (
-            <option key={size.toString()}>{size}</option>
-          ))}
-        </select>
-      </div> */}
-
-      {withNumber ? (
-        <Paginator
-          page={page}
-          pageSize={pageSize}
-          loading={loading}
-          currentLength={currentLength}
-          setPage={setPage}
-          totalRows={totalRows}
-        />
-      ) : (
-        <div className="flex items-center ">
+      {isMobile ? (
+        // Simpler pagination for mobile
+        <div className="flex items-center">
           <button
             disabled={page <= 1}
             onClick={() => setPage?.(1)}
             className={clsx(
-              "mr-3 bg-fara-blue text-white p-1.5",
-              page <= 1 ? "opacity-50" : ""
+              'mr-3 bg-[#0066FF] rounded text-white p-1.5',
+              page <= 1 && 'opacity-50'
             )}
           >
             <ChevronDoubleLeftIcon className="w-4 h-4" strokeWidth={1} />
@@ -356,18 +342,21 @@ const Pagination = ({
             onClick={() => setPage?.(page - 1)}
             disabled={page <= 1}
             className={clsx(
-              "mr-3 bg-fara-blue text-white p-1.5",
-              page <= 1 ? "opacity-50" : ""
+              'mr-3 bg-[#0066FF] rounded text-white p-1.5',
+              page <= 1 && 'opacity-50'
             )}
           >
             <ChevronLeftIcon strokeWidth={1} className="w-4 h-4" />
           </button>
+          <span className="mx-3">
+            Page {page} of {lastPage}
+          </span>
           <button
             onClick={() => setPage?.(page + 1)}
             disabled={page >= lastPage}
             className={clsx(
-              "mr-3 bg-fara-blue text-white p-1.5",
-              page >= lastPage ? "opacity-50" : ""
+              'mr-3 bg-[#0066FF] rounded text-white p-1.5',
+              page >= lastPage && 'opacity-50'
             )}
           >
             <ChevronRightIcon strokeWidth={3} className="w-4 h-4" />
@@ -376,13 +365,23 @@ const Pagination = ({
             disabled={page >= lastPage}
             onClick={() => setPage?.(lastPage)}
             className={clsx(
-              "bg-fara-blue text-white p-1.5",
-              page >= lastPage ? "opacity-50" : ""
+              'bg-[#0066FF] rounded text-white p-1.5',
+              page >= lastPage && 'opacity-50'
             )}
           >
             <ChevronDoubleRightIcon strokeWidth={1} className="w-4 h-4" />
           </button>
         </div>
+      ) : (
+        // Numbered paginator for larger screens
+        <Paginator
+          page={page}
+          pageSize={pageSize}
+          loading={loading}
+          currentLength={currentLength}
+          setPage={setPage}
+          totalRows={totalRows}
+        />
       )}
     </div>
   );

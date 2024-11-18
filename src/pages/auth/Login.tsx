@@ -32,7 +32,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
-  const { setLoggedIn, setToken, setUserProfile } = useAuth()
+  const { setLoggedIn, setToken, setUserProfile, setVerified } = useAuth()
 
   const initialUserData = {
     email: "",
@@ -57,14 +57,7 @@ export default function Login() {
       <p className='text-sm lg:text-base'>
         Provide your email and password to continue
       </p>
-      <div className="text-sm md:text-base flex justify-between items-center mb-4 gap-5">
-        <button onClick={() => setActiveTab('ajosquad')} className={`${activeTab === "ajosquad" ? "font-semibold bg-primary text-white" : "border border-primary"} rounded-3xl p-3 w-full`}>
-          <span>Login to Ajosquad</span>
-        </button>
-        <button onClick={() => setActiveTab('ajohome')} className={`${activeTab === "ajohome" ? "font-semibold bg-primary text-white" : "border border-primary"} rounded-3xl p-3 w-full`}>
-          <span>Login to Ajohome</span>
-        </button>
-      </div>
+      
       <Formik
         initialValues={initialUserData}
         validationSchema={validationSchema}
@@ -84,6 +77,7 @@ export default function Login() {
                 setToken(res.accessToken);
                 setLoggedIn(true);
                 setSubmitting(false);
+                setVerified(res.data.verified)
                 toast.success("Login successful");
                 navigate('/dashboard');
               }
