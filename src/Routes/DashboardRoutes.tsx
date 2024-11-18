@@ -24,6 +24,12 @@ export const AjosquadDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/squad",
+      },
+      () => import("../pages/dashboard/Squad")
+    ),
+    LazyRoute(
+      {
         path: "/payment",
       },
       () => import("../pages/dashboard/Payment")
