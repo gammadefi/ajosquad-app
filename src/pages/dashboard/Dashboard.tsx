@@ -1,5 +1,6 @@
 import React from 'react'
 import { CgProfile } from "react-icons/cg";
+import { LiaFileContractSolid } from "react-icons/lia";
 import { useAuth } from '../../zustand/auth.store'
 import clsx from 'clsx'
 import People from '../../icons/reusables/people';
@@ -36,21 +37,20 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
         <h3 className='text-2xl font-semibold'>Account set up Checklist</h3>
         <div className='flex mt-2 gap-3'>
           <VerificationCards>
-            <div className='flex gap-2 items-center'>
-              <div>
-                <CgProfile size={24} />
+            <div className='flex gap-2'>
+              <div className="mt-2">
+              <LiaFileContractSolid size={24} />
               </div>
 
-              <h3 className=" text-lg font-bold md:text-2xl">Complete Account  KYC & Agreement</h3>
+              <h3 className=" text-lg font-bold md:text-2xl">Read and sign the  Ajosquad Agreement</h3>
             </div>
 
-            <h5 className='text-xs md:text-sm mt-3'>Get access to all features when you<br />
-              complete your account KYC and User agreement.</h5>
+            <h5 className='text-xs md:text-sm mt-3'>Almost done! Read and sign our User Agreement to unlock all Ajosquad features and start exploring.</h5>
 
-            <button className={clsx('px-5 max-w-[165px] py-2 border border-white rounded-md mt-auto',
+            <button className={clsx('px-5 max-w-[205px] py-2 border border-white rounded-md mt-auto',
 
 
-            )}>Proceed to KYC</button>
+            )}>Read & Sign Agreement</button>
 
           </VerificationCards>
           <VerificationCards disabled={kycVerified === false}>
