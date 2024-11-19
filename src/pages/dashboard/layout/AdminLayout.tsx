@@ -14,7 +14,6 @@ export const AdminLayout = () => {
 export const sidebar: SideItem[] = [
   { name: "Dashboard", path: "/dashboard", iconName: "element-4" },
   { name: "Squad", path: "/squad", iconName: "people" },
-  { name: "Payment Authorization", path: "/payment-authorization", iconName: "money-tick" },
   { name: "Payment", path: "/payment", iconName: "money-receive" },
   { name: "Payout", path: "/payout", iconName: "money-send" },
 ];

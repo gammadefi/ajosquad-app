@@ -88,7 +88,7 @@ interface ITmpPaginator {
       btnNext: "inline-flex w-[92px] px-2 items-center justify-center",
       btnPrev: "inline-flex px-2 w-[92px] items-center justify-center",
       item: " h-9 min-w-[2.25rem] bg-primary-light px-3 py-1 cursor-pointer text-primary",
-      itemActive: "!text-white !bg-[#470E81] px-4",
+      itemActive: "!text-white !bg-[#0066FF] px-4",
       dropDown: "dropdown-dots relative inline-block !bg-transparent [&>ul]:hover:visible",
       dropdownMenu: clsx(
         "invisible",

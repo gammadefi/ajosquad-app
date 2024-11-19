@@ -33,7 +33,7 @@ const TextInput = ({
       {label && (
         <label
           htmlFor={restProps?.id || name}
-          className='font-normal font-satoshiRegular capitalize mb-1.5'
+          className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'
         >
           {label}
         </label>
@@ -64,7 +64,7 @@ const TextInput = ({
           />
         ) : (
           <input
-            className={`w-full h-12 py-2.5 focus:outline-none ${rightIcon ? "pr-11 pl-3" : "px-3"} rounded-lg bg-white border ${
+            className={`w-full h-[44px] py-2.5 focus:outline-none ${rightIcon ? "pr-11 pl-3" : "px-3"} rounded-lg bg-white border ${
               meta.touched && meta.error
                 ? "border-red-600"
                 : "border-[#D0D5DD]"

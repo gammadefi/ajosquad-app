@@ -4,6 +4,8 @@ import { combine, persist } from "zustand/middleware";
 
 type ROLE = "AJOSQUAD_ADMIN"
 
+type PRODUCT = "AjoSquad" | "AjoHome" | "AjoBusiness"
+
 interface Auth {
   username: string;
   password: string;
@@ -15,8 +17,10 @@ export const useAuth = create(
       {
         loggedIn: false,
         token: null as string | null | AxiosBasicCredentials,
-        profile: null,
+        profile: null as | null | any,
         role: null as ROLE | null | string,
+        verified: false,
+        product: null as PRODUCT | null | string,
       },
       (set) => ({
         setLoggedIn: (value: boolean) => {
@@ -24,6 +28,12 @@ export const useAuth = create(
         },
         setToken: (token: string | AxiosBasicCredentials | any) => {
           set({ token });
+        },
+        setVerified: (value: boolean) => {
+          set({ verified: value });
+        },
+        setProduct: (value: any) => {
+          set({ product: value });
         },
         setUserProfile: (profile: any) => {
           set({ profile, loggedIn: true });
@@ -37,13 +47,15 @@ export const useAuth = create(
             token: null,
             profile: null,
             role: null,
+            verified: false,
+            product: ""
           });
-          if(useAuth.getState().loggedIn) window.location.replace("/login")
+          window.location.replace("/login")
         },
       })
     ),
     {
-      name: "ecap-auth",
+      name: "Ajosquad-auth",
       getStorage: () => sessionStorage,
     }
   )
@@ -61,5 +73,11 @@ export const AuthActions = {
   },
   setRole: (role: string) => {
     useAuth.setState({ role });
+  },
+  setProduct: (product: string) => {
+    useAuth.setState({ product });
+  },
+  setVerified: (verified: boolean) => {
+    useAuth.setState({ verified });
   },
 };
