@@ -24,8 +24,9 @@ export const sidebarMid: SideItem[] = [
 ];
 
 export const sidebarEnd: SideItem[] = [
+  { name: "Help Desk", path: "/help", iconName: "Help" },
   { name: "Notification", path: "/notification", iconName: "notification-bing" },
-  { name: "Join Ajohomes", path: "/#", iconName: "logo" },
+  // { name: "Explore Other Product", path: "/#", iconName: "Logo" },
 
 
 ];

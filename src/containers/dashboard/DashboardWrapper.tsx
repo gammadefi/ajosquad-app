@@ -10,6 +10,8 @@ import { DashboardSidebar, SideItem } from "./Sidebar";
 import { useAuth } from "../../zustand/auth.store";
 import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
+import OurProductModal from "../../components/Modal/OurProductModal";
+import { ProductContext } from "../../context/ProductContext";
 // import { DashboardTopBar } from "./TopBar";
 
 export const DashboardWrapper = ({
@@ -20,6 +22,7 @@ export const DashboardWrapper = ({
   children: React.ReactNode;
 }) => {
   const logout: any = React.useContext(LogoutContext);
+  const product: any = React.useContext(ProductContext);
   const { pathname } = useLocation()
 
 
@@ -70,6 +73,7 @@ export const DashboardWrapper = ({
             <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </main>
+        <OurProductModal onClick={product.closeProduct} open={product.isProductOpen} />
       </section>
     </section>
   );
