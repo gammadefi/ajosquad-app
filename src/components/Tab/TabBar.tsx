@@ -28,7 +28,7 @@ const Tab = ({ active, label, onClick }: { active: string, label: string, onClic
     return (
       <button onClick={() => onClick(label)} className={`flex items-center whitespace-nowrap justify-center capitalize text-xs w-auto  lg:text-sm pb-1 px-2 lg:px-3 relative ${active === label ? "text-primary font-bold" : "text-gray-500"}`}>
         {label}
-        <span className={`absolute ${active === label && "bg-blue-500 h-[2px] -bottom-[10px] w-full"}`}></span>
+        <span className={`absolute ${active === label && "bg-blue-500 h-[2px] -bottom-[8px] w-full"}`}></span>
       </button>
     )
   }

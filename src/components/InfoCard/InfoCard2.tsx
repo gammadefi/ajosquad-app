@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 
 import {
   IsPosOrNeg,
 } from "../../utils/percentageUtil";
-import clsx from "clsx";
 
 export interface InfoProps {
   header: string;
@@ -21,19 +20,9 @@ export const InfoCard = ({
   percentage = "",
   className,
   iconName,
-  iconBg,
-  onfilterChange = (e: any) => { }
+  iconBg
 
 }: InfoProps) => {
-  const filterParams = ["2Months ago", "Last Month", "All Time"]
-
-  const [activeFilter, setActiveFilter] = useState(filterParams[2])
-
-  const handleFilterChange = (param: string) => {
-    setActiveFilter(param)
-    onfilterChange(param)
-
-  }
 
   return (
     <div

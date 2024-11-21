@@ -52,6 +52,12 @@ export const AjosquadDashRouter: IModuleRouter = {
       },
       () => import("../pages/dashboard/Account/Account")
     ),
+    LazyRoute(
+      {
+        path: "/notification",
+      },
+      () => import("../pages/dashboard/Notifications")
+    ),
     {
       path: "*",
       element: <Navigate to="/dashboard" />,

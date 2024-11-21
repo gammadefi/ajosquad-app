@@ -6,7 +6,7 @@ import { Button } from '../Button/Button';
 import { FaArrowRight } from 'react-icons/fa6';
 
 const OurProductModal = ({ open, onClick = () => { } }: { open: boolean, onClick?: () => void }) => {
-    const profile: any = useAuth((s) => s.profile);
+    // const profile: any = useAuth((s) => s.profile);
     const [selected, setSelected] = React.useState("")
     const [error, setError] = React.useState(false)
 

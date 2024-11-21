@@ -38,7 +38,7 @@ const Payout = () => {
     return (
         <div className='px-3  md:px-6'>
             <div>
-                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total deposit' />
+                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrwal' />
             </div>
 
             <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Payout</span>  Track your payouts easily. See every transaction in one place.</h3>
