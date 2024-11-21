@@ -5,6 +5,7 @@ import { useRef, useState, useContext } from "react";
 import { useSingleState } from "../../hooks/useSingleState";
 import { LogoutContext } from "../../context/LogoutContext";
 import { sidebar, sidebarEnd, sidebarMid } from "../../pages/dashboard/layout/AdminLayout";
+import { ProductContext } from "../../context/ProductContext";
 
 
 
@@ -200,6 +201,7 @@ export const SidebarEndItem = ({
 }) => {
   const { pathname } = useLocation()
   const logout: any = useContext(LogoutContext)
+  const product = useContext(ProductContext)
 
   return (
     <div className="mb-0 mt-12 pt-2 w-full">
@@ -227,6 +229,26 @@ export const SidebarEndItem = ({
 
         </div>
       )}
+
+      <div className="py-2 w-full px-3">
+
+        <button 
+        onClick={() => product?.toggleProduct()}
+         className={clsx(
+          "flex items-center gap-3 text-[#5A5C5E] px-3 py-2")
+        }>
+
+          <img
+            src={`/sidebar-icons/Logo.svg`}
+            className={clsx(
+              "w-5 h-5",
+            )}
+          /> <h3 className={clsx("capitalize")}>Explore Other Product</h3>
+
+
+        </button>
+
+      </div>
 
       <div className="w-full px-6 py-2 flex cursor-pointer items-center gap-3.5">
         <img
