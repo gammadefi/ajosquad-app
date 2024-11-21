@@ -59,9 +59,9 @@ const Product = () => {
 
 
 
-const ProductCard = ({ image, title, description, comingSoon = false, selected = false, onClick = (e) => { } }: { image: string, title: string, description: string, comingSoon?: boolean, selected?: boolean, onClick?: (e: any) => void }) => {
+export const ProductCard = ({ image, title, description, comingSoon = false, selected = false, onClick = (e) => { } }: { image: string, title: string, description: string, comingSoon?: boolean, selected?: boolean, onClick?: (e: any) => void }) => {
     return (
-        <div onClick={() => onClick(title)} className={clsx('w-full p-3 cursor-pointer border-[0.8px] rounded-xl border-[#C8CCD0] h-[252px] flex flex-col gap-5', selected && comingSoon && "border-[#D42620]", selected && !comingSoon && "border-[#0066FF]")}>
+        <div onClick={() => onClick(title)} className={clsx('w-full p-3 cursor-pointer border-[0.8px] rounded-xl border-[#C8CCD0] h-[252px] flex flex-col gap-5', selected && comingSoon && "border-[#D42620]", selected && !comingSoon && "!border-[#0066FF]")}>
             <div className='h-[80px] w-[125px]'>
             <img className='h-[80px] object-contain w-auto' src={image} alt="" />
 

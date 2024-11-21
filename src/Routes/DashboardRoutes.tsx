@@ -40,6 +40,18 @@ export const AjosquadDashRouter: IModuleRouter = {
       },
       () => import("../pages/dashboard/Payout")
     ),
+    LazyRoute(
+      {
+        path: "/referral",
+      },
+      () => import("../pages/dashboard/Referral/Referral")
+    ),
+    LazyRoute(
+      {
+        path: "/account",
+      },
+      () => import("../pages/dashboard/Account/Account")
+    ),
     {
       path: "*",
       element: <Navigate to="/dashboard" />,
