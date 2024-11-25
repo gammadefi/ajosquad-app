@@ -92,8 +92,8 @@ const Dashboard = () => {
                         <button
                           key={range}
                           className={`px-4 py-2 bg-white rounded-lg ${selectedRange === range
-                              ? "border-blue-600 border text-gray-800"
-                              : " text-gray-800"
+                            ? "border-blue-600 border text-gray-800"
+                            : " text-gray-800"
                             }`}
                           onClick={() => setSelectedRange(range)}
                         >

@@ -214,3 +214,10 @@ code {
   -webkit-mask-size: cover;
   mask-size: cover;
 }
+
+.chart-container {
+  max-width: 400px; /* Limit the maximum width */
+  height: auto; /* Adjust height automatically */
+  aspect-ratio: 2; /* Keep a 2:1 ratio for the semi-doughnut */
+  margin: 0 auto; /* Center the chart */
+}

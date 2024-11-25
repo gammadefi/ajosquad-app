@@ -2,7 +2,7 @@ import { AxiosBasicCredentials } from "axios";
 import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
 
-type ROLE = "AJOSQUAD_ADMIN"
+type ROLE = "ADMIN" | "USER"
 
 type PRODUCT = "AjoSquad" | "AjoHome" | "AjoBusiness"
 
@@ -18,7 +18,7 @@ export const useAuth = create(
         loggedIn: false,
         token: null as string | null | AxiosBasicCredentials,
         profile: null as | null | any,
-        role: null as ROLE | null | string,
+        role: "ADMIN" as ROLE | null | string,
         verified: false,
         product: null as PRODUCT | null | string,
       },

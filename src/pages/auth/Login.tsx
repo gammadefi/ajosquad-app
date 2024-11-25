@@ -32,7 +32,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
-  const { setLoggedIn, setToken, setUserProfile, setVerified } = useAuth()
+  const { setLoggedIn, setToken, setUserProfile, setVerified, setUserRoleType } = useAuth()
 
   const initialUserData = {
     email: "",
@@ -57,7 +57,7 @@ export default function Login() {
       <p className='text-sm lg:text-base'>
         Provide your email and password to continue
       </p>
-      
+
       <Formik
         initialValues={initialUserData}
         validationSchema={validationSchema}
@@ -77,6 +77,11 @@ export default function Login() {
                 setToken(res.accessToken);
                 setLoggedIn(true);
                 setSubmitting(false);
+                if (res.data.role === "user") {
+                    setUserRoleType("USER")
+                } else {
+                  setUserRoleType("ADMIN")
+                }
                 setVerified(res.data.verified)
                 toast.success("Login successful");
                 navigate('/dashboard');
