@@ -8,7 +8,7 @@ interface FormValues {
   file: File | null;
 }
 
-const FileUploadForm = () => {
+const FileUploadForm = ({ next }: { next: () => void }) => {
   const [fileName, setFileName] = useState<string | null>(null);
 
   const initialValues: FormValues = {
@@ -60,6 +60,7 @@ const FileUploadForm = () => {
 
   const handleSubmit = (values: FormValues) => {
     alert(`File uploaded: ${values.file?.name}`);
+    next()
   };
 
   return (

@@ -34,7 +34,8 @@ const JoinSquadRegistrationFlow = () => {
     <div className="relative">
       {step === 1 && <Step1 step={step} next={handleNextStep} formData={formData} setFormData={handleFormDataChange} />}
       {step === 2 && <Step2 step={step} back={handlePreviousStep} next={handleNextStep} formData={formData} setFormData={handleFormDataChange} />}
-      {step === 3 && <Step3 step={step} formData={formData} />}
+      {step === 3 && <Step3 step={step} formData={formData} next={handleNextStep} />}
+      {step === 4 && <SuccessModal />}
     </div>
   );
 }
@@ -239,32 +240,28 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
   )
 }
 
-const Step3 = ({ step, formData }: { step: number, formData: any }) => {
-  // const [hasJoinedSuccessfully, setHasJoinedSuccessfully] = useState(false);
+const Step3 = ({ step, next, formData }: { step: number, next: () => void, formData: any }) => {
   const guarantorRequiredPositions = ["Position 1", "Position 2", "Position 3", "Position 4", "Position 5"]
   const hasPosition1To5 = formData.positions.some((position: string) => guarantorRequiredPositions.includes(position));
   const progress = (step / 3) * 100;
 
+  if (!hasPosition1To5) {
+    next();
+  }
+
   return (
-    <>
-      {
-        hasPosition1To5 ?
-          <div>
-            <div className='flex justify-between'>
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4">
-                Provide Guarantor
-              </h1>
-              <CircularProgressBar progress={progress} currentStep={step} />
-            </div>
-            <p>
-              For position within 1-5, you need to provide and upload a guarantor information and document which would need to be verify before you can proceed and you can select from existing or previous verified guarantor.
-            </p>
-            <FileUploadForm />
-          </div>
-          :
-          <SuccessModal />
-      }
-    </>
+    <div>
+      <div className='flex justify-between'>
+        <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4">
+          Provide Guarantor
+        </h1>
+        <CircularProgressBar progress={progress} currentStep={step} />
+      </div>
+      <p>
+        For position within 1-5, you need to provide and upload a guarantor information and document which would need to be verify before you can proceed and you can select from existing or previous verified guarantor.
+      </p>
+      <FileUploadForm next={next} />
+    </div>
   )
 };
 
