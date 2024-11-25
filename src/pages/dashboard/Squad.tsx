@@ -34,65 +34,29 @@ const Squad = () => {
       </div>
       <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
         <SquadCard
+          id='1'
           payoutAmount='5,000.00'
           date={new Date("2024-12-05T13:30:00")}
           title='Brass 12.0'
+          squadType='Brass'
           squadDuration={5}
           numOfMaxMembers={10}
         />
         <SquadCard
+          id='2'
           payoutAmount='5,000.00'
           date={new Date("2024-12-05T13:30:00")}
           title='Brass 12.0'
+          squadType='Brass'
           squadDuration={5}
           numOfMaxMembers={10}
         />
         <SquadCard
+          id='3'
           payoutAmount='5,000.00'
           date={new Date("2024-12-05T13:30:00")}
           title='Brass 12.0'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
+          squadType='Brass'
           squadDuration={5}
           numOfMaxMembers={10}
         />
