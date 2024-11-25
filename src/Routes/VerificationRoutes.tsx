@@ -1,5 +1,4 @@
 import { Navigate } from "react-router-dom";
-import { AdminLayout } from "../pages/dashboard/layout/AdminLayout";
 import { LazyRoute } from "../utils/helpers";
 import { IModuleRouter } from "./index";
 import SetupLayout from "../pages/setup/Layout/SetupLayout";

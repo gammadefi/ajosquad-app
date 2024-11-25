@@ -29,7 +29,7 @@ export const GraphWrapper = ({
         {extraHeader}
       </div> */}
 
-      <div className="h-auto w-full overflow-x-hidden overflow-y-auto py-2">{children}</div>
+      <div className="h-auto w-full overflow-x-hidden overflow-y-auto">{children}</div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 export const Config = {
   apiUrl: "/api/v1/",
-  apiBaseUrl: "https://ajosquad-backend.onrender.com"
+  apiBaseUrl: "https://api.ajosquad.com"
   // defaults: {
   //   paginator: {
   //     pageKey: "page",

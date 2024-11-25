@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
 import { AuthRouter } from "./AuthRoutes";
-import { AjosquadDashRouter } from "./DashboardRoutes";
+import { AjosquadAdminDashRouter, AjosquadDashRouter } from "./DashboardRoutes";
 import { AppFallback } from "./Layout";
 import { useAuth } from "../zustand/auth.store";
 import { ProductRouter, VerificationRouter } from "./VerificationRoutes";
@@ -13,31 +13,37 @@ export interface IModuleRouter {
   key: string;
 }
 
-const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter];
+const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter,AjosquadAdminDashRouter];
 
 export const AppRouter = () => {
   const [router, setRouter] = useState<IModuleRouter | null>(null);
   const isLoggedIn: boolean = useAuth(s => !!s.token);
   const product = useAuth(s => s.product);
   const isVerified: boolean = useAuth(s => s.verified);
-  // const isLoggedIn: boolean = false;
+  const isAdmin: boolean = useAuth(s => s.role === "ADMIN");
+  // const isAdmin: boolean = true
+  // const isLoggedIn: boolean = true;
   useEffect(() => {
     if (isLoggedIn && isVerified && product) {
       if (product === "AjoSquad") {
         setRouter(ModuleRouters[1]);
       }
-
-    } else if (isLoggedIn && (!isVerified || !product)) {
-      if(isVerified && !product){
+    }else if(isLoggedIn && isAdmin) {
+        setRouter(ModuleRouters[4]);
+    }
+     else if (isLoggedIn && (!isVerified || !product)) {
+      if (isVerified && !product) {
         setRouter(ModuleRouters[2]);
-      }else{
+      } else {
         setRouter(ModuleRouters[3]);
       }
 
     } else {
       setRouter(ModuleRouters[0]);
     }
-  }, [isLoggedIn, isVerified, product]);
+  }, [isLoggedIn, isVerified, product, isAdmin]);
+
+  console.log(router)
 
   const Layout = router?.layout ?? AppFallback;
   const routerView = useRoutes([

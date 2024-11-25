@@ -32,7 +32,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
-  const { setLoggedIn, setToken, setUserProfile, setVerified } = useAuth()
+  const { setLoggedIn, setToken, setUserProfile, setVerified, setUserRoleType } = useAuth()
 
   const initialUserData = {
     email: "",
@@ -57,7 +57,7 @@ export default function Login() {
       <p className='text-sm lg:text-base'>
         Provide your email and password to continue
       </p>
-      
+
       <Formik
         initialValues={initialUserData}
         validationSchema={validationSchema}
@@ -72,11 +72,15 @@ export default function Login() {
                 "password": values.password
               })
               if (res) {
-                // TODO: Update zustand state with user details and tres
                 setUserProfile(res.data);
                 setToken(res.accessToken);
                 setLoggedIn(true);
                 setSubmitting(false);
+                if (res.data.role === "user") {
+                    setUserRoleType("USER")
+                } else {
+                  setUserRoleType("ADMIN")
+                }
                 setVerified(res.data.verified)
                 toast.success("Login successful");
                 navigate('/dashboard');
@@ -163,7 +167,7 @@ export default function Login() {
         </button>
       </div>
       <p>Dont have an account yet? <Link to='/sign-up'>
-        <a className='text-primary font-bold'>Sign Up</a>
+        <span className='text-primary font-bold'>Sign Up</span>
       </Link>
       </p>
       <Modal onClick={() => setOpenModal(!openModal)} open={openModal}>
