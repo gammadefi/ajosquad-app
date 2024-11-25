@@ -46,10 +46,10 @@ const DashboardHeader = ({ title = "" }: { title?: any }) => {
 
             <Link className="flex items-center gap-2" to="/profile">
               <span className="w-8 h-8 bg-[#464749] text-white text-xl font-medium rounded-full flex items-center justify-center">
-                {_extractInitials(`${profile.firstName} `)}
+                {_extractInitials(`${profile?.firstName ?? "Admin"} `)}
               </span>
               <div>
-                <h3 className="text-xs font-medium">Hello, {profile.firstName} {profile.lastName}</h3>
+                <h3 className="text-xs font-medium">Hello, {profile?.firstName ?? "Admin"} {profile?.lastName ?? "Ajosquad"}</h3>
                 <h5 className="text-[10px] text-[#5A5C5E]">Good day</h5>
               </div>
             </Link>

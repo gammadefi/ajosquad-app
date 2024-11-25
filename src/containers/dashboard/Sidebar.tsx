@@ -4,7 +4,9 @@ import { ChevronRightIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import { useRef, useState, useContext } from "react";
 import { useSingleState } from "../../hooks/useSingleState";
 import { LogoutContext } from "../../context/LogoutContext";
-import { sidebar, sidebarEnd, sidebarMid } from "../../pages/dashboard/layout/AdminLayout";
+import { sidebar, sidebarEnd, sidebarMid } from "../../pages/dashboard/layout/DashboardLayout";
+import { ProductContext } from "../../context/ProductContext";
+import { useAuth } from "../../zustand/auth.store";
 
 
 
@@ -86,9 +88,10 @@ export const SidebarItem = ({
   className?: any;
 }) => {
   const { pathname } = useLocation()
+  const role: any = useAuth((s) => s.role)
   return (
     <div className="mb-6">
-      {sidebar.map((items, index) =>
+      {sidebar[role].map((items: any, index: number) =>
         <div className="py-2 w-full px-3">
 
           <NavLink to={items.path ?? "/"} className={({ isActive }) =>
@@ -143,9 +146,10 @@ export const SidebarMidItem = ({
   className?: any;
 }) => {
   const { pathname } = useLocation()
+  const role: any = useAuth((s) => s.role)
   return (
     <div className="mb-8 pt-2 border-t">
-      {sidebarMid.map((items, index) =>
+      {sidebarMid[role].map((items: any, index: number) =>
         <div className="py-2 w-full px-3">
 
           <NavLink to={items.path ?? "/"} className={({ isActive }) =>
@@ -200,10 +204,12 @@ export const SidebarEndItem = ({
 }) => {
   const { pathname } = useLocation()
   const logout: any = useContext(LogoutContext)
+  const product = useContext(ProductContext)
+  const role: any = useAuth((s) => s.role)
 
   return (
-    <div className="mb-0 mt-12 pt-2 w-full">
-      {sidebarEnd.map((items, index) =>
+    <div className="mb-0 pb-3 mt-12 pt-2 w-full">
+      {sidebarEnd[role].map((items: any, index: number) =>
         <div className="py-2 w-full px-3">
 
           <NavLink to={items.path ?? "/"} className={({ isActive }) =>
@@ -227,6 +233,30 @@ export const SidebarEndItem = ({
 
         </div>
       )}
+
+      {
+        role === "ADMIN" && <div className="py-2 w-full px-3">
+
+          <button
+            onClick={() => product?.toggleProduct()}
+            className={clsx(
+              "flex items-center gap-3 text-[#5A5C5E] px-3 py-2")
+            }>
+
+            <img
+              src={`/sidebar-icons/Logo.svg`}
+              className={clsx(
+                "w-5 h-5",
+              )}
+            /> <h3 className={clsx("capitalize")}>Explore Other Product</h3>
+
+
+          </button>
+
+        </div>
+      }
+
+
 
       <div className="w-full px-6 py-2 flex cursor-pointer items-center gap-3.5">
         <img

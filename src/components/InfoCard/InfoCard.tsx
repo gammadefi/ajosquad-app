@@ -11,6 +11,7 @@ export interface InfoProps {
   percentage?: string;
   className?: string;
   iconName?: string;
+  type? : string;
   iconBg?: "#470E81" | "#FCB706" | "#169D1B" | "#9B8442" | "#A077E6" | "#F03738",
   onfilterChange?: (e: any) => void
 }
@@ -22,12 +23,16 @@ export const InfoCard = ({
   className,
   iconName,
   iconBg,
+  type = "default",
   onfilterChange = (e: any) => { }
 
 }: InfoProps) => {
   const filterParams = ["2Months ago", "Last Month", "All Time"]
+  const filterParams2 = ["Completed", "Active Squad"]
 
   const [activeFilter, setActiveFilter] = useState(filterParams[2])
+  const [activeFilter2, setActiveFilter2] = useState(filterParams2[1])
+
 
   const handleFilterChange = (param: string) => {
     setActiveFilter(param)
@@ -35,9 +40,15 @@ export const InfoCard = ({
 
   }
 
+  const handleFilterChange2 = (param: string) => {
+    setActiveFilter2(param)
+    onfilterChange(param)
+
+  }
+
   return (
     <div
-      className={`max-w-[364px] flex flex-col justify-between border-[0.4px] border-[#C8CCD0] w-full py-3 px-3 h-[168px] bg-white rounded-lg shadow-md ${className}`}
+      className={`lg:max-w-[364px] flex flex-col justify-between border-[0.4px] border-[#C8CCD0] w-full py-3 px-3 h-[168px] bg-white rounded-lg shadow-md ${className}`}
     >
       <div style={{ backgroundColor: iconBg }} className={`w-full  flex items-center justify-between `}>
         <h4 className='my-3 text-sm text-[#A0A3A6] '>{header}</h4>
@@ -45,7 +56,7 @@ export const InfoCard = ({
       </div>
 
       <div className='flex items-center justify-between'>
-        {value && <h3 className='text-3xl text-[#464749] font-semibold'>{value}</h3>}
+        {value && <h3 className='text-2xl text-[#464749] font-semibold'>{value}</h3>}
 
         {percentage &&
           (IsPosOrNeg(percentage) === "pos" ? (
@@ -60,19 +71,40 @@ export const InfoCard = ({
 
       </div>
 
-      <div className="flex justify-between items-center">
-        {
-          filterParams.map((params, i) => {
-            return (
-              <button onClick={() => handleFilterChange(params)} className={clsx("px-[6px] text-xs border-[0.4px] rounded-md h-[28px] py-[2px]", activeFilter === params && "bg-[#1898D81A] !border border-[#08354C]")} key={i} >{params}</button>
 
-            )
-          })
-        }
+      {
+        type === "default" ? (
+          <div className="flex justify-between items-center">
+          {
+            filterParams.map((params, i) => {
+              return (
+                <button onClick={() => handleFilterChange(params)} className={clsx("px-[6px] text-xs border-[0.4px] rounded-md h-[28px] py-[2px]", activeFilter === params && "bg-[#1898D81A] !border border-[#08354C]")} key={i} >{params}</button>
+  
+              )
+            })
+          }
+  
+  
+  
+        </div>
+        ): (
+          <div className="flex gap-3 justify-end items-center">
+          {
+            filterParams2.map((params, i) => {
+              return (
+                <button onClick={() => handleFilterChange2(params)} className={clsx("px-[6px] text-xs border-[0.4px] rounded-md h-[28px] py-[2px]", activeFilter2 === params && "bg-[#1898D81A] !border border-[#08354C]")} key={i} >{params}</button>
+  
+              )
+            })
+          }
+  
+  
+  
+        </div>
+        )
+      }
 
-
-
-      </div>
+     
 
 
 

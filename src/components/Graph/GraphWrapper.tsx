@@ -15,8 +15,8 @@ export const GraphWrapper = ({
   type,
 }: IGraphWrapperProps) => {
   return (
-    <div className="w-full h-full bg-white rounded-lg py-6 px-3">
-      <div className=" pb-5 border-b">
+    <div className="w-full h-full bg-white border-[0.8px] border-[#E1E4EA] shadow-md rounded-lg py-6 px-3">
+      {/* <div className=" pb-5 border-b">
         <div className="flex flex-wrap justify-between">
           <h4 className="font-bold whitespace-nowrap text-base">{graphTitle}</h4>
 
@@ -27,9 +27,9 @@ export const GraphWrapper = ({
           
         </div>
         {extraHeader}
-      </div>
+      </div> */}
 
-      <div className="h-auto w-full overflow-x-hidden overflow-y-auto py-2">{children}</div>
+      <div className="h-auto w-full overflow-x-hidden overflow-y-auto">{children}</div>
     </div>
   );
 };
