@@ -10,12 +10,6 @@ const Squad = () => {
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const squadType = searchParams.get("squadType") || "brass";
 
-  console.log(activeTab, squadType);
-
-  useEffect(() => {
-
-  }, [])
-
   return (
     <div className='px-3 md:px-6'>
       <SquadTabBar
