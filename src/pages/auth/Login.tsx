@@ -57,7 +57,7 @@ export default function Login() {
       <p className='text-sm lg:text-base'>
         Provide your email and password to continue
       </p>
-      
+
       <Formik
         initialValues={initialUserData}
         validationSchema={validationSchema}
@@ -72,7 +72,6 @@ export default function Login() {
                 "password": values.password
               })
               if (res) {
-                // TODO: Update zustand state with user details and tres
                 setUserProfile(res.data);
                 setToken(res.accessToken);
                 setLoggedIn(true);
@@ -163,7 +162,7 @@ export default function Login() {
         </button>
       </div>
       <p>Dont have an account yet? <Link to='/sign-up'>
-        <a className='text-primary font-bold'>Sign Up</a>
+        <span className='text-primary font-bold'>Sign Up</span>
       </Link>
       </p>
       <Modal onClick={() => setOpenModal(!openModal)} open={openModal}>

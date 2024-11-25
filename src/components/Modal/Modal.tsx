@@ -21,7 +21,7 @@ const Modal: FunctionComponent<ModalPropsInterface> = ({ children, onClick = () 
 			<div className="flex items-center justify-around min-w-44 h-screen">
 				<div
 					ref={modalRef}
-					className="modal items-center align-middle max-w-2xl md:-mt-48 bg-white rounded"
+					className="modal items-center align-middle max-w-2xl md:-mt-20 bg-white rounded"
 				>
 					<div className="modal-head flex justify-between items-center px-1 py-1 ">
 						<a
