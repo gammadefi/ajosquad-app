@@ -1,95 +1,86 @@
 import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts"; // Import the type for options
 
 interface BarGraphProps {
   data: {
     colors: string[];
     xAxisLabel: string[];
-    stacked: boolean;
-    seriesData: {
-      name: string;
-      data: number[];
-    }[];
+    seriesData: number[];
   };
 }
+
 const BarGraph = ({ data }: BarGraphProps) => {
-  const option = {
-    series: data.seriesData,
+  // Explicitly type the options object
+  const options: ApexOptions = {
+    chart: {
+      type: "bar",
+      toolbar: {
+        show: false,
+      },
+    },
+    xaxis: {
+      categories: data.xAxisLabel,
+      labels:{
+        style:{
+          fontWeight:"700"
+        }
+      } // Set x-axis labels
+    },
+    yaxis: {
+      labels: {
+        show: false,
+        offsetX: -15
+      },
+      title: {
+        text: "No of Customers", // Y-axis title
+        style: {
+          color: "#fff",
+        },
+      },
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "90%", // Adjust bar width
+        distributed: true, // Make each bar a unique color
+        borderRadius: 4, // Rounded corners
+        borderRadiusApplication:"end",
+      },
+    },
+    dataLabels: {
+      enabled: true, // Display values on bars
+      style: {
+        colors: ["#fff"], // Color for the labels
+      },
+    },
+    grid: {
+      show: false,
+      padding: {
+        left: -1,
+        right: 0,
+      },
+
+    },
+    colors: data.colors, // Set bar colors
+    legend: {
+      show: false, // Hide legend
+    },
   };
 
+  const series = [
+    {
+      name: "Customers",
+      data: data.seriesData, // Single series data
+    },
+  ];
+
   return (
-    <div className="h-full pt-5 pb-3" id="chart apexOuter">
+    <div className="h-full pt-5 pb-3">
       <ReactApexChart
-        style={{
-          display: "block",
-          justifyContent: "center",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-        options={{
-          chart: {
-            id: "chart",
-            stacked: data.stacked,
-            sparkline:{
-              enabled:false
-            },
-            toolbar: {
-              show: false,
-              offsetX: 0,
-              offsetY: 0,
-              tools: {
-                download: true,
-                selection: false,
-                zoom: false,
-                zoomin: false,
-                zoomout: false,
-                pan: false,
-                reset: false,
-                customIcons: [],
-              },
-            },
-          },
-          xaxis: {
-            categories: data.xAxisLabel,
-          },
-          yaxis: {
-            labels: {
-              show: false,
-              offsetX: -15
-            }
-          },
-          grid: {
-            show: false,
-            padding: {
-              left: -1,
-              right: 0,
-            },
-
-          },
-          plotOptions:{
-            bar: {
-              columnWidth:"8px",
-              barHeight:"90%",
-              borderRadius:4,
-              colors:{
-                backgroundBarColors:["#DBCCE6"],
-              }
-            }
-          },
-
-          dataLabels:{
-            enabled:false
-          },
-
-          legend: {
-            show: false,
-            position: "top",
-          },
-          colors: data.colors,
-        }}
-        width={"100%"}
-        height={250}
-        series={option.series}
+        options={options} // Pass properly typed options
+        series={series}
         type="bar"
+        width="100%"
+        height={250}
       />
     </div>
   );

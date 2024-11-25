@@ -56,7 +56,7 @@ export const InfoCard = ({
       </div>
 
       <div className='flex items-center justify-between'>
-        {value && <h3 className='text-3xl text-[#464749] font-semibold'>{value}</h3>}
+        {value && <h3 className='text-2xl text-[#464749] font-semibold'>{value}</h3>}
 
         {percentage &&
           (IsPosOrNeg(percentage) === "pos" ? (
