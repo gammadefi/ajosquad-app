@@ -43,13 +43,21 @@ const JoinSquadRegistrationFlow = () => {
 export default JoinSquadRegistrationFlow
 
 const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () => void, formData: any, setFormData: any }) => {
-  const positions = ["Position 1", "Position 2", "Position 3", "Position 4", "Position 5", "Position 6", "Position 7", "Position 8", "Position 9", "Position 10"];
+  const positions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const progress = (step / 3) * 100;
 
   const validationSchema = Yup.object().shape({
     selectedOptions: Yup.array()
       .min(1, "You must select at least one option.")
-      .max(3, "You can select a maximum of three options."),
+      .max(3, "You can select a maximum of three options.")
+      .test(
+        'single-position',
+        'You can select only one checkbox from positions 1 to 5.',
+        (checkboxes: any) => {
+          const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
+          const selectedPositions = guarantorRequiredPositions.filter(position => checkboxes.includes(position))
+          return selectedPositions.length <= 1;
+        }),
   });
 
   const initialValues = {
@@ -89,7 +97,7 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
                       className="w-5 h-5"
                     />
                     <div className='flex flex-col'>
-                      <label className='text-sm font-medium'>{position}</label>
+                      <label className='text-sm font-medium'>Position {position}</label>
                       {
                         index < 5 &&
                         <span className='text-[#D42620] text-xs'>Guarantor Needed</span>
@@ -241,7 +249,7 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
 }
 
 const Step3 = ({ step, next, formData }: { step: number, next: () => void, formData: any }) => {
-  const guarantorRequiredPositions = ["Position 1", "Position 2", "Position 3", "Position 4", "Position 5"]
+  const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
   const hasPosition1To5 = formData.positions.some((position: string) => guarantorRequiredPositions.includes(position));
   const progress = (step / 3) * 100;
 

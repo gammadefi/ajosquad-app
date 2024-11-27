@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-interface SquadTypeTabBarITF {
+interface SquadCategoryTabBarITF {
   tabs: string[],
   activeTab: string,
   onChange?: (e: any) => void;
 }
 
-const SquadTypeTabBar = ({ tabs, activeTab }: SquadTypeTabBarITF) => {
+const SquadCategoryTabBar = ({ tabs, activeTab }: SquadCategoryTabBarITF) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,4 +35,4 @@ const Tab = ({ activeTab, label, onClick }: { activeTab: string, label: string, 
   )
 }
 
-export default SquadTypeTabBar
+export default SquadCategoryTabBar
