@@ -41,7 +41,7 @@ export const sidebarEnd: Record<string, Route[]> = {
     { name: "Notification", path: "/notification", iconName: "notification-bing" },
   ],
   USER: [
-    { name: "Help Desk", path: "/help", iconName: "help" },
+    { name: "Help Desk", path: "/help", iconName: "help2" },
     { name: "Notification", path: "/notification", iconName: "notification-bing" },
   ],
 };
