@@ -1,7 +1,7 @@
 import { createApiClient } from "../utils/api"
 import { squadApiRoutes } from "./routes"
 
-export const sqaudServices = {
+export const squadServices = {
   getAllSquads: async () => {
     const response = await createApiClient().get(squadApiRoutes.getAllSquads);
     return response.data;
