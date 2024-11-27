@@ -13,7 +13,8 @@ const _extractInitials = (val: string) => {
 
 const DashboardHeader = ({ title = "" }: { title?: any }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const profile:any = useAuth((s) => s.profile);
+  const profile: any = useAuth((s) => s.profile);
+  const role = useAuth((s) => s.role)
 
   const _openNav = () => {
     setIsNotificationOpen(true);
@@ -30,17 +31,21 @@ const DashboardHeader = ({ title = "" }: { title?: any }) => {
               setIsNotificationOpen={setIsNotificationOpen}
               isNotificationOpen={isNotificationOpen}
             />
-            <Link to={""} >
-              <img src="/help_outline.svg" />
-            </Link>
-            <div
-              onClick={_openNav}
+            {
+              role === "USER" &&
+              <Link to={"/helpdesk"} >
+                <img src="/help_outline.svg" />
+              </Link>
+            }
+
+            <Link
+             to={"/notification"}
               className={`w-10 h-10 rounded-full bg-opacity-20 cursor-pointer ${isNotificationOpen ? "bg-pc-lightblue" : "bg-transparent"
                 } flex justify-center items-center`}
             >
               <img src="/notification.svg" className="h-6 w-6" />
 
-            </div>
+            </Link>
 
             <div className="border-l border-[#A0A3A6] mx-3 border h-[30px]" />
 

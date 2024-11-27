@@ -235,7 +235,7 @@ export const SidebarEndItem = ({
       )}
 
       {
-        role === "ADMIN" && <div className="py-2 w-full px-3">
+        role !== "ADMIN" && <div className="py-2 w-full px-3">
 
           <button
             onClick={() => product?.toggleProduct()}
