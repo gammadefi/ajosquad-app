@@ -1,13 +1,14 @@
 import { useLocation } from 'react-router-dom';
 import SquadTabBar from '../../components/Tab/SquadTabBar';
 import SquadCard from '../../components/Squad/SquadCard';
-import { sqaudServices } from '../../services/squad';
+import { squadServices } from '../../services/squad';
 import { AxiosResponse } from 'axios';
 import { useQuery } from 'react-query';
 import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
+import dayjs from 'dayjs';
 
 const fetchSquads = async () => {
-  const res: AxiosResponse = await sqaudServices.getAllSquads();
+  const res: AxiosResponse = await squadServices.getAllSquads();
   return res.data;
 };
 
@@ -18,13 +19,6 @@ const Squad = () => {
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const squadCartegory = searchParams.get("squadType") || "brass";
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-
-  //   }
-  //   fetchData();
-  // }, [])
 
   console.log(squads);
 
@@ -50,7 +44,12 @@ const Squad = () => {
           activeTab={squadCartegory}
         />
       </div>
-      {isLoading && <p className='mt-10'>Loading......</p>}
+      {
+        isLoading &&
+        <div className='mt-10 flex justify-center'>
+          <img src="./logo.png" alt="" className='h-20 w-20' />
+        </div>
+      }
       {
         squads &&
         <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
@@ -63,7 +62,7 @@ const Squad = () => {
                 date={new Date(squad.createdAt)}
                 title={squad.name}
                 category={squad.category}
-                squadDuration={5}
+                squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
                 numOfMaxMembers={10}
               />
             ))
