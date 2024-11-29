@@ -43,7 +43,7 @@ export const AppRouter = () => {
     }
   }, [isLoggedIn, isVerified, product, isAdmin]);
 
-  console.log(router)
+  // console.log(router)
 
   const Layout = router?.layout ?? AppFallback;
   const routerView = useRoutes([

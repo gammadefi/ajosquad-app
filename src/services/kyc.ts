@@ -6,6 +6,11 @@ export const KycServices = {
         const response = await createApiClient().post(`/user/${id}/kyc`, payload);
         return response.data;
     },
+
+    getKyc: async (id: string) => {
+        const response = await createApiClient().get(`/user/${id}/kyc`);
+        return response.data;
+    },
     initializeKyc: async (payload: any) => {  
         const response = await createApiClient().post(`/user/initiate-kyc`, payload);
         return response.data;
