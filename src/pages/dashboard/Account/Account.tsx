@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import TabBar from '../../../components/Tab/TabBar';
+import Profile from './Profile';
 
 const Account = () => {
     const tabs = ["profile", "Bank", "Password Settings", "Guarantor Information", "Contract Agreement"]
@@ -10,8 +11,7 @@ const Account = () => {
 
         switch (tabIndex) {
             case tabs[0]:
-                return ""
-            // return <BioProfile />
+                return <Profile />
             case tabs[1]:
                 return ""
             case tabs[2]:
