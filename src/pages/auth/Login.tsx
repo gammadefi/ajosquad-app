@@ -77,11 +77,15 @@ export default function Login() {
                 setLoggedIn(true);
                 setSubmitting(false);
                 if (res.data.role === "user") {
-                    setUserRoleType("USER")
+                  setUserRoleType("USER")
+                  if (res.data.kycVerificationStatus == "pending") {
+                    setVerified(false)
+                  } else if (res.data.kycVerificationStatus == "verified") setVerified(true)
                 } else {
                   setUserRoleType("ADMIN")
                 }
-                setVerified(res.data.verified)
+
+
                 toast.success("Login successful");
                 navigate('/dashboard');
               }
@@ -107,7 +111,8 @@ export default function Login() {
               }
             }
           }
-        }}
+        }
+        }
       >
         {({ isSubmitting }) => {
           return (

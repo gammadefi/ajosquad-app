@@ -38,7 +38,7 @@ export const createApiClient = (auth = true) => {
       if (err.response) {
         if (
           err.response.data &&
-          err.response.data.message === "Token Expired"
+          err.response.data.message === "jwt expired"
         ) {
           AuthActions.logout();
           window.location.href = "/login";

@@ -5,9 +5,10 @@ interface ModalPropsInterface {
 	onClick?: () => void;
 	children: React.ReactNode;
 	open:boolean;
+	showCloseButton?:boolean
 }
 
-const Modal: FunctionComponent<ModalPropsInterface> = ({ children, onClick = () => {}, open }) => {
+const Modal: FunctionComponent<ModalPropsInterface> = ({ children, onClick = () => {}, open, showCloseButton = true }) => {
 	const modalRef = useRef<any>();
 
 	useOnClickOutside(modalRef, () => {
@@ -23,7 +24,8 @@ const Modal: FunctionComponent<ModalPropsInterface> = ({ children, onClick = () 
 					ref={modalRef}
 					className="modal items-center align-middle  bg-white rounded"
 				>
-					<div className="modal-head flex justify-between items-center px-1 py-1 ">
+					{
+						showCloseButton && <div className="modal-head flex justify-between items-center px-1 py-1 ">
 						<button
 							onClick={onClick}
 							type="button"
@@ -45,6 +47,8 @@ const Modal: FunctionComponent<ModalPropsInterface> = ({ children, onClick = () 
 							</svg>
 						</button>
 					</div>
+					}
+					
 					<div className="modal-body p-5 rounded-xl">{children}</div>
 				</div>
 			</div>

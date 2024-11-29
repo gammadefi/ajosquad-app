@@ -15,6 +15,7 @@ import Spinner from "../spinner/Spinner";
 import { Paginator } from "./Paginator";
 import TabBar from "../Tab/TabBar";
 import SearchInput from "../FormInputs/SearchInput";
+import useMobile from "../../hooks/useMobile";
 // import { useTable, Column } from "react-table";
 
 export interface ITableProps<TRow> {
@@ -289,7 +290,7 @@ const TableCol = <TRow,>({
   );
 };
 
-const Pagination = ({
+export const Pagination = ({
   page = 1,
   pageSize = 1,
   totalRows = 0,
@@ -306,19 +307,20 @@ const Pagination = ({
   totalRows?: number;
   currentLength: number;
   loading: boolean;
-  withNumber: boolean;
+  withNumber?: boolean;
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  // const [isMobile, setIsMobile] = useState(false);
+ const {isMobile} = useMobile()
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+  //   };
 
-    handleResize(); // Set initial state
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  //   handleResize(); // Set initial state
+  //   window.addEventListener('resize', handleResize);
+  //   return () => window.removeEventListener('resize', handleResize);
+  // }, []);
 
   const pageStart = pageSize * (page - 1);
   const lastPage = Math.ceil(totalRows / pageSize);

@@ -1,5 +1,6 @@
 import React from "react";
 import { FieldAttributes, useField } from "formik";
+import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 
 interface TextInputProps extends FieldAttributes<any> {
@@ -40,14 +41,14 @@ const TextInput = ({
       )}
 
       <div className='relative'>
-        {name === "phone" ? (
+        {name === "phone" || name === "phoneNumber" || name === "employerPhoneNumber" ? (
           <PhoneInput
-            country={"ng"}
-            onlyCountries={["ng"]}
-            areaCodes={{ng: ['234']}}
+            country={"ca"}
+            onlyCountries={["ca"]}
+            areaCodes={{ng: ['1']}}
             value={field.value}
             inputClass={`w-full !border-none !w-full`}
-            containerClass={`w-full rounded border ${
+            containerClass={`w-full rounded-lg border ${
               meta.touched && meta.error
                 ? "border-red-600"
                 : "border-[#470e812b]"
