@@ -51,6 +51,7 @@ export default function Login() {
 
   return (
     <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 lg:shadow-[0_8px_16px_0px_rgba(0,0,0,0.08)]'>
+      <img src="./logo.png" alt="logo" className="w-20 h-20" />
       <h2 className='text-2xl lg:text-3xl font-semibold text-black'>
         Login
       </h2>

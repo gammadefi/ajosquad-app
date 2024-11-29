@@ -5,7 +5,6 @@ import { AuthActions, useAuth } from "../zustand/auth.store";
 export const createApiClient = (auth = true) => {
   const http = axios.create({
     baseURL: Config.apiBaseUrl,
-
   });
 
   http.interceptors.request.use(
