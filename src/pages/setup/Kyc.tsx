@@ -7,6 +7,63 @@ import { KycServices } from '../../services/kyc'
 import { useAuth } from '../../zustand/auth.store'
 import Modal from '../../components/Modal/Modal'
 
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object().shape({
+    name: Yup.string()
+        .required('Name is required')
+        .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
+        .min(2, 'Name should be at least 2 characters long'),
+
+    email: Yup.string()
+        .email('Invalid email format')
+        .required('Email is required'),
+
+    phoneNumber: Yup.string()
+        .required('Phone number is required')
+        .matches(/^\d+$/, 'Phone number should only contain digits')
+        .min(10, 'Phone number should be at least 10 digits')
+        .max(15, 'Phone number should not exceed 15 digits'),
+
+    homeAddress: Yup.string()
+        .required('Home address is required')
+        .min(5, 'Home address should be at least 5 characters long'),
+
+    city: Yup.string()
+        .required('City is required')
+        .matches(/^[a-zA-Z\s]+$/, 'City should only contain letters and spaces'),
+
+    state: Yup.string()
+        .required('State is required')
+        .matches(/^[a-zA-Z\s]+$/, 'State should only contain letters and spaces'),
+
+    zipCode: Yup.string()
+        .required('Zip code is required')
+        .matches(/^\d+$/, 'Zip code should only contain digits')
+        .length(6, 'Zip code should be exactly 6 digits'),
+
+    jobTitle: Yup.string()
+        .required('Job title is required')
+        .min(2, 'Job title should be at least 2 characters long'),
+
+    employerName: Yup.string()
+        .required('Employer name is required')
+        .matches(/^[a-zA-Z\s]+$/, 'Employer name should only contain letters and spaces')
+        .min(2, 'Employer name should be at least 2 characters long'),
+
+    employerPhoneNumber: Yup.string()
+        .required('Employer phone number is required')
+        .matches(/^\d+$/, 'Employer phone number should only contain digits')
+        .min(10, 'Employer phone number should be at least 10 digits')
+        .max(15, 'Employer phone number should not exceed 15 digits'),
+
+    others: Yup.string()
+        .nullable() // Optional field, can be null
+        .max(500, 'Others field should not exceed 500 characters'),
+});
+
+
+
 const Kyc = () => {
     const [isKycLoading, setIsKycLoading] = React.useState(false)
     const [pageLoadeing, setPageLoading] = React.useState(true)
@@ -28,6 +85,7 @@ const Kyc = () => {
             "employerPhoneNumber": "34378208154",
             "others": ""
         },
+        validationSchema: validationSchema,
         onSubmit: (values: any) => {
             // console.log(values)
             handleSubmit.mutate(values)
@@ -36,7 +94,7 @@ const Kyc = () => {
     })
 
     useEffect(() => {
-       initialStart()
+        initialStart()
 
     }, [])
 
@@ -47,7 +105,7 @@ const Kyc = () => {
                 "reference": profile.kycVerificationReference
             }
 
-          const res =  await callbackFunc(callBackBody)
+            const res = await callbackFunc(callBackBody)
         } catch (error) {
 
         } finally {
@@ -199,6 +257,10 @@ const Kyc = () => {
                                             <option value="other">Other</option>
 
                                         </select>
+                                        {form.touched.others && form.errors.others ? (
+                                            // @ts-ignore
+                                            <small className='text-red-600 mt-1 text-xs md:text-sm'>{form.errors.others && form.errors?.others}</small>
+                                        ) : null}
                                     </div>
 
 
