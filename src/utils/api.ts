@@ -5,7 +5,6 @@ import { AuthActions, useAuth } from "../zustand/auth.store";
 export const createApiClient = (auth = true) => {
   const http = axios.create({
     baseURL: Config.apiBaseUrl,
-
   });
 
   http.interceptors.request.use(
@@ -20,7 +19,7 @@ export const createApiClient = (auth = true) => {
 
         // config.headers = {...config.headers, 'content-Type':'application/x-www-form-urlencoded'}
       }
-      console.log(config.headers, token);
+      // console.log(config.headers, token);
       // console.log(config);
       return config;
     },
@@ -38,7 +37,7 @@ export const createApiClient = (auth = true) => {
       if (err.response) {
         if (
           err.response.data &&
-          err.response.data.message === "Token Expired"
+          err.response.data.message === "jwt expired"
         ) {
           AuthActions.logout();
           window.location.href = "/login";

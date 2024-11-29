@@ -2,11 +2,12 @@ import { Navigate } from "react-router-dom";
 import { LazyRoute } from "../utils/helpers";
 import { IModuleRouter } from "./index";
 import SetupLayout from "../pages/setup/Layout/SetupLayout";
+import KycLayout from "../pages/setup/Layout/kycLayout";
 
 export const VerificationRouter: IModuleRouter = {
   key: "verification",
   guard: (loggedIn) => loggedIn,
-  layout: SetupLayout,
+  layout: KycLayout,
   routes: [
     {
       index: true,
@@ -20,7 +21,7 @@ export const VerificationRouter: IModuleRouter = {
       {
         path: "/personal-information",
       },
-      () => import("../pages/setup/Product")
+      () => import("../pages/setup/Kyc")
     ),
     {
       path: "*",
@@ -50,7 +51,7 @@ export const ProductRouter: IModuleRouter = {
     ),
     {
       path: "*",
-      element: <Navigate to="/personal-information" />,
+      element: <Navigate to="/select-product" />,
     },
   ],
 };

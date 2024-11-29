@@ -6,24 +6,27 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { FaArrowRight } from 'react-icons/fa6';
 import Modal from '../Modal/Modal';
 import JoinSquadRegistrationFlow from './JoinSquadRegistrationFlow';
+import { useCADFormatter } from '../../hooks/useCADFormatter';
 
 dayjs.extend(advancedFormat)
 
 type SquadCardType = {
   id: string,
-  payoutAmount: string,
+  payoutAmount: number,
   title: string,
   numOfMaxMembers: number,
   date: Date,
-  squadType: string,
+  category: string,
   squadDuration: number
 }
 
-const SquadCard = ({ id, date, payoutAmount, squadType, title, numOfMaxMembers, squadDuration }: SquadCardType) => {
-  const [openModal, setOpenModal] = useState(false);
-  const [openJoinSquadForm, setOpenJoinSquadForm] = useState(false);
+const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, squadDuration }: SquadCardType) => {
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openJoinSquadForm, setOpenJoinSquadForm] = useState<boolean>(false);
 
+  const formattedPayoutAmount = useCADFormatter(payoutAmount);
   const formattedDate = dayjs(date).format('Do MMM, YYYY | h:mm A');
+  
   return (
     <>
       <div className='border border-[#C8CCD0] rounded-lg p-5 space-y-3'>
@@ -32,7 +35,7 @@ const SquadCard = ({ id, date, payoutAmount, squadType, title, numOfMaxMembers, 
           <span className='bg-black text-white text-xs font-semibold rounded-xl px-2 py-0.5'>Start in 2 weeks</span>
         </div>
         <div className='flex justify-between'>
-          <h3 className='text-lg font-bold'>CA${payoutAmount} payout</h3>
+          <h3 className='text-lg font-bold'>CA{formattedPayoutAmount} payout</h3>
           <span className='flex items-center gap-1'><User />{numOfMaxMembers} Max. Member</span>
         </div>
         <div className='text-[#5A5C5E]'>This squad would run for {squadDuration} months,</div>
@@ -55,7 +58,7 @@ const SquadCard = ({ id, date, payoutAmount, squadType, title, numOfMaxMembers, 
           openJoinSquadForm ?
             <JoinSquadRegistrationFlow />
             :
-            <ConnectBank squadType={squadType} onClick={() => setOpenJoinSquadForm(true)} />
+            <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(true)} />
         }
       </Modal>
     </>

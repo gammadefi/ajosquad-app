@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import TabBar from '../../../components/Tab/TabBar';
 import Profile from './Profile';
+import PasswordSetting from './PasswordSetting';
 
 const Account = () => {
     const tabs = ["profile", "Bank", "Password Settings", "Guarantor Information", "Contract Agreement"]
@@ -15,7 +16,7 @@ const Account = () => {
             case tabs[1]:
                 return ""
             case tabs[2]:
-                return ""
+                return <PasswordSetting />
             case tabs[3]:
                 return ""
             case tabs[4]:

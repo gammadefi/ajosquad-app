@@ -73,14 +73,15 @@ export default function SignUp() {
 
 
   return (
-    <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 '>
+    <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5'>
+      <img src="./logo.png" alt="logo" className="w-20 h-20" />
       <h2 className='text-2xl lg:text-3xl font-semibold text-black mb-2'>
         Create Account
       </h2>
       <p className='text-sm mb-6 lg:text-base'>
         Provide all required information to set up your account
       </p>
-     
+
       <Formik
         initialValues={initialUserSignUpInfo}
         validationSchema={validationSchema}
