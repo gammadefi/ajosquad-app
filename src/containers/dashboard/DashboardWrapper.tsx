@@ -12,6 +12,8 @@ import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import OurProductModal from "../../components/Modal/OurProductModal";
 import { ProductContext } from "../../context/ProductContext";
+import Drawer from "./Drawer";
+import { SideBarContext } from "../../context/SideBarContext";
 // import { DashboardTopBar } from "./TopBar";
 
 export const DashboardWrapper = ({
@@ -22,17 +24,19 @@ export const DashboardWrapper = ({
   children: React.ReactNode;
 }) => {
   const logout: any = React.useContext(LogoutContext);
+  const sidebarC:any = React.useContext(SideBarContext);
   const product: any = React.useContext(ProductContext);
   const { pathname } = useLocation()
 
-
+console.log(pathname)
 
   return (
     <section className="flex relative h-screen w-full bg-white text-[15px]">
       <DashboardSidebar items={sidebar} />
       <section className="flex-1 flex flex-col">
-        <DashboardHeader title={sidebar.find((items,) => items.path === pathname)?.name} />
+        <DashboardHeader title={sidebar.find((items:any,) => pathname.includes(items.path))?.name} />
         <main className="flex-1 grid overflow-y-auto  relative">
+          <Drawer hasHero={false} setIsOpen={sidebarC?.closeSideBar} isOpen={sidebarC?.isSideBarOpen} />
           <Modal onClick={logout.closeLogout} open={logout.isLogoutOpen}>
             <div className="w-[300px] p-5">
               <h6 className="text-center text-pc-grey10 font-semibold">

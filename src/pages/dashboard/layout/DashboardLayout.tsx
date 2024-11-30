@@ -23,9 +23,11 @@ export const sidebar: Record<string, Route[]> = {
 
 export const sidebarMid: Record<string, Route[]> = {
   ADMIN: [
-    { name: "Customer", path: "/customer", iconName: "people" },
+    { name: "Member Mangament", path: "/member-management", iconName: "people" },
+    { name: "User Mangament", path: "/user-management", iconName: "profile-2user" },
     { name: "KYC", path: "/kyc", iconName: "profile-tick" },
     { name: "Account Activity", path: "/activity", iconName: "activity" },
+    { name: "Guarantor verification", path: "/guarantor-verification", iconName: "profile-tick" },
     { name: "Account", path: "/account", iconName: "profile-circle" },
     { name: "Referral", path: "/referral", iconName: "profile-2user" },
   ],
