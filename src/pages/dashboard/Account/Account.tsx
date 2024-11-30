@@ -1,20 +1,23 @@
-import React, { useState } from 'react'
-import TabBar from '../../../components/Tab/TabBar';
+import React from 'react'
+import Profile from './Profile';
 import PasswordSetting from './PasswordSetting';
+import Bank from './Bank';
+import TabBar2 from '../../../components/Tab/TabBar2';
+import { useLocation } from 'react-router-dom';
 
 const Account = () => {
-    const tabs = ["profile", "Bank", "Password Settings", "Guarantor Information", "Contract Agreement"]
+    const tabs = ["profile", "bank", "password settings", "guarantor information", "contract agreement"]
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const activeTab = searchParams.get("activeTab") || "profile";
 
-    const [tab, setTab] = useState<string>(tabs[0])
 
-    const displayAccountContent = (tabIndex: any) => {
-
-        switch (tabIndex) {
+    const displayAccountContent = (currentTab: string) => {
+        switch (currentTab) {
             case tabs[0]:
-                return ""
-            // return <BioProfile />
+                return <Profile />
             case tabs[1]:
-                return ""
+                return <Bank />
             case tabs[2]:
                 return <PasswordSetting />
             case tabs[3]:
@@ -28,9 +31,12 @@ const Account = () => {
     }
     return (
         <div className='px-3  md:px-6'>
-            <TabBar onChange={(val: any) => setTab(val)} tabs={tabs} />
+            <TabBar2
+                tabs={tabs}
+                activeTab={activeTab}
+            />
             <div className='mt-6'>
-                {displayAccountContent(tab)}
+                {displayAccountContent(activeTab)}
 
             </div>
 
