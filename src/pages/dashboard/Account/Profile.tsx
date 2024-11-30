@@ -1,16 +1,17 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { useState } from 'react'
 import * as Yup from "yup";
 import { FaArrowRight, FaCamera } from "react-icons/fa6";
 import { PiPencilSimpleLine } from "react-icons/pi";
 import { useAuth } from '../../../zustand/auth.store';
 import Modal from '../../../components/Modal/Modal';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
+import TextInput from '../../../components/FormInputs/TextInput2';
 
 const Profile = () => {
   const [showEditPersonalInformation, setShowEditPersonalInformation] = useState(false);
   const [showEditEmployerInformation, setShowEditEmployerInformation] = useState(false);
   const profile = useAuth.getState().profile;
-  console.log(profile)
+  // console.log(profile)
   return (
     <div>
       <div className='my-5 space-y-4'>
@@ -124,12 +125,8 @@ const EditPersonalInformationForm = () => {
     homeAddress: Yup.string()
       .trim()
       .required("*Home Address is required"),
-    phoneNumber: Yup.string()
-      .test('phoneNumber', 'Invalid phone number', function (value) {
-        const { country } = this.parent;
-        const regex = phoneValidationRules[country];
-        return regex ? regex.test(value || '') : true;
-      })
+    phone: Yup.string()
+      .trim()
       .required('Phone number is required'),
     city: Yup.string()
       .trim()
@@ -146,17 +143,11 @@ const EditPersonalInformationForm = () => {
     firstName: "",
     lastName: "",
     email: "",
-    phoneNumber: "",
+    phone: "",
     homeAddress: "",
     city: "",
     state: "",
     zipCode: ""
-  };
-
-  const handleCountryChange = (setFieldValue, country) => {
-    setSelectedCountry(country);
-    setFieldValue('country', country);
-    setFieldValue('phoneNumber', ''); // Clear phone number input on country change
   };
 
   return (
@@ -171,101 +162,56 @@ const EditPersonalInformationForm = () => {
               <Formik
                 initialValues={initialUserInfo}
                 validationSchema={validationSchema}
-                onSubmit={async (values) => {
-
+                onSubmit={(values) => {
+                  console.log(values)
                 }}
               >
                 {({ isSubmitting }) => {
                   return (
                     <Form className='flex flex-col gap-4 my-3'>
                       <div className="flex gap-3">
-                        <div className='flex flex-col w-full space-y-1.5'>
-                          <label htmlFor="firstName" className='text-sm font-medium'>First Name</label>
-                          <Field
-                            name="firstName"
-                            type="text"
-                            placeholder="First Name"
-                            className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                          />
-                          <ErrorMessage name="firstName" component="div" className='text-red-600' />
-                        </div>
-                        <div className='flex flex-col w-full space-y-1.5'>
-                          <label htmlFor="lastName" className='text-sm font-medium'>Last Name</label>
-                          <Field
-                            name="lastName"
-                            type="text"
-                            placeholder="Last Name"
-                            className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                          />
-                          <ErrorMessage name="lastName" component="div" className='text-red-600' />
-                        </div>
-                      </div>
-                      <div className='flex flex-col w-full space-y-1.5'>
-                        <label htmlFor="email" className='text-sm font-medium'>Email</label>
-                        <Field
-                          name="email"
-                          type="text"
-                          placeholder="Email"
-                          className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
+                        <TextInput
+                          name='firstName'
+                          label="First Name"
+                          placeholder='First Name'
                         />
-                        <ErrorMessage name="email" component="div" className='text-red-600' />
-                      </div>
-                      <div className='flex flex-col w-full space-y-1.5'>
-                        <label htmlFor="homeAddress" className='text-sm font-medium'>Home Address</label>
-                        <Field
-                          name="homeAddress"
-                          type="text"
-                          placeholder="Home Address"
-                          className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
+                        <TextInput
+                          name='lastName'
+                          label="last Name"
+                          placeholder='Last Name'
                         />
-                        <ErrorMessage name="homeAddress" component="div" className='text-red-600' />
                       </div>
-                      <div className='flex flex-col w-full space-y-1.5'>
-                        <label htmlFor="phoneNumber" className='text-sm font-medium'>Phone Number</label>
-                        <div>
-                          <Field
-                            name="phoneNumber"
-                            type="text"
-                            placeholder="Home Address"
-                            className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                          />
-                        </div>
-                        <ErrorMessage name="phoneNumber" component="div" className='text-red-600' />
-                      </div>
+                      <TextInput
+                        name='email'
+                        type='email'
+                        label="Email"
+                        placeholder='Email address'
+                      />
+                      <TextInput
+                        name='homeAddress'
+                        label="Home Address"
+                        placeholder='Home Address'
+                      />
+                      <TextInput
+                        name='phone'
+                        label="Phone Number"
+                      />
                       <div className='grid md:grid-cols-3 gap-3'>
-                        <div className='flex flex-col space-y-1.5'>
-                          <label htmlFor="city" className='text-sm font-medium'>City</label>
-                          <Field
-                            name="city"
-                            type="text"
-                            placeholder="City"
-                            className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                          />
-                          <ErrorMessage name="city" component="div" className='text-red-600' />
-                        </div>
-                        <div className='flex flex-col space-y-1.5'>
-                          <label htmlFor="state" className='text-sm font-medium'>State</label>
-                          <Field
-                            name="state"
-                            type="text"
-                            placeholder="State"
-                            className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                          />
-                          <ErrorMessage name="state" component="div" className='text-red-600' />
-                        </div>
-                        <div className='flex flex-col space-y-1.5'>
-                          <label htmlFor="zipCode" className='text-sm font-medium'>ZIP Code</label>
-                          <Field
-                            name="zipCode"
-                            type="text"
-                            placeholder="Zip code"
-                            className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                            onInput={(e: ChangeEvent<HTMLInputElement>) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                          />
-                          <ErrorMessage name="zipCode" component="div" className='text-red-600' />
-                        </div>
+                        <TextInput
+                          name='city'
+                          label="City"
+                          placeholder='City'
+                        />
+                        <TextInput
+                          name='state'
+                          label="State"
+                          placeholder='State'
+                        />
+                        <TextInput
+                          name='zipCode'
+                          label="Zip Code"
+                          placeholder='Zip Code'
+                        />
                       </div>
                       <div className='mt-5 flex justify-between'>
                         <button
@@ -302,19 +248,19 @@ const EditEmployerInformationForm = () => {
   const validationSchema = Yup.object({
     employerName: Yup.string()
       .trim()
-      .required("*First Name is required"),
+      .required("*Employer Name is required"),
     jobTitle: Yup.string()
       .trim()
-      .required("*Last Name is required"),
-    employerPhoneNumber: Yup.string()
+      .required("*Job Title is required"),
+    phone: Yup.string()
       .trim()
-      .required("*Email is required")
+      .required("*Employer PhoneNumber is required")
   });
 
   const initialEmployerInfo = {
     jobTitle: "",
     employerName: "",
-    employerPhoneNumber: ""
+    phone: ""
   }
 
   return (
@@ -329,33 +275,27 @@ const EditEmployerInformationForm = () => {
               <Formik
                 initialValues={initialEmployerInfo}
                 validationSchema={validationSchema}
-                onSubmit={async (values) => {
-
+                onSubmit={(values) => {
+console.log(values)
                 }}
               >
                 {({ isSubmitting }) => {
                   return (
                     <Form className='flex flex-col gap-4 my-3'>
-                      <div className='flex flex-col w-full space-y-1.5'>
-                        <label htmlFor="jobTitle" className='text-sm font-medium'>Job Title</label>
-                        <Field
-                          name="jobTitle"
-                          type="text"
-                          placeholder="Job Title"
-                          className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                        />
-                        <ErrorMessage name="jobTitle" component="div" className='text-red-600' />
-                      </div>
-                      <div className='flex flex-col w-full space-y-1.5'>
-                        <label htmlFor="employerName" className='text-sm font-medium'>Employer Name</label>
-                        <Field
-                          name="employerName"
-                          type="text"
-                          placeholder="Employer Name"
-                          className="py-[10px] px-[14px] border border-[#D0D5DD] focus:outline-none rounded-lg"
-                        />
-                        <ErrorMessage name="employerName" component="div" className='text-red-600' />
-                      </div>
+                      <TextInput
+                        name='jobTitle'
+                        label="Job Title"
+                        placeholder='Job Title'
+                      />
+                      <TextInput
+                        name='employerName'
+                        label="Employer Name"
+                        placeholder='Employer Name'
+                      />
+                      <TextInput
+                        name='phone'
+                        label="Phone Number"
+                      />
                       <div className='mt-5 flex justify-between'>
                         <button
                           type="button"

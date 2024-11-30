@@ -189,7 +189,7 @@ const Kyc = () => {
 
             const res = await callbackFunc(callBackBody)
             console.log(res)
-            if (res.message === "Verification successful") {
+            if (res.message === "Verification request successful") {
                 setVerificationStatus("successful")
                 setIsModalOpen(true)
             }

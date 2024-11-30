@@ -1,11 +1,11 @@
 import { useLocation } from 'react-router-dom';
-import SquadTabBar from '../../components/Tab/SquadTabBar';
 import SquadCard from '../../components/Squad/SquadCard';
 import { squadServices } from '../../services/squad';
 import { AxiosResponse } from 'axios';
 import { useQuery } from 'react-query';
 import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
 import dayjs from 'dayjs';
+import TabBar2 from '../../components/Tab/TabBar2';
 
 const fetchSquads = async () => {
   const res: AxiosResponse = await squadServices.getAllSquads();
@@ -24,7 +24,7 @@ const Squad = () => {
 
   return (
     <div className='px-3 md:px-6'>
-      <SquadTabBar
+      <TabBar2
         tabs={[
           "upcoming",
           "active",
