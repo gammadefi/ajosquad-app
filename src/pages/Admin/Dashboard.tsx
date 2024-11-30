@@ -11,6 +11,10 @@ import LineChart from '../../components/Graph/Graphs/LineChart';
 import BarGraph from '../../components/Graph/Graphs/BarGraph';
 import { SemiDoughnutChart } from '../../components/Graph/Graphs/SemiDoughnutChart';
 import HorizontalBarChart from '../../components/Graph/Graphs/HorizontalBarChart';
+import SearchInput from '../../components/FormInputs/SearchInput';
+import { Table, TableEmpty } from '../../components/Table/TableTwo';
+import { mockData } from '../../samples/mockdata';
+import { Label } from '../../components/Label/Label';
 
 const Dashboard = () => {
   const [kycVerified, setKycVerified] = React.useState(true)
@@ -58,6 +62,33 @@ const Dashboard = () => {
 
   // Get data for the selected range
   const { xAxisLabel, seriesData } = allData[selectedRange];
+
+  const columns = [
+    {
+      header: "S/N",
+      view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+    },
+    {
+      header: "Description",
+      view: (row: any) => <div>{row.description}</div>,
+    },
+    {
+      header: "Position",
+      view: (row: any) => <div>{row.position}</div>,
+    },
+    {
+      header: "Amount",
+      view: (row: any) => <div>{row.amount}</div>,
+    },
+    {
+      header: "Date",
+      view: (row: any) => <div>{row.date}</div>,
+    },
+    {
+      header: "Status",
+      view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+    },
+  ];
 
   return (
 
@@ -114,16 +145,16 @@ const Dashboard = () => {
                   />
                   <div className='justify-around flex'>
                     <div className='flex items-center gap-2'>
-                      <div className='w-[36px] h-[20px] bg-[#005CE6]' />
-                      <h3 className='font-semibold'>Registered User</h3>
+                      <div className='w-[30px] md:w-[36px] h-[20px] bg-[#005CE6]' />
+                      <h3 className='font-semibold text-xs'>Registered User</h3>
                     </div>
                     <div className='flex items-center gap-2'>
-                      <div className='w-[36px] h-[20px] bg-[#0C7931]' />
-                      <h3 className='font-semibold'>Verified User</h3>
+                      <div className='w-[30px] md:w-[36px] h-[20px] bg-[#0C7931]' />
+                      <h3 className='font-semibold text-xs'>Verified User</h3>
                     </div>
                     <div className='flex items-center gap-2'>
-                      <div className='w-[36px] h-[20px] bg-[#FCAD14]' />
-                      <h3 className='font-semibold'>Active User</h3>
+                      <div className='w-[30px] md:w-[36px] h-[20px] bg-[#FCAD14]' />
+                      <h3 className='font-semibold text-xs'>Active User</h3>
                     </div>
 
                   </div>
@@ -222,12 +253,16 @@ const Dashboard = () => {
         <div className='grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
           <div className='col-span-3'>
             <GraphWrapper graphTitle="Overall Sale">
-              <div className='flex items-center gap-3'>
-                <div className="flex bg-[#F7F7F8] py-2 px-2 space-x-4 mb-4">
+              <div className='flex flex-wrap mb-4 justify-between items-center gap-3'>
+                <div>
+                  <h3 className='text-sm md:text-base text-[#525866]'>All Transaction</h3>
+                  <h1 className='text-lg md:text-2xl font-semibold'>CA$ 50,500.00</h1>
+                </div>
+                <div className="flex bg-[#F7F7F8] py-2 px-2 space-x-4 ">
                   {["24h", "7d", "6M", "1Y", "Max"].map((range) => (
                     <button
                       key={range}
-                      className={`px-4 py-2 bg-white rounded-lg ${selectedRange === range
+                      className={`px-4 py-2 text-sm bg-white rounded-lg ${selectedRange === range
                         ? "border-blue-600 border text-gray-800"
                         : " text-gray-800"
                         }`}
@@ -249,6 +284,33 @@ const Dashboard = () => {
           </div>
 
         </div>
+
+        <div className='my-5'>
+              <div className='my-8 flex gap-2 items-center '>
+                <h3 className='text-xl font-semibold'>Transaction History</h3>
+
+                <div className='flex items-center gap-2'>
+                  <SearchInput placeholder='Search...' />
+                  <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                </div>
+
+
+              </div>
+
+              {
+                mockData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
+                  data={mockData.data}
+                  columns={columns}
+                  loading={false}
+                  pagination={
+                    mockData.pagination
+                  }
+
+                />
+              }
+
+
+            </div>
 
 
 

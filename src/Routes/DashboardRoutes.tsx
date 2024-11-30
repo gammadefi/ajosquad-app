@@ -88,19 +88,67 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
       {
         path: "/squad",
       },
-      () => import("../pages/dashboard/Squad")
+      () => import("../pages/Admin/squad/Index")
+    ),
+    LazyRoute(
+      {
+        path: "/squad/squad-member",
+      },
+      () => import("../pages/Admin/squad/SquadMember")
+    ),
+    LazyRoute(
+      {
+        path: "/squad/completed-squad",
+      },
+      () => import("../pages/Admin/squad/CompletedSquad")
+    ),
+    LazyRoute(
+      {
+        path: "/squad/active-squad",
+      },
+      () => import("../pages/Admin/squad/ActiveSquad")
+    ),
+    LazyRoute(
+      {
+        path: "/squad/upcoming-squad",
+      },
+      () => import("../pages/Admin/squad/UpcomingSquad")
+    ),
+    LazyRoute(
+      {
+        path: "/member-management",
+      },
+      () => import("../pages/Admin/member/Index")
+    ),
+    LazyRoute(
+      {
+        path: "/member-management/inactive-member",
+      },
+      () => import("../pages/Admin/member/InactiveMember")
+    ),
+    LazyRoute(
+      {
+        path: "/member-management/ajosquad-member",
+      },
+      () => import("../pages/Admin/member/AjosquadMember")
+    ),
+    LazyRoute(
+      {
+        path: "/member-management/ajohome-member",
+      },
+      () => import("../pages/Admin/member/AjohomeMember")
     ),
     LazyRoute(
       {
         path: "/payment",
       },
-      () => import("../pages/dashboard/Payment")
+      () => import("../pages/Admin/Payment")
     ),
     LazyRoute(
       {
         path: "/payout",
       },
-      () => import("../pages/dashboard/Payout")
+      () => import("../pages/Admin/Payout")
     ),
     LazyRoute(
       {
@@ -113,6 +161,12 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
         path: "/account",
       },
       () => import("../pages/dashboard/Account/Account")
+    ),
+    LazyRoute(
+      {
+        path: "/activity",
+      },
+      () => import("../pages/Admin/AccountActivity")
     ),
     LazyRoute(
       {

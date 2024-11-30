@@ -395,7 +395,7 @@ export const TableEmpty = (props: {
   image?: string;
 }) => {
   return (
-    <div className="max-w-[264px]  text-center flex flex-col items-center ">
+    <div className="max-w-[664px] mx-auto  flex-1  py-10  text-center justify-center flex flex-col items-center ">
       <img src={props.image ?? "/icons/table-empty.svg"} />
       <p className="text-base font-medium text-mid-night-80 mt-4">
         {props.title}

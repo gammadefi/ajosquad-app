@@ -5,7 +5,7 @@ import { Table, TableEmpty } from '../../components/Table/Table'
 import { Label } from '../../components/Label/Label'
 import { mockData } from '../../samples/mockdata'
 
-const Payout = () => {
+const AccountActivity = () => {
     const columns = [
         {
             header: "S/N",
@@ -37,14 +37,17 @@ const Payout = () => {
 
     return (
         <div className='px-3  md:px-6'>
-            <div>
-                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrwal' />
+            <div className='flex justify-between items-center'>
+                <div>
+                    <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Audit</span> Track every activity that occur on your platform.</h3>
+
+                </div>
+
             </div>
 
-            <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Payout</span>  Track your payouts easily. See every transaction in one place.</h3>
 
             <div className='my-8 flex justify-between items-center '>
-                <h3 className='text-xl font-semibold'>Payout Information</h3>
+                <h3 className='text-xl font-semibold'>Account Activity</h3>
 
                 <div className='flex items-center gap-2'>
                     <SearchInput placeholder='Search...' />
@@ -55,7 +58,7 @@ const Payout = () => {
             </div>
 
             {
-                [].length === 0 ? <TableEmpty title='Payout History Details' image='/empty-states/payout.png' subtitle="On this page, you'll find a record of your previous payouts, including dates, and amount." /> : <Table
+                [].length === 0 ? <TableEmpty title='No Activity Yet' image='/empty-states/payout.png' subtitle="On this page, you'll find a record of all activities on your platform." /> : <Table
                     data={mockData.data}
                     columns={columns}
                     loading={false}
@@ -73,4 +76,4 @@ const Payout = () => {
     )
 }
 
-export default Payout
+export default AccountActivity

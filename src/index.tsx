@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { LogoutProvider } from "./context/LogoutContext";
 import { ProductProvider } from "./context/ProductContext";
+import { SideBarProvider } from "./context/SideBarContext";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -25,7 +26,9 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <LogoutProvider>
         <ProductProvider>
-          <App />
+          <SideBarProvider>
+            <App />
+          </SideBarProvider>
         </ProductProvider>
       </LogoutProvider>
     </QueryClientProvider>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { InfoCard } from '../../components/InfoCard/InfoCard'
 import SearchInput from '../../components/FormInputs/SearchInput'
-import { Table } from '../../components/Table/Table'
+import { Table, TableEmpty } from '../../components/Table/Table'
 import { Label } from '../../components/Label/Label'
 import { mockData } from '../../samples/mockdata'
 
@@ -54,15 +54,17 @@ const Payment = () => {
 
             </div>
 
-            <Table
-                data={mockData.data}
-                columns={columns}
-                loading={false}
-                pagination={
-                    mockData.pagination
-                }
+            {
+                [].length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
+                    data={mockData.data}
+                    columns={columns}
+                    loading={false}
+                    pagination={
+                        mockData.pagination
+                    }
 
-         />
+                />
+            }
 
 
     </div>

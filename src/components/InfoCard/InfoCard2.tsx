@@ -11,7 +11,11 @@ export interface InfoProps {
   className?: string;
   iconName?: string;
   iconBg?: "#470E81" | "#FCB706" | "#169D1B" | "#9B8442" | "#A077E6" | "#F03738",
-  onfilterChange?: (e: any) => void
+  onfilterChange?: (e: any) => void,
+  action?: {
+    label: string;
+    buttonAction: () => void
+  }
 }
 
 export const InfoCard = ({
@@ -20,13 +24,15 @@ export const InfoCard = ({
   percentage = "",
   className,
   iconName,
-  iconBg
+  iconBg,
+  action,
+
 
 }: InfoProps) => {
 
   return (
     <div
-      className={`max-w-[220px] min-w-[218px] flex flex-col justify-between border-[0.4px] border-[#C8CCD0] w-full py-3 px-3 h-[128px] bg-white rounded-lg shadow-lg ${className}`}
+      className={`max-w-[420px] min-w-[218px] flex flex-col justify-between border-[0.4px] border-[#C8CCD0] w-full py-3 px-3 h-[128px] bg-white rounded-lg shadow-lg ${className}`}
     >
       <div style={{ backgroundColor: iconBg }} className={`w-full  flex items-center justify-between `}>
         <h4 className='my-3 text-sm text-[#A0A3A6] '>{header}</h4>
@@ -36,16 +42,11 @@ export const InfoCard = ({
       <div className='flex items-center justify-between'>
         {value && <h3 className='text-xl text-black font-semibold'>{value}</h3>}
 
-        {percentage &&
-          (IsPosOrNeg(percentage) === "pos" ? (
-            <span className="font-normal text-green-500 p-1 bg-green-100 text-xs flex-row flex items-center gap-1">
-              <img src="/icons/trending-up.svg" alt="u" /> {percentage}
-            </span>
-          ) : (
-            <span className="font-normal text-red-500 p-1 bg-red-100 text-xs flex-row flex items-center gap-1">
-              <img src="icons/trending-down.svg" alt="d" /> {percentage}
-            </span>
-          ))}
+        {
+          action && (
+            <button className="border-[0.4px] py-1 px-[6px] rounded text-xs text-[#5A5C5E] border-[#C8CCD0]" onClick={action.buttonAction}>{action.label}</button>
+          )
+        }
 
       </div>
 

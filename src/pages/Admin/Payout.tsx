@@ -37,12 +37,23 @@ const Payout = () => {
 
     return (
         <div className='px-3  md:px-6'>
-            <div>
-                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrwal' />
+           <div className='flex justify-between items-center'>
+                <div>
+                    <h3 className='text-base md:text-xl font-semibold'>Manage and oversee all payout activities in one place</h3>
+                    <p className='max-w-[648px] text-[#5A5C5E]'>
+                    Monitor and manage all payout activities from a single, intuitive dashboard.
+                    </p>
+                </div>
+
+            </div>
+            <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
+                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrawal' />
+                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='AjoSquad Withdrawal' />
+                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='AjoHome Withdrawal' />
+                <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='AjoBusiness Withdrawal' />
             </div>
 
-            <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Payout</span>  Track your payouts easily. See every transaction in one place.</h3>
-
+           
             <div className='my-8 flex justify-between items-center '>
                 <h3 className='text-xl font-semibold'>Payout Information</h3>
 
