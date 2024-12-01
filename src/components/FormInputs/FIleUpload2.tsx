@@ -53,7 +53,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ name, wrapperClass, onFileChang
 
         try {
             const response = await axios.post(
-                'https://api.cloudinary.com/v1_1/ajosquad/upload',
+                'https://api.cloudinary.com/v1_1/dwk4rqxhu/upload',
                 formData
             );
             const fileUrl = response.data.secure_url;
