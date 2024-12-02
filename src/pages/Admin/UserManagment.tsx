@@ -1,13 +1,13 @@
 import React from 'react'
-import { mockData } from '../../../samples/mockdata';
-import { Table, TableEmpty } from '../../../components/Table/Table';
-import SearchInput from '../../../components/FormInputs/SearchInput';
-import { InfoCard } from '../../../components/InfoCard/InfoCard2';
-import { Label } from '../../../components/Label/Label';
+import { mockData } from '../../samples/mockdata';
+import { Table, TableEmpty } from '../../components/Table/Table';
+import SearchInput from '../../components/FormInputs/SearchInput';
+import { InfoCard } from '../../components/InfoCard/InfoCard2';
+import { Label } from '../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowRoundBack } from "react-icons/io";
 
-const SquadMember = () => {
+const UserManagement = () => {
     const navigate = useNavigate()
     const columns = [
         {
@@ -41,31 +41,33 @@ const SquadMember = () => {
     ];
     return (
         <div className='px-3  md:px-6'>
-            <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button>
-            <div className='flex justify-between items-center'>
+            {/* <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button> */}
+            <div className='flex justify-between flex-wrap items-center'>
                 <div>
-                    <h3 className='text-base md:text-xl font-semibold'>Squad Member</h3>
+                    <h3 className='text-base md:text-xl font-semibold'>Manage and oversee all your User in one place</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                        You can view all the squad member information and record here.
+                    View and manage all user information, interactions, and activities from a single, intuitive dashboard.
                     </p>
                 </div>
 
+                <button className='h-[44px] border mt-5 lg:mt-0 border-primary px-4 py-2 rounded' >Invite User <span></span></button>
+
+              
 
 
 
             </div>
-            <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-3'>
-                <InfoCard header="Squad Member" iconName='people' value="50" />
-                <InfoCard header="Completed Square" iconName='profile-2user-active' value="50" />
-                <InfoCard header="Points" iconName='profile-2user-inactive' value="50" />
-
+            <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
+                <InfoCard header="Total Users" iconName='profile-2user' value="5" />
+               
+                
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
 
             <div>
                 <div className='my-8 flex justify-between items-center '>
-                    <h3 className='text-xl font-semibold'>All Members</h3>
+                    <h3 className='text-xl font-semibold'>All User</h3>
 
                     <div className='flex items-center gap-2'>
                         <SearchInput placeholder='Search...' />
@@ -75,20 +77,18 @@ const SquadMember = () => {
 
                 </div>
 
+                
+            {
+                [].length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                    data={mockData.data}
+                    columns={columns}
+                    loading={false}
+                    pagination={
+                        mockData.pagination
+                    }
 
-                {
-                    mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
-                     <Table
-                        data={mockData.data}
-                       clickRowAction={(row:any) => navigate(`/squad/squad-member/${row.id}`)}
-                        columns={columns}
-                        loading={false}
-                        pagination={
-                            mockData.pagination
-                        }
-
-                    />
-                }
+                />
+            }
 
 
             </div>
@@ -96,4 +96,4 @@ const SquadMember = () => {
     )
 }
 
-export default SquadMember
+export default UserManagement

@@ -46,10 +46,10 @@ const UpcomingSquad = () => {
                 <div>
                     <h3 className='text-base md:text-xl font-semibold'>Upcoming Squad</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                    You can view all upcoming squad here, its transaction record and its member.
+                        You can view all upcoming squad here, its transaction record and its member.
                     </p>
                 </div>
-              
+
 
 
 
@@ -60,7 +60,7 @@ const UpcomingSquad = () => {
                 <InfoCard header="Bronze Squad" iconName='tick-square' value="50" />
                 <InfoCard header="Silver Squad" iconName='tick-square' value="50" />
                 <InfoCard header="Gold Squad" iconName='tick-square' value="50" />
-                
+
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
@@ -77,18 +77,20 @@ const UpcomingSquad = () => {
 
                 </div>
 
-                
-            {
-                [].length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
 
-                />
-            }
+                {
+                    mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                        <Table
+                            clickRowAction={(row: any) => navigate(`/squad/upcoming-squad/${row?.id}`)}
+                            data={mockData.data}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                                mockData.pagination
+                            }
+
+                        />
+                }
 
 
             </div>

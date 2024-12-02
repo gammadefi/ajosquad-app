@@ -79,7 +79,9 @@ const CompletedSquad = () => {
 
                 
             {
-                [].length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                 <Table
+                    clickRowAction={(row:any) => navigate(`/squad/completed-squad/${row.id}`) }
                     data={mockData.data}
                     columns={columns}
                     loading={false}

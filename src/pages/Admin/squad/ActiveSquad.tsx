@@ -44,12 +44,12 @@ const ActiveSquad = () => {
             <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button>
             <div className='flex justify-between items-center'>
                 <div>
-                    <h3 className='text-base md:text-xl font-semibold'>Active Member</h3>
+                    <h3 className='text-base md:text-xl font-semibold'>Active Squad</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                    You can view all active squad here, its transaction record and its member.
+                        You can view all active squad here, its transaction record and its member.
                     </p>
                 </div>
-              
+
 
 
 
@@ -60,7 +60,7 @@ const ActiveSquad = () => {
                 <InfoCard header="Bronze Squad" iconName='tick-square' value="50" />
                 <InfoCard header="Silver Squad" iconName='tick-square' value="50" />
                 <InfoCard header="Gold Squad" iconName='tick-square' value="50" />
-                
+
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
@@ -77,18 +77,20 @@ const ActiveSquad = () => {
 
                 </div>
 
-                
-            {
-                [].length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
 
-                />
-            }
+                {
+                    mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                        <Table
+                            clickRowAction={(row:any) => navigate(`/squad/active-squad/${row?.id}`)}
+                            data={mockData.data}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                                mockData.pagination
+                            }
+
+                        />
+                }
 
 
             </div>
