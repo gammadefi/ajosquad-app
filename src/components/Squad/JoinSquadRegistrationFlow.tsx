@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import CircularProgressBar from '../Progress/CircularProgressBar';
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
+import { RiBankFill } from "react-icons/ri";
 import FileUploadForm from './FileUploadForm';
+import { userServices } from '../../services/user';
+import { useAuth } from '../../zustand/auth.store';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { AxiosResponse } from 'axios';
 
 const JoinSquadRegistrationFlow = () => {
   const [formData, setFormData] = useState({
     positions: [],
-    bank: "",
+    bankName: "",
     accountName: "",
     institutionNumber: "",
     transitNumber: "",
@@ -43,13 +48,21 @@ const JoinSquadRegistrationFlow = () => {
 export default JoinSquadRegistrationFlow
 
 const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () => void, formData: any, setFormData: any }) => {
-  const positions = ["Position 1", "Position 2", "Position 3", "Position 4", "Position 5", "Position 6", "Position 7", "Position 8", "Position 9", "Position 10"];
+  const positions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const progress = (step / 3) * 100;
 
   const validationSchema = Yup.object().shape({
     selectedOptions: Yup.array()
       .min(1, "You must select at least one option.")
-      .max(3, "You can select a maximum of three options."),
+      .max(3, "You can select a maximum of three options.")
+      .test(
+        'single-position',
+        'You can select only one checkbox from positions 1 to 5.',
+        (checkboxes: any) => {
+          const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
+          const selectedPositions = guarantorRequiredPositions.filter(position => checkboxes.includes(position))
+          return selectedPositions.length <= 1;
+        }),
   });
 
   const initialValues = {
@@ -89,7 +102,7 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
                       className="w-5 h-5"
                     />
                     <div className='flex flex-col'>
-                      <label className='text-sm font-medium'>{position}</label>
+                      <label className='text-sm font-medium'>Position {position}</label>
                       {
                         index < 5 &&
                         <span className='text-[#D42620] text-xs'>Guarantor Needed</span>
@@ -128,10 +141,13 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
 
 
 const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back: () => void, next: () => void, formData: any, setFormData: any }) => {
+  const [banks, setBanks] = useState<any[]>([]);
+  const [showBanks, setShowBanks] = useState(false)
+
   const validationSchema = Yup.object({
-    bank: Yup.string()
+    bankName: Yup.string()
       .trim()
-      .required("*Bank is required"),
+      .required("*Bank Name is required"),
     accountName: Yup.string()
       .trim()
       .required("*Account Name is required"),
@@ -144,10 +160,10 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
     accountNumber: Yup.string()
       .trim()
       .required("*Account Number is required")
-  })
+  });
 
   const initialValues = {
-    bank: formData.bank,
+    bankName: formData.bankName,
     accountName: formData.accountName,
     institutionNumber: formData.institutionNumber,
     transitNumber: formData.transitNumber,
@@ -155,6 +171,16 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
   };
 
   const progress = (step / 3) * 100;
+
+  useEffect(() => {
+    const fetchUserBanks = async () => {
+      const res: AxiosResponse = await userServices.bank.getAllBanks(useAuth.getState().profile.id);
+      console.log(res.data);
+      setBanks(res.data)
+    }
+
+    fetchUserBanks();
+  }, [])
 
   return (
     <div className='flex flex-col gap-2 h-[550px] overflow-scroll'>
@@ -172,22 +198,42 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
+          onSubmit={async (values) => {
             setFormData({
               ...formData,
-              bank: values.bank,
+              bankName: values.bankName,
               accountName: values.accountName,
               institutionNumber: values.institutionNumber,
               transitNumber: values.transitNumber,
               accountNumber: values.accountNumber
             });
-            next()
+
+            const payload = {
+              bankName: values.bankName,
+              accountName: values.accountName,
+              institutionNumber: values.institutionNumber,
+              transitNumber: values.transitNumber,
+              accountNumber: values.accountNumber
+            }
+            if (values) {
+              try {
+                if (!banks.includes(payload)) {
+                  const res = await userServices.bank.createBank(useAuth.getState().profile.id, payload)
+                  if (res) {
+                    next();
+                  }
+                }
+                next();
+              } catch (error) {
+                console.log(error)
+              }
+            }
           }}
         >
-          {() => (
+          {({ isSubmitting }) => (
             <Form className='flex flex-col gap-1.5'>
               <TextInput
-                name='bank'
+                name='bankName'
                 type='text'
                 label="Select Bank*"
                 placeholder='Select Bank'
@@ -216,7 +262,55 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
                 label="Account Number"
                 placeholder='Account Number'
               />
-              <div className="mt-3 flex justify-between">
+              <div className='my-3 space-y-2'>
+                <div className='flex justify-between items-center'>
+                  <div className='flex items-center gap-2'>
+                    <RiBankFill className='text-gray-600 h-5 w-5' />
+                    <p className='font-medium'>Select from existing Bank</p>
+                  </div>
+                  <div onClick={() => setShowBanks(!showBanks)} className='cursor-pointer flex gap-1'>
+                    <p className='rounded-3xl py-1 px-3 bg-[#C8CCD0]'>See All</p>
+                    <div className='flex items-center justify-center rounded-full p-2 bg-[#C8CCD0]'>
+                      <ChevronDownIcon className={`h-4 w-4 ${showBanks && "rotate-90"}`} />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  {showBanks && <>
+                    {
+                      banks.length > 0 ? <div className='space-y-3'>
+                        {
+                          banks.map((bank: any) => (
+                            <div className='cursor-pointer w-full px-3 py-2 rounded-lg border border-primary bg-[#F8F8F8]' key={bank.id}>
+                              <h2 className='text-[#5A5C5E] font-bold'>{bank.bankName}</h2>
+                              <div className='space-y-0.5 my-2'>
+                                <div className='text-xs flex justify-between'>
+                                  <h3>Account Name: </h3>
+                                  <p className='font-bold'>{bank.accountName}</p>
+                                </div>
+                                <div className='text-xs flex justify-between'>
+                                  <h3>Account Number: </h3>
+                                  <p className='font-bold'>{bank.accountNumber}</p>
+                                </div>
+                                <div className='text-xs flex justify-between'>
+                                  <h3>Institution Number: </h3>
+                                  <p className='font-bold'>{bank.institutionNumber}</p>
+                                </div>
+                                <div className='text-xs flex justify-between'>
+                                  <h3>Transit Number: </h3>
+                                  <p className='font-bold'>{bank.transitNumber}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        }
+                      </div>
+                        : <>No Banks founds. Please add a bank</>
+                    }
+                  </>}
+                </div>
+              </div>
+              <div className="flex justify-between">
                 <button
                   type="button"
                   onClick={back}
@@ -226,9 +320,10 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
                 </button>
                 <button
                   type='submit'
+                  disabled={isSubmitting}
                   className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
                 >
-                  Proceed
+                  {isSubmitting ? "Proceeding" : "Proceed"}
                   <FaArrowRight />
                 </button>
               </div>
@@ -241,7 +336,7 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
 }
 
 const Step3 = ({ step, next, formData }: { step: number, next: () => void, formData: any }) => {
-  const guarantorRequiredPositions = ["Position 1", "Position 2", "Position 3", "Position 4", "Position 5"]
+  const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
   const hasPosition1To5 = formData.positions.some((position: string) => guarantorRequiredPositions.includes(position));
   const progress = (step / 3) * 100;
 

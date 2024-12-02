@@ -3,6 +3,7 @@ import TabBar from '../../components/Tab/TabBar'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { GoStar, GoStarFill, GoTrash } from "react-icons/go";
 import { Paginator } from '../../components/Table/Paginator';
+import { Pagination } from '../../components/Table/Table';
 
 const Notifications = () => {
     const tabs = ["All", "Archived"]
@@ -30,8 +31,9 @@ const Notifications = () => {
                 <Notification isFavourite={false} />
 
             </div>
-            <div className='flex justify-end'>
-                <Paginator page={1} pageSize={10} totalRows={188} loading={false} currentLength={188} />
+            <div className='flex justify-center md:justify-end'>
+                <Pagination  page={1} pageSize={10} totalRows={188} loading={false} currentLength={188} />
+                {/* <Paginator  /> */}
             </div>
         </div>
     )
@@ -39,7 +41,7 @@ const Notifications = () => {
 
 const Notification = ({ isFavourite, }: { isFavourite: boolean }) => {
     return (
-        <div className='h-[44px] flex items-center justify-between w-full'>
+        <div className='h-[44px] flex gap-1 items-center justify-between w-full'>
             <div className='flex gap-2 items-center'>
                 <input type='checkbox' className='h-4 w-4 ' />
                 <button>{
@@ -49,10 +51,10 @@ const Notification = ({ isFavourite, }: { isFavourite: boolean }) => {
             </div>
             <h3 className='font-semibold'>Welcome</h3>
             <div >
-                <h3>Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar  risus risus...</h3>
+                <h3 className='truncate lg:whitespace-normal md:w-full lg:max-w-full max-w-40'>Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar  risus risus...</h3>
             </div>
             <div className='flex gap-2 items-center'>
-                <h3>Just Now</h3>
+                <h3 className='text-sm whitespace-nowrap'>Just Now</h3>
                 <button className='h-6 flex justify-center items-center w-6 rounded-full bg-[#FBE9E9] '>
                     <GoTrash color='#D42620' />
                 </button>

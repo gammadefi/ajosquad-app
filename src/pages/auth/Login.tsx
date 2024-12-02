@@ -51,6 +51,7 @@ export default function Login() {
 
   return (
     <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 lg:shadow-[0_8px_16px_0px_rgba(0,0,0,0.08)]'>
+      <img src="./logo.png" alt="logo" className="w-20 h-20" />
       <h2 className='text-2xl lg:text-3xl font-semibold text-black'>
         Login
       </h2>
@@ -77,11 +78,15 @@ export default function Login() {
                 setLoggedIn(true);
                 setSubmitting(false);
                 if (res.data.role === "user") {
-                    setUserRoleType("USER")
+                  setUserRoleType("USER")
+                  if (res.data.kycVerificationStatus == "pending") {
+                    setVerified(false)
+                  } else if (res.data.kycVerificationStatus == "verified") setVerified(true)
                 } else {
                   setUserRoleType("ADMIN")
                 }
-                setVerified(res.data.verified)
+
+
                 toast.success("Login successful");
                 navigate('/dashboard');
               }
@@ -107,7 +112,8 @@ export default function Login() {
               }
             }
           }
-        }}
+        }
+        }
       >
         {({ isSubmitting }) => {
           return (

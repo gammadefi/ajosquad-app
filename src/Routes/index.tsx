@@ -13,7 +13,7 @@ export interface IModuleRouter {
   key: string;
 }
 
-const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter,AjosquadAdminDashRouter];
+const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter, AjosquadAdminDashRouter];
 
 export const AppRouter = () => {
   const [router, setRouter] = useState<IModuleRouter | null>(null);
@@ -24,14 +24,14 @@ export const AppRouter = () => {
   // const isAdmin: boolean = true
   // const isLoggedIn: boolean = true;
   useEffect(() => {
-    if (isLoggedIn && isVerified && product) {
+    if (isLoggedIn && isAdmin) {
+      setRouter(ModuleRouters[4]);
+    } else if (isLoggedIn && isVerified && product) {
       if (product === "AjoSquad") {
         setRouter(ModuleRouters[1]);
       }
-    }else if(isLoggedIn && isAdmin) {
-        setRouter(ModuleRouters[4]);
     }
-     else if (isLoggedIn && (!isVerified || !product)) {
+    else if (isLoggedIn && (!isVerified || !product)) {
       if (isVerified && !product) {
         setRouter(ModuleRouters[2]);
       } else {
@@ -43,7 +43,7 @@ export const AppRouter = () => {
     }
   }, [isLoggedIn, isVerified, product, isAdmin]);
 
-  console.log(router)
+  // console.log(router)
 
   const Layout = router?.layout ?? AppFallback;
   const routerView = useRoutes([

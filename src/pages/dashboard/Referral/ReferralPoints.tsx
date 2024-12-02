@@ -61,7 +61,7 @@ const ReferralPoints = () => {
                     <h4 className='mb-1 font-semibold'>Invite Link</h4>
                     <div className='flex items-center gap-2'>
                         <input readOnly disabled name='inviteLink' className='border rounded-md h-[44px] px-3 w-[343px] text-sm' value={"ajosquad.com/favidesign62g"} />
-                        <Button label='Copy Link' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
+                        <Button label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
                     </div>
                     <small>Minimum point to redeem is CAD$50</small>
                 </div>

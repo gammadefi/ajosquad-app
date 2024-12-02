@@ -76,8 +76,8 @@ const LineChart = ({ colors, seriesData, xAxisLabel,type }: LineChartProps) => {
           },
         }}
         fill={colors}
-        width={"95%"}
-        height={400}
+        width={"100%"}
+        height={"auto"}
         series={option2.series}
         type={type}
       />

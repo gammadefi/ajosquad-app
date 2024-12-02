@@ -1,18 +1,30 @@
-import React from 'react'
 import { useLocation } from 'react-router-dom';
-import SquadTabBar from '../../components/Tab/SquadTabBar';
-import SquadTypeTabBar from '../../components/Tab/SquadTypeTabBar';
 import SquadCard from '../../components/Squad/SquadCard';
+import { squadServices } from '../../services/squad';
+import { AxiosResponse } from 'axios';
+import { useQuery } from 'react-query';
+import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
+import dayjs from 'dayjs';
+import TabBar2 from '../../components/Tab/TabBar2';
+
+const fetchSquads = async () => {
+  const res: AxiosResponse = await squadServices.getAllSquads();
+  return res.data;
+};
 
 const Squad = () => {
+  const { data: squads, isLoading } = useQuery(['squads'], fetchSquads);
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("activeTab") || "upcoming";
-  const squadType = searchParams.get("squadType") || "brass";
+  const squadCartegory = searchParams.get("squadType") || "brass";
+
+  console.log(squads);
 
   return (
     <div className='px-3 md:px-6'>
-      <SquadTabBar
+      <TabBar2
         tabs={[
           "upcoming",
           "active",
@@ -22,45 +34,41 @@ const Squad = () => {
         activeTab={activeTab}
       />
       <div className='mt-5'>
-        <SquadTypeTabBar
+        <SquadCategoryTabBar
           tabs={[
             "brass",
             "bronze",
             "silver",
             "gold"
           ]}
-          activeTab={squadType}
+          activeTab={squadCartegory}
         />
       </div>
-      <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
-        <SquadCard
-          id='1'
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadType='Brass'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          id='2'
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadType='Brass'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-        <SquadCard
-          id='3'
-          payoutAmount='5,000.00'
-          date={new Date("2024-12-05T13:30:00")}
-          title='Brass 12.0'
-          squadType='Brass'
-          squadDuration={5}
-          numOfMaxMembers={10}
-        />
-      </div>
+      {
+        isLoading &&
+        <div className='mt-10 flex justify-center'>
+          <img src="./logo.png" alt="" className='h-20 w-20' />
+        </div>
+      }
+      {
+        squads &&
+        <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
+          {
+            squads.data.map((squad: any) => (
+              <SquadCard
+                key={squad.id}
+                id={squad.id}
+                payoutAmount={squad.amount}
+                date={new Date(squad.createdAt)}
+                title={squad.name}
+                category={squad.category}
+                squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                numOfMaxMembers={10}
+              />
+            ))
+          }
+        </div>
+      }
     </div>
   )
 }
