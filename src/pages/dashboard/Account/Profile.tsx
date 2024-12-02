@@ -11,7 +11,7 @@ const Profile = () => {
   const [showEditPersonalInformation, setShowEditPersonalInformation] = useState(false);
   const [showEditEmployerInformation, setShowEditEmployerInformation] = useState(false);
   const profile = useAuth.getState().profile;
-  // console.log(profile)
+  
   return (
     <div>
       <div className='my-5 space-y-4'>
@@ -103,7 +103,6 @@ export default Profile
 
 const EditPersonalInformationForm = () => {
   const [hasUpdated, setHasUpdated] = useState(false);
-
 
   const phoneValidationRules: any = {
     US: /^\d{10}$/,

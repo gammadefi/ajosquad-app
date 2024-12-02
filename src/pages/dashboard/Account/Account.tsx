@@ -4,6 +4,8 @@ import PasswordSetting from './PasswordSetting';
 import Bank from './Bank';
 import TabBar2 from '../../../components/Tab/TabBar2';
 import { useLocation } from 'react-router-dom';
+import GuarantorInformation from './GuarantorInformation';
+import ContractAgreement from './ContractAgreement';
 
 const Account = () => {
     const tabs = ["profile", "bank", "password settings", "guarantor information", "contract agreement"]
@@ -21,9 +23,9 @@ const Account = () => {
             case tabs[2]:
                 return <PasswordSetting />
             case tabs[3]:
-                return ""
+                return <GuarantorInformation />
             case tabs[4]:
-                return ""
+                return <ContractAgreement />
             default:
                 return ""
             // return <BioProfile />

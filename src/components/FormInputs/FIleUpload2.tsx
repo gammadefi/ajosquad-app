@@ -99,7 +99,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ name, wrapperClass, onFileChang
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
             >
-               <img alt="Upload Icon" src='/icons/upload_icon.svg' />
+               <img alt="Upload Icon" src="/UploadIcon.svg" />
                 <h3 className='mt-2'>Drag & Drop files or <label className='text-primary cursor-pointer underline font-semibold' htmlFor={name}>
                     Browse
                 </label>
