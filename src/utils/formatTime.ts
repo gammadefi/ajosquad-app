@@ -1,5 +1,5 @@
 import { format, formatDistanceToNow, differenceInDays, differenceInWeeks, differenceInMonths } from 'date-fns';
-
+import { enUS } from 'date-fns/locale';
 // ----------------------------------------------------------------------
 
 export function fDate(date : string) {
@@ -46,4 +46,14 @@ export function timeAgo(date: Date) {
 
   const months = differenceInMonths(now, date);
   return `${months} month${months === 1 ? '' : 's'} ago`;
+}
+
+export function formatDate2(dateString: string) {
+  const date = new Date(dateString);
+
+  const formattedDate = format(date, "do MMM, yyyy", {
+    locale: enUS,
+  });
+
+  return formattedDate;
 }
