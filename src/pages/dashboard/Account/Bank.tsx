@@ -38,33 +38,36 @@ const Bank = () => {
       </div>
 
       {
-        isLoading &&
-        <div className='flex justify-center'>
-          <img src="./logo.png" alt="" className='h-20 w-20' />
-        </div>
-      }
-      {
-        banks &&
-        <div className='grid lg:grid-cols-3 gap-4 lg:gap-8'>
-          {
-            banks.map((bank: BankCardType) => (
-              <BankCard
-                key={bank.id}
-                id={bank.id}
-                accountName={bank.accountName}
-                accountNumber={bank.accountNumber}
-                bankName={bank.bankName}
-                institutionNumber={bank.institutionNumber}
-                transitNumber={bank.transitNumber}
-              />
-            ))
-          }
-        </div>
+        isLoading ?
+          <div className='flex justify-center'>
+            <img src="./logo.png" alt="" className='h-20 w-20' />
+          </div>
+          :
+          (
+            banks?.length > 0 ?
+              <div className='grid lg:grid-cols-3 gap-4 lg:gap-8'>
+                {
+                  banks.map((bank: BankCardType) => (
+                    <BankCard
+                      key={bank.id}
+                      id={bank.id}
+                      accountName={bank.accountName}
+                      accountNumber={bank.accountNumber}
+                      bankName={bank.bankName}
+                      institutionNumber={bank.institutionNumber}
+                      transitNumber={bank.transitNumber}
+                    />
+                  ))
+                }
+              </div>
+              :
+              <>No banks. Please add a bank</>
+          )
       }
       <Modal open={showAddPayoutBankForm} onClick={() => setShowAddPayoutBankForm(false)}>
         <AddPayoutBankForm />
       </Modal>
-    </div>
+    </div >
   )
 }
 

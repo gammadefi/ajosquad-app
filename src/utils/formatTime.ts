@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, differenceInDays, differenceInWeeks, differenceInMonths } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
@@ -25,4 +25,25 @@ export function formatDate(currentDate : string){
   //  console.log(date, time+":00");
    return `${date} ${time}:00`
    
+}
+
+
+export function timeAgo(date: Date) {
+  const now = new Date();
+
+  const days = differenceInDays(now, date);
+  if (days < 7) {
+    if (days === 0) {
+      return "Today";  
+    }
+    return `${days} day${days === 1 ? '' : 's'} ago`;
+  }
+
+  const weeks = differenceInWeeks(now, date);
+  if (weeks < 4) {
+    return `${weeks} week${weeks === 1 ? '' : 's'} ago`;
+  }
+
+  const months = differenceInMonths(now, date);
+  return `${months} month${months === 1 ? '' : 's'} ago`;
 }
