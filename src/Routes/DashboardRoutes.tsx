@@ -98,9 +98,21 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/squad/squad-member/:id",
+      },
+      () => import("../pages/Admin/squad/SquadMemberDetails")
+    ),
+    LazyRoute(
+      {
         path: "/squad/completed-squad",
       },
       () => import("../pages/Admin/squad/CompletedSquad")
+    ),
+    LazyRoute(
+      {
+        path: "/squad/completed-squad/:id",
+      },
+      () => import("../pages/Admin/squad/CompleteSquadDetails")
     ),
     LazyRoute(
       {
@@ -110,15 +122,39 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/squad/active-squad/:id",
+      },
+      () => import("../pages/Admin/squad/ActiveSquadDetails")
+    ),
+    LazyRoute(
+      {
         path: "/squad/upcoming-squad",
       },
       () => import("../pages/Admin/squad/UpcomingSquad")
     ),
     LazyRoute(
       {
+        path: "/squad/upcoming-squad/:id",
+      },
+      () => import("../pages/Admin/squad/UpcomingSquadDetails")
+    ),
+    LazyRoute(
+      {
+        path: "/user-management",
+      },
+      () => import("../pages/Admin/UserManagment")
+    ),
+    LazyRoute(
+      {
         path: "/member-management",
       },
       () => import("../pages/Admin/member/Index")
+    ),
+    LazyRoute(
+      {
+        path: "/member-management/member-information/:id",
+      },
+      () => import("../pages/Admin/member/MemberDetails")
     ),
     LazyRoute(
       {

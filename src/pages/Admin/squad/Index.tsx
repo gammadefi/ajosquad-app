@@ -43,14 +43,14 @@ const Index = () => {
     ];
     return (
         <div className='px-3  md:px-6'>
-            <div className='flex justify-between items-center'>
+            <div className='flex flex-wrap justify-between items-center'>
                 <div>
-                    <h3 className='text-base md:text-xl font-semibold'>Manage and oversee all squad activities in one place</h3>
+                    <h3 className='text-base  md:text-xl font-semibold'>Manage and oversee all squad activities in one place</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
                         Monitor and control all squad activities from a centralized dashboard. Efficiently track progress, create squad, and drive squad productivity
                     </p>
                 </div>
-                <button className='h-[44px] border border-primary px-4 py-2 rounded' >Create Squad <span></span></button>
+                <button className='h-[44px] border mt-5 lg:mt-0 border-primary px-4 py-2 rounded' >Create Squad <span></span></button>
 
 
 

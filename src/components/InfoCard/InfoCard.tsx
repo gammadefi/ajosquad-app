@@ -48,7 +48,7 @@ export const InfoCard = ({
 
   return (
     <div
-      className={`lg:max-w-[364px] flex flex-col justify-between border-[0.4px] border-[#C8CCD0] w-full py-3 px-3 h-[168px] bg-white rounded-lg shadow-md ${className}`}
+      className={`lg:max-w-[364px] min-w-[250px] flex flex-col justify-between border-[0.4px] border-[#C8CCD0] w-full py-3 px-3 h-[168px] bg-white rounded-lg shadow-md ${className}`}
     >
       <div style={{ backgroundColor: iconBg }} className={`w-full  flex items-center justify-between `}>
         <h4 className='my-3 text-sm text-[#A0A3A6] '>{header}</h4>

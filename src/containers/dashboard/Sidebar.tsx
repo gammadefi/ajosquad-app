@@ -24,7 +24,7 @@ export const DashboardSidebar = ({ items }: { items: SideItem[] }) => {
   return (
     <aside
       className={clsx(
-        "h-full md:flex hidden border-r text-sm transition-[width,padding] text-[#5A5C5E] duration-300 flex-col overflow-y-hidden overflow-x-hidden bg-white relative",
+        "h-full lg:flex hidden border-r text-sm transition-[width,padding] text-[#5A5C5E] duration-300 flex-col overflow-y-hidden overflow-x-hidden bg-white relative",
         "w-[250px]"
       )}
     >

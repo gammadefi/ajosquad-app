@@ -87,7 +87,7 @@ const Index = () => {
 
             <div>
                 <div className='my-8 flex justify-between items-center '>
-                    <h3 className='text-xl font-semibold'>All Transactions</h3>
+                    <h3 className='text-xl font-semibold'>All Member</h3>
 
                     <div className='flex items-center gap-2'>
                         <SearchInput placeholder='Search...' />
