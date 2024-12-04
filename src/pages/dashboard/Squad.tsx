@@ -6,19 +6,36 @@ import { useQuery } from 'react-query';
 import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
 import dayjs from 'dayjs';
 import TabBar2 from '../../components/Tab/TabBar2';
+import useFetchWithParams from '../../hooks/useFetchWithParams';
 
-const fetchSquads = async () => {
-  const res: AxiosResponse = await squadServices.getAllSquads();
-  return res.data;
-};
+// const fetchSquads = async () => {
+//   const res: AxiosResponse = await squadServices.getAllSquads();
+//   return res.data;
+// };
 
 const Squad = () => {
-  const { data: squads, isLoading } = useQuery(['squads'], fetchSquads);
-
+  // const { data: squads, isLoading } = useQuery(['squads'], fetchSquads);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const squadCartegory = searchParams.get("squadType") || "brass";
+
+  const { data: squads, isLoading, refetch } = useFetchWithParams(
+    ["query-all-squads", {
+      category: squadCartegory, status: activeTab.toLowerCase()
+    }],
+    squadServices.getAllSquads,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+
 
   console.log(squads);
 
@@ -54,9 +71,9 @@ const Squad = () => {
         squads &&
         <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
           {
-            squads.data.map((squad: any) => (
+            squads.data.map((squad: any, index: number) => (
               <SquadCard
-                key={squad.id}
+                key={index}
                 id={squad.id}
                 payoutAmount={squad.amount}
                 date={new Date(squad.createdAt)}

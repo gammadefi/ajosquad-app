@@ -14,7 +14,7 @@ const fetchGuarantors = async () => {
 };
 
 const GuarantorInformation = () => {
-  const { data: guarantors, isLoading } = useQuery(['guarantors'], fetchGuarantors);
+  const { data: guarantors, isLoading, refetch } = useQuery(['guarantors'], fetchGuarantors);
   console.log(guarantors)
   const [showAddGuarantorForm, setShowAddGuarantorForm] = useState(false);
 
@@ -59,8 +59,15 @@ const GuarantorInformation = () => {
               <>No guarantors yet. Please add a guarantor</>
           )
       }
-      <Modal open={showAddGuarantorForm} onClick={() => setShowAddGuarantorForm(false)}>
-        <AddGuarantorForm closeModal={() => setShowAddGuarantorForm(false)} />
+      <Modal open={showAddGuarantorForm} onClick={() => {
+          setShowAddGuarantorForm(false)
+          refetch()
+        }}>
+        <AddGuarantorForm closeModal={() => {
+          setShowAddGuarantorForm(false)
+          refetch()
+        }
+        } />
       </Modal>
     </div>
   )

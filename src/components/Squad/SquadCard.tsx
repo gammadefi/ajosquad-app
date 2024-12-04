@@ -26,7 +26,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
   const formattedPayoutAmount = useCADFormatter(payoutAmount);
   const formattedDate = dayjs(date).format('Do MMM, YYYY | h:mm A');
-  
+
   return (
     <>
       <div className='border border-[#C8CCD0] rounded-lg p-5 space-y-3'>
@@ -54,12 +54,8 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
         setOpenModal(!openModal)
         setOpenJoinSquadForm(false)
       }}>
-        {
-          openJoinSquadForm ?
-            <JoinSquadRegistrationFlow />
-            :
-            <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(true)} />
-        }
+
+        <JoinSquadRegistrationFlow />
       </Modal>
     </>
   )
