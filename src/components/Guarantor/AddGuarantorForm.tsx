@@ -51,7 +51,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
         hasAddedGuarantor ?
           <SuccessModal closeModal={closeModal} />
           :
-          <div className='md:w-[600px]'>
+          <div className='w-[90vw] md:w-[600px]'>
             <h2 className='mb-5 text-3xl font-semibold'>Add Guarantor</h2>
             <div>
               <h4 className='font-medium text-lg mb-2'>Guarantor Information</h4>

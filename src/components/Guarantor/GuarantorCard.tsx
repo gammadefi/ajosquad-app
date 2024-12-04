@@ -28,7 +28,7 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
 
   return (
     <>
-      <div className="rounded-xl border-[0.5px] border-[#B4B8BB] max-w-[319px]">
+      <div className="rounded-xl border-[0.5px] border-[#B4B8BB] w-full md:max-w-[319px]">
         <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl">
           <img src="/DocumentPrev.svg" alt="" />
         </div>
