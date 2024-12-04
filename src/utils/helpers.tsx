@@ -53,3 +53,27 @@ export const currencyFormat = (
     currency,
     minimumFractionDigits: 0,
   });
+
+
+export const convertToThumbnailUrl = (
+  cloudinaryUrl: string,
+  format: "jpg" | "png" = "jpg",
+  width: number = 500
+): string | null => {
+  // Validate the Cloudinary URL
+  if (!cloudinaryUrl || !cloudinaryUrl.includes("cloudinary.com")) {
+    return null;
+  }
+
+  // Split the URL into the base and resource parts
+  const urlParts = cloudinaryUrl.split("/upload/");
+  if (urlParts.length !== 2) {
+    return null;
+  }
+
+  const baseUrl = urlParts[0];
+  const resource = urlParts[1];
+
+  // Construct the transformed URL
+  return `${baseUrl}/upload/f_${format},w_${width}/${resource}`;
+};

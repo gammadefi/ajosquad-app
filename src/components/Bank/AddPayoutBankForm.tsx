@@ -6,9 +6,17 @@ import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { AxiosResponse } from "axios";
+import { useMutation, useQueryClient } from "react-query";
+
+const updateBankInformation = async ({ payload }: { payload: any }) => {
+  const res: AxiosResponse = await userServices.bank.createBank(useAuth.getState().profile.id, payload)
+  return res.data
+};
 
 const AddPayoutBankForm = () => {
   const [hasAddedBank, setHasAddedBank] = useState(false);
+  const queryClient = useQueryClient()
 
   const validationSchema = Yup.object({
     bankName: Yup.string()
@@ -35,6 +43,12 @@ const AddPayoutBankForm = () => {
     transitNumber: "",
     accountNumber: ""
   }
+
+  const mutation = useMutation(updateBankInformation, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["banks"]);
+    },
+  });
 
   return (
     <>
@@ -79,10 +93,10 @@ const AddPayoutBankForm = () => {
                     accountNumber: values.accountNumber
                   }
                   try {
-                      const res = await userServices.bank.createBank(useAuth.getState().profile.id, payload)
-                      if(res) {
-                        setHasAddedBank(true)
-                      }
+                    const res = await mutation.mutateAsync({ payload });
+                    if (res) {
+                      setHasAddedBank(true);
+                    }
                   } catch (error) {
                     console.log(error)
                     toast.error("Failed to add a bank")
