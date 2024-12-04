@@ -8,10 +8,17 @@ import { userServices } from '../../services/user';
 import { useAuth } from '../../zustand/auth.store';
 import toast from 'react-hot-toast';
 import { AxiosResponse } from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
+
+const updateGuarantor = async ({ guarantorId, payload }: { guarantorId: string, payload: any }) => {
+  const res: AxiosResponse = await userServices.guarantor.updateGuarantor(useAuth.getState().profile.id, guarantorId, payload)
+  return res.data
+};
 
 const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => void, guarantorId: string }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const [hasUpdatedGuarantor, setHasUpdatedGuarantor] = useState(false);
+  const queryClient = useQueryClient();
 
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -37,31 +44,28 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
       .required("*Guarantor Document is required"),
   });
 
-  // const initialValues = {
-  //   name: "",
-  //   email: "",
-  //   phone: "",
-  //   city: "",
-  //   state: "",
-  //   zipCode: "",
-  //   guarantorDocument: ""
-  // };
-
   useEffect(() => {
     const fetchUserBank = async () => {
       const res: AxiosResponse = await userServices.guarantor.getGuarantor(useAuth.getState().profile.id, guarantorId);
-      console.log(res)
-      // const userBankInformation = res.data;
-      // setInitialValues({
-      //   bankName: userBankInformation.bankName || "",
-      //   accountName: userBankInformation.accountName || "",
-      //   institutionNumber: userBankInformation.institutionNumber || "",
-      //   transitNumber: userBankInformation.transitNumber || "",
-      //   accountNumber: userBankInformation.accountNumber || ""
-      // })
+      const guarantorInformation = res.data;
+      setInitialValues({
+        name: guarantorInformation.name || "",
+        email: guarantorInformation.email || "",
+        phone: guarantorInformation.phoneNumber || "",
+        city: guarantorInformation.city || "",
+        state: guarantorInformation.state || "",
+        zipCode: guarantorInformation.zipCode || "",
+        guarantorDocument: guarantorInformation.document_url || ""
+      })
     }
     fetchUserBank();
   }, [])
+
+  const mutation = useMutation(updateGuarantor, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["guarantors"]);
+    },
+  });
 
   if (!initialValues) {
     return (
@@ -78,7 +82,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
           <SuccessModal closeModal={closeModal} />
           :
           <div className='md:w-[600px]'>
-            <h2 className='mb-5 text-3xl font-semibold'>Add Guarantor</h2>
+            <h2 className='mb-5 text-3xl font-semibold'>Update Guarantor</h2>
             <div>
               <h4 className='font-medium text-lg mb-2'>Guarantor Information</h4>
               <Formik
@@ -96,12 +100,12 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                       "document_url": values.guarantorDocument
                     }
                     try {
-                      const res = await userServices.guarantor.addGuarantor(useAuth.getState().profile.id, payload)
-                      if (res) {
-                        setHasUpdatedGuarantor(true)
+                      const res = await mutation.mutateAsync({ guarantorId, payload });
+                      if(res) {
+                        setHasUpdatedGuarantor(true);
                       }
                     } catch (error) {
-                      toast.error("Failed to upload guarantor")
+                      toast.error("Failed to update guarantor")
                       // closeModal();
                     }
                   }
@@ -143,7 +147,10 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                           placeholder='Zip Code'
                         />
                       </div>
-                      <FileUpload name='guarantorDocument' fileType='document' />
+                      <div className='space-y-1'>
+                        <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
+                        <FileUpload name='guarantorDocument' fileType='document' />
+                      </div>
                       <div className='mt-5 flex justify-between'>
                         <button
                           onClick={closeModal}
@@ -157,7 +164,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                           className='bg-primary font-semibold rounded-lg text-white inline-flex items-center gap-3 justify-center text-center py-3 px-10 disabled:bg-opacity-50'
                         >
                           {
-                            isSubmitting ? "Adding Guarantor" : "Add Guarantor"
+                            isSubmitting ? "Updating" : "Update"
                           }
                         </button>
                       </div>

@@ -6,10 +6,19 @@ import { useAuth } from '../../zustand/auth.store';
 import { Form, Formik } from 'formik';
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
+import { useMutation, useQueryClient } from 'react-query';
+import toast from 'react-hot-toast';
+
+const updateBankInformation = async ({ bankId, payload }: { bankId: string, payload: any }) => {
+  // TODO: api call to update bank info 
+  const res: AxiosResponse = await userServices.guarantor.updateGuarantor(useAuth.getState().profile.id, bankId, payload)
+  return res.data
+};
 
 const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const [hasUpdated, setHasUpdated] = useState(false);
+  const queryClient = useQueryClient();
 
   const validationSchema = Yup.object({
     bankName: Yup.string()
@@ -43,6 +52,12 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
     }
     fetchUserBank();
   }, [])
+
+  const mutation = useMutation(updateBankInformation, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["banks"]);
+    },
+  });
 
   if (!initialValues) {
     return (
@@ -95,9 +110,12 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
                     accountNumber: values.accountNumber
                   }
                   try {
-
+                    const res = await mutation.mutateAsync({ bankId, payload });
+                    if (res) {
+                      setHasUpdated(true);
+                    }
                   } catch (error) {
-
+                    toast.error("Failed to update guarantor")
                   }
                 }
               }}
