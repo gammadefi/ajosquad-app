@@ -42,6 +42,12 @@ export const AjosquadDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/help",
+      },
+      () => import("../pages/dashboard/HelpDesk")
+    ),
+    LazyRoute(
+      {
         path: "/referral",
       },
       () => import("../pages/dashboard/Referral/Referral")
