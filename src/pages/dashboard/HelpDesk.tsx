@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { IoLogoWhatsapp } from "react-icons/io";
-import { FaChevronDown } from "react-icons/fa6";
+import { CiSearch } from "react-icons/ci";
 import SearchInput from "../../components/FormInputs/SearchInput";
 import Accordion from "../../components/Accordion/Accordion";
 
@@ -24,7 +23,12 @@ const HelpDesk = () => {
       </div>
       <div className="lg:w-1/2 space-y-5">
         <h2 className="font-bold text-[#2B2C34] text-xl">Frequently Asked Questions (FAQs)</h2>
-        <SearchInput placeholder="Search...." />
+        <div className="flex gap-4 items-center py-2 pl-3 pr-5 rounded-lg border border-[#C8CCD0]">
+          <input type="text" placeholder="Search" className="p-1 w-full focus:outline-none" />
+          <button>
+            <CiSearch size={24} />
+          </button>
+        </div>
         <Accordion
           title="What is Ajosquad?"
           content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
