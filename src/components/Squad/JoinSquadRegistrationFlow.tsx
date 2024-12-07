@@ -10,6 +10,7 @@ import { userServices } from '../../services/user';
 import { useAuth } from '../../zustand/auth.store';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { AxiosResponse } from 'axios';
+import { banks } from '../../utils/banks';
 
 const JoinSquadRegistrationFlow = () => {
   const [formData, setFormData] = useState({
@@ -141,7 +142,7 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
 
 
 const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back: () => void, next: () => void, formData: any, setFormData: any }) => {
-  const [banks, setBanks] = useState<any[]>([]);
+  const [userbanks, setUserBanks] = useState<any[]>([]);
   const [showBanks, setShowBanks] = useState(false)
 
   const validationSchema = Yup.object({
@@ -176,7 +177,7 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
     const fetchUserBanks = async () => {
       const res: AxiosResponse = await userServices.bank.getAllBanks(useAuth.getState().profile.id);
       console.log(res.data);
-      setBanks(res.data)
+      setUserBanks(res.data)
     }
 
     fetchUserBanks();
@@ -217,7 +218,7 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
             }
             if (values) {
               try {
-                if (!banks.includes(payload)) {
+                if (!userbanks.includes(payload)) {
                   const res = await userServices.bank.createBank(useAuth.getState().profile.id, payload)
                   if (res) {
                     next();
@@ -230,14 +231,25 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
             }
           }}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting , getFieldProps, setFieldValue, setValues}) => (
             <Form className='flex flex-col gap-1.5'>
-              <TextInput
+              {/* <TextInput
                 name='bankName'
                 type='text'
                 label="Select Bank*"
                 placeholder='Select Bank'
-              />
+              /> */}
+              <div className='flex flex-col  w-full text-xs md:text-sm lg:text-base'>
+                <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
+                <select onChange={(e) =>  setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode }) } name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                  <option>Select Bank</option>
+                  {
+                    banks.docs.map((bank: any) => (
+                      <option key={bank._id} value={bank.bankName}>{bank.bankName}</option>
+                    ))
+                  }
+                </select>
+              </div>
               <TextInput
                 name='accountName'
                 type='text'
@@ -247,6 +259,8 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
               <TextInput
                 name='institutionNumber'
                 type='text'
+                readonly
+                disabled
                 label="Institution Number*"
                 placeholder='Institution Number'
               />
@@ -278,9 +292,9 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
                 <div>
                   {showBanks && <>
                     {
-                      banks.length > 0 ? <div className='space-y-3'>
+                      userbanks.length > 0 ? <div className='space-y-3'>
                         {
-                          banks.map((bank: any) => (
+                          userbanks.map((bank: any) => (
                             <div className='cursor-pointer w-full px-3 py-2 rounded-lg border border-primary bg-[#F8F8F8]' key={bank.id}>
                               <h2 className='text-[#5A5C5E] font-bold'>{bank.bankName}</h2>
                               <div className='space-y-0.5 my-2'>
@@ -345,7 +359,7 @@ const Step3 = ({ step, next, formData }: { step: number, next: () => void, formD
   }
 
   return (
-    <div>
+    <div className='max-w-[630px]'>
       <div className='flex justify-between'>
         <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4">
           Provide Guarantor

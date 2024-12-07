@@ -45,6 +45,9 @@ export function timeAgo(date: Date) {
   }
 
   const months = differenceInMonths(now, date);
+  if (months === 0) {
+    return "A month aga";  
+  }
   return `${months} month${months === 1 ? '' : 's'} ago`;
 }
 

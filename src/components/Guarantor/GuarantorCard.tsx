@@ -4,6 +4,7 @@ import useOnClickOutside from "../../hooks/useClickOutside"
 import { useRef, useState } from "react"
 import Modal from "../Modal/Modal"
 import UpdateGuarantorForm from "./UpdateGuarantorForm"
+import { convertToThumbnailUrl } from "../../utils/helpers"
 
 export type GuarantorCardProps = {
   id: string,
@@ -17,6 +18,7 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
   const [showOptions, setShowOptions] = useState(false);
   const [showUpdateGuarantorInformationModal, setShowUpdateGuarantorInformationModal] = useState(false);
   const [showDeleteGuarantorModal, setShowDeleteGuarantorModal] = useState(false);
+  const previewImageUrl = convertToThumbnailUrl(imgUrl);
 
   const optionsRef = useRef(null);
 
@@ -25,12 +27,13 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
       setShowOptions(false);
     }
   );
-
   return (
     <>
-      <div className="rounded-xl border-[0.5px] border-[#B4B8BB] max-w-[319px]">
+      <div className="rounded-xl border-[0.5px] border-[#B4B8BB] w-full md:max-w-[319px]">
         <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl">
-          <img src="/DocumentPrev.svg" alt="" />
+          <a href={imgUrl} target="_blank" rel="noopener noreferrer" download="Guarantor form">
+            <img src={previewImageUrl || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
+          </a>
         </div>
         <div className="px-4 py-3 flex justify-between">
           <div>

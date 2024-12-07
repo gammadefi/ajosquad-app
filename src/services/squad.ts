@@ -1,9 +1,10 @@
 import { createApiClient } from "../utils/api"
+import { paramsObjectToQueryString } from "../utils/helpers";
 import { squadApiRoutes } from "./routes"
 
 export const squadServices = {
-  getAllSquads: async () => {
-    const response = await createApiClient().get(squadApiRoutes.getAllSquads);
+  getAllSquads: async (payload:any) => {
+    const response = await createApiClient().get(squadApiRoutes.getAllSquads + paramsObjectToQueryString(payload));
     return response.data;
   },
   getSquad: async (id: string) => {

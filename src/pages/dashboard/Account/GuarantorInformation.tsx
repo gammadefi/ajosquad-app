@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MdOutlineUploadFile } from "react-icons/md";
 import Modal from '../../../components/Modal/Modal';
 import AddGuarantorForm from '../../../components/Guarantor/AddGuarantorForm';
@@ -6,8 +6,7 @@ import { useQuery } from 'react-query';
 import { AxiosResponse } from 'axios';
 import { userServices } from '../../../services/user';
 import { useAuth } from '../../../zustand/auth.store';
-import { timeAgo } from '../../../utils/formatTime';
-import GuarantorCard, { GuarantorCardProps } from '../../../components/Guarantor/GuarantorCard';
+import GuarantorCard from '../../../components/Guarantor/GuarantorCard';
 
 const fetchGuarantors = async () => {
   const res: AxiosResponse = await userServices.guarantor.getAllGuarantors(useAuth.getState().profile.id);
@@ -15,7 +14,7 @@ const fetchGuarantors = async () => {
 };
 
 const GuarantorInformation = () => {
-  const { data: guarantors, isLoading } = useQuery(['guarantors'], fetchGuarantors);
+  const { data: guarantors, isLoading, refetch } = useQuery(['guarantors'], fetchGuarantors);
   console.log(guarantors)
   const [showAddGuarantorForm, setShowAddGuarantorForm] = useState(false);
 
@@ -42,7 +41,7 @@ const GuarantorInformation = () => {
           :
           (
             guarantors.length > 0 ?
-              <div className='my-5 place-content-center grid lg:grid-cols-3 gap-4 lg:gap-8'>
+              <div className='my-5 place-content-center grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8'>
                 {
                   guarantors.map((guarantor: any) => (
                     <GuarantorCard
@@ -60,8 +59,15 @@ const GuarantorInformation = () => {
               <>No guarantors yet. Please add a guarantor</>
           )
       }
-      <Modal open={showAddGuarantorForm} onClick={() => setShowAddGuarantorForm(false)}>
-        <AddGuarantorForm closeModal={() => setShowAddGuarantorForm(false)} />
+      <Modal open={showAddGuarantorForm} onClick={() => {
+          setShowAddGuarantorForm(false)
+          refetch()
+        }}>
+        <AddGuarantorForm closeModal={() => {
+          setShowAddGuarantorForm(false)
+          refetch()
+        }
+        } />
       </Modal>
     </div>
   )

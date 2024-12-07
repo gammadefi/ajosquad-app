@@ -42,6 +42,12 @@ export const AjosquadDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/help",
+      },
+      () => import("../pages/dashboard/HelpDesk")
+    ),
+    LazyRoute(
+      {
         path: "/referral",
       },
       () => import("../pages/dashboard/Referral/Referral")
@@ -194,9 +200,21 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/kyc",
+      },
+      () => import("../pages/Admin/KycPage")
+    ),
+    LazyRoute(
+      {
+        path: "/guarantor-verification",
+      },
+      () => import("../pages/Admin/GuarantorVerification")
+    ),
+    LazyRoute(
+      {
         path: "/account",
       },
-      () => import("../pages/dashboard/Account/Account")
+      () => import("../pages/Admin/Account/Account")
     ),
     LazyRoute(
       {
