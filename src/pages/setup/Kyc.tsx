@@ -75,16 +75,17 @@ const Kyc = () => {
     const profile = useAuth((s) => s.profile)
     const form = useFormik({
         initialValues: {
-            "name": "Sample User",
-            "email": "sampleuser@mail.com",
-            "phoneNumber": "35587891047",
-            "homeAddress": "Sample Address",
-            "city": "Sample City",
-            "state": "Sample State",
-            "zipCode": "123456",
-            "jobTitle": "Sample Job",
-            "employerName": "Sample Employer",
-            "employerPhoneNumber": "34378208154",
+            "firstName": profile.firstName,
+            "lastName": profile.lastName,
+            "email_address": profile.email_address,
+            "phoneNumber": profile.phoneNumber,
+            "homeAddress": profile.homeAddress,
+            "city": profile.city,
+            "state": profile.state,
+            "zipCode": profile.zipCode,
+            "jobTitle": profile.jobTitle,
+            "employerName": profile.employerName,
+            "employerPhoneNumber":profile.employerPhoneNumber,
             "others": ""
         },
         validationSchema: validationSchema,

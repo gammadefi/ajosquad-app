@@ -3,7 +3,7 @@ import { createApiClient } from "../utils/api"
 
 export const KycServices = {
     addKyc: async (payload: any, id: string) => {
-        const response = await createApiClient().post(`/user/${id}/kyc`, payload);
+        const response = await createApiClient().patch(`/user/${id}/kyc`, payload);
         return response.data;
     },
 
