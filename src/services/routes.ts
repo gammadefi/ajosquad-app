@@ -22,7 +22,8 @@ export const userApiRoutes = {
     getMe: "/user/me",
     getUserById: (userId: string) => `/user/${userId}`,
     getAllUsers: "/user",
-    updateUser: (userId: string) => `/user/${userId}`,
+    updateUserPersonal: (userId: string) => `/user/${userId}/personal-info`,
+    updateUserEmployer: (userId: string) => `/user/${userId}/employer-info`,
     changePassword: (userId: string) => `/user/${userId}/update-password`
 
   },

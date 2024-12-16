@@ -65,13 +65,13 @@ const Profile = () => {
                       </div>
                       <div className='w-2/5'>
                         <p className='text-[#96999C]'>Phone Number</p>
-                        <p className='font-normal'>+{user.KYC.phoneNumber}</p>
+                        <p className='font-normal'>+{user.phoneNumber}</p>
                       </div>
                     </div>
                     <div className='flex justify-between'>
                       <div>
                         <p className='text-[#96999C]'>Address</p>
-                        <p className='font-normal'>{user.KYC.homeAddress}</p>
+                        <p className='font-normal'>{user.homeAddress}</p>
                       </div>
                     </div>
                   </div>
@@ -87,17 +87,17 @@ const Profile = () => {
                     <div className='flex justify-between'>
                       <div>
                         <p className='text-[#96999C]'>Job Title</p>
-                        <p className='font-normal'>{user.KYC.jobTitle}</p>
+                        <p className='font-normal'>{user.jobTitle}</p>
                       </div>
                     </div>
                     <div className='flex justify-between'>
                       <div className='w-1/2'>
                         <p className='text-[#96999C]'>Employer name</p>
-                        <p className='font-normal'>{user.KYC.employerName}</p>
+                        <p className='font-normal'>{user.employerName}</p>
                       </div>
                       <div className='w-1/2'>
                         <p className='text-[#96999C]'>Employer Phone Number</p>
-                        <p className='font-normal'>+{user.KYC.employerPhoneNumber}</p>
+                        <p className='font-normal'>+{user.employerPhoneNumber}</p>
                       </div>
                     </div>
                   </div>
@@ -106,10 +106,10 @@ const Profile = () => {
             </div>
       }
       <Modal open={showEditPersonalInformation} onClick={() => setShowEditPersonalInformation(!showEditPersonalInformation)}>
-        <EditPersonalInformationForm />
+        <EditPersonalInformationForm onClose={() => setShowEditPersonalInformation(!showEditPersonalInformation)} />
       </Modal>
       <Modal open={showEditEmployerInformation} onClick={() => setShowEditEmployerInformation(!showEditEmployerInformation)}>
-        <EditEmployerInformationForm />
+        <EditEmployerInformationForm onClose={() => setShowEditEmployerInformation(!showEditEmployerInformation)} />
       </Modal>
     </div>
   )

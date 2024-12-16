@@ -1,6 +1,6 @@
 import { FaArrowRight } from "react-icons/fa6"
 
-const SuccessModal = ({ title }: { title: string }) => {
+const SuccessModal = ({ title, onClose }: { title: string, onClose: () => void }) => {
   return (
     <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
       <img src="./Check.svg" alt="Email verified" className='w-52 h-52' />
@@ -14,6 +14,7 @@ const SuccessModal = ({ title }: { title: string }) => {
       </p>
       <button
         type='submit'
+        onClick={onClose}
         className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
       >
         Dismiss
