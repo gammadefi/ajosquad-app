@@ -33,5 +33,6 @@ export const authServices = {
   sendOtp: async (payload: any) => {
     const response = await createApiClient().post(authApiRoutes.sendOtp, payload);
     return response.data;
-  }
+  },
+ 
 }
