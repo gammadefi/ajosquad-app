@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import User from '../../icons/reusables/user'
 import { LuCalendarDays } from "react-icons/lu";
 import dayjs from 'dayjs'
@@ -38,7 +38,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
           <h3 className='text-lg font-bold'>CA{formattedPayoutAmount} payout</h3>
           <span className='flex items-center gap-1'><User />{numOfMaxMembers} Max. Member</span>
         </div>
-        <div className='text-[#5A5C5E]'>This squad would run for {squadDuration} months,</div>
+        <div className='text-[#5A5C5E]'>This squad would run for {squadDuration} months</div>
         <div className='flex justify-between'>
           <p className='text-sm'>CA$ 300.00 / Every 2 weeks</p>
           <span className='text-xs flex items-center gap-1'><LuCalendarDays className='w-5 h-5' /> {formattedDate}</span>
@@ -55,7 +55,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
         setOpenJoinSquadForm(false)
       }}>
 
-        <JoinSquadRegistrationFlow />
+        <JoinSquadRegistrationFlow squadId={id} />
       </Modal>
     </>
   )

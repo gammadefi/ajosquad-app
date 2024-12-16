@@ -47,23 +47,5 @@ export const userServices = {
       const response = await createApiClient().post(userApiRoutes.bank.createBank(userId), payload);
       return response.data;
     }
-  },
-  guarantor: {
-    getAllGuarantors: async(userId: string) => {
-      const response = await createApiClient().get(userApiRoutes.guarantor.getAllGuarantors(userId));
-      return response.data;
-    },
-    getGuarantor: async(userId: string, guarantorId: string) => {
-      const response = await createApiClient().get(userApiRoutes.guarantor.getGuarantor(userId, guarantorId));
-      return response.data;
-    },
-    addGuarantor: async(userId: string, payload: any) => {
-      const response = await createApiClient().post(userApiRoutes.guarantor.addGuarantor(userId), payload);
-      return response.data;
-    },
-    updateGuarantor: async(userId: string, guarantorId: string, payload: any) =>{
-      const response = await createApiClient().patch(userApiRoutes.guarantor.updateGuarantor(userId, guarantorId), payload);
-      return response.data;
-    }
   }
 }

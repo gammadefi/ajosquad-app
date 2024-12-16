@@ -4,14 +4,14 @@ import * as Yup from "yup";
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import FileUpload from '../FormInputs/FIleUpload2';
-import { userServices } from '../../services/user';
 import { useAuth } from '../../zustand/auth.store';
 import toast from 'react-hot-toast';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
+import { guarantorServices } from '../../services/guarantor';
 
 const updateGuarantor = async ({ guarantorId, payload }: { guarantorId: string, payload: any }) => {
-  const res: AxiosResponse = await userServices.guarantor.updateGuarantor(useAuth.getState().profile.id, guarantorId, payload)
+  const res: AxiosResponse = await guarantorServices.updateGuarantor(guarantorId, payload)
   return res.data
 };
 
@@ -46,7 +46,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
 
   useEffect(() => {
     const fetchUserBank = async () => {
-      const res: AxiosResponse = await userServices.guarantor.getGuarantor(useAuth.getState().profile.id, guarantorId);
+      const res: AxiosResponse = await guarantorServices.getGuarantor(guarantorId);
       const guarantorInformation = res.data;
       setInitialValues({
         name: guarantorInformation.name || "",

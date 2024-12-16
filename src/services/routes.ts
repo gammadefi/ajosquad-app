@@ -32,11 +32,12 @@ export const userApiRoutes = {
     getAllBanks: (userId: string) => `/user/${userId}/bank`,
     getBank: (userId: string, bankId: string) => `/user/${userId}/bank/${bankId}`,
     createBank: (userId: string) => `/user/${userId}/bank`,
-  },
-  guarantor: {
-    getAllGuarantors: (userId: string) => `/user/${userId}/guarantor`,
-    getGuarantor: (userId: string, guarantorId: string) => `/user/${userId}/guarantor/${guarantorId}`,
-    addGuarantor: (userId: string) => `/user/${userId}/guarantor`,
-    updateGuarantor: (userId: string, guarantorId: string) => `/user/${userId}/guarantor/${guarantorId}`
   }
+}
+
+export const guarantorApiRoutes = {
+  getAllGuarantors: "/guarantor/query",
+  getGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`,
+  addGuarantor: "/guarantor",
+  updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
 }
