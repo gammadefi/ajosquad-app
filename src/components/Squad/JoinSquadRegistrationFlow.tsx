@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import CircularProgressBar from '../Progress/CircularProgressBar';
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import { RiBankFill } from "react-icons/ri";
-import FileUploadForm from './FileUploadForm';
 import { userServices } from '../../services/user';
 import { useAuth } from '../../zustand/auth.store';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { AxiosResponse } from 'axios';
 import { banks } from '../../utils/banks';
+import FileUpload from '../FormInputs/FIleUpload2';
+import toast from 'react-hot-toast';
+import { guarantorServices } from '../../services/guarantor';
+import { squadServices } from '../../services/squad';
 
-const JoinSquadRegistrationFlow = () => {
+const JoinSquadRegistrationFlow = ({ squadId }: { squadId: string }) => {
   const [formData, setFormData] = useState({
-    positions: [],
-    bankName: "",
-    accountName: "",
-    institutionNumber: "",
-    transitNumber: "",
-    accountNumber: ""
+    desiredPosition: [],
+    bankInfoId: ""
   });
 
   const [step, setStep] = useState(1);
@@ -39,14 +38,14 @@ const JoinSquadRegistrationFlow = () => {
   return (
     <div className="relative">
       {step === 1 && <Step1 step={step} next={handleNextStep} formData={formData} setFormData={handleFormDataChange} />}
-      {step === 2 && <Step2 step={step} back={handlePreviousStep} next={handleNextStep} formData={formData} setFormData={handleFormDataChange} />}
-      {step === 3 && <Step3 step={step} formData={formData} next={handleNextStep} />}
+      {step === 2 && <Step2 step={step} formData={formData} back={handlePreviousStep} next={handleNextStep} setFormData={setFormData} />}
+      {step === 3 && <Step3 step={step} back={handlePreviousStep} next={handleNextStep} formData={formData} squadId={squadId} />}
       {step === 4 && <SuccessModal />}
     </div>
   );
 }
 
-export default JoinSquadRegistrationFlow
+export default JoinSquadRegistrationFlow;
 
 const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () => void, formData: any, setFormData: any }) => {
   const positions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
@@ -67,11 +66,11 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
   });
 
   const initialValues = {
-    selectedOptions: formData.positions,
+    selectedOptions: formData.desiredPosition,
   };
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='max-w-[630px] flex flex-col gap-2'>
       <div className='flex justify-between'>
         <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4">
           Choose a position within the Squad
@@ -87,7 +86,7 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values) => {
-            setFormData({ ...formData, positions: values.selectedOptions });
+            setFormData({ ...formData, desiredPosition: values.selectedOptions });
             next();
           }}
         >
@@ -140,10 +139,156 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
   )
 }
 
+const Step2 = ({ step, back, next, formData, setFormData }: { step: number, next: () => void, back: () => void, formData: any, setFormData: any }) => {
+  const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
+  const hasPosition1To5 = formData.desiredPosition.some((position: string) => guarantorRequiredPositions.includes(position));
+  const progress = (step / 3) * 100;
 
-const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back: () => void, next: () => void, formData: any, setFormData: any }) => {
+  if (!hasPosition1To5) {
+    next();
+  }
+
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .trim()
+      .required("*Full Name is required"),
+    email: Yup.string()
+      .trim()
+      .email("*Email must be a valid address")
+      .required("*Email is required"),
+    phone: Yup.string()
+      .trim()
+      .length(11, "Phone must be 11 digits")
+      .required('Phone number is required'),
+    city: Yup.string()
+      .trim()
+      .required("*City is required"),
+    state: Yup.string()
+      .trim()
+      .required("*State is required"),
+    zipCode: Yup.string()
+      .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
+      .required('ZIP code is required'),
+    guarantorDocument: Yup.string()
+      .required("*Guarantor Document is required"),
+  });
+
+  const initialValues = {
+    name: "",
+    email: "",
+    phone: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    guarantorDocument: ""
+  };
+
+  return (
+    <div className='max-w-[630px] max-h-[550px] overflow-scroll'>
+      <div className='flex justify-between'>
+        <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4">
+          Provide Guarantor
+        </h1>
+        <CircularProgressBar progress={progress} currentStep={step} />
+      </div>
+      <p>
+        For position within 1-5, you need to provide and upload a guarantor information and document which would need to be verify before you can proceed and you can select from existing or previous verified guarantor.
+      </p>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={async (values) => {
+          if (values) {
+            const payload = {
+              "name": values.name,
+              "email": values.email,
+              "phoneNumber": values.phone,
+              "city": values.city,
+              "state": values.state,
+              "zipCode": values.zipCode,
+              "document_url": values.guarantorDocument,
+              "user_id": useAuth.getState().profile.id
+            }
+            try {
+              const res = await guarantorServices.addGuarantor(payload)
+              if (res) {
+                setFormData({ ...formData, "guarantorId": res.data.id });
+                next()
+              }
+            } catch (error) {
+              console.log(formData)
+              toast.error("Failed to upload guarantor")
+            }
+          }
+        }}
+      >
+        {({ isSubmitting }) => {
+          return (
+            <Form className='flex flex-col gap-4 my-3'>
+              <TextInput
+                name='name'
+                label="Name"
+                placeholder='John Doe'
+              />
+              <TextInput
+                name='email'
+                type='email'
+                label="Email"
+                placeholder='linda@framcreative.com'
+              />
+              <TextInput
+                name='phone'
+                label="Phone Number"
+              />
+              <div className='grid md:grid-cols-3 gap-3'>
+                <TextInput
+                  name='city'
+                  label="City"
+                  placeholder='City'
+                />
+                <TextInput
+                  name='state'
+                  label="State"
+                  placeholder='State'
+                />
+                <TextInput
+                  name='zipCode'
+                  label="Zip Code"
+                  placeholder='Zip Code'
+                />
+              </div>
+              <FileUpload name='guarantorDocument' fileType='document' />
+              <div className="mt-5 flex justify-between">
+                <button
+                  type="button"
+                  onClick={back}
+                  className="border border-primary font-medium px-10 rounded-lg"
+                >
+                  Back
+                </button>
+                <button
+                  type='submit'
+                  disabled={isSubmitting}
+                  className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
+                >
+                  {
+                    isSubmitting ? "Proceeding" : "Proceed"
+                  }
+                  <FaArrowRight />
+                </button>
+              </div>
+            </Form>
+          );
+        }}
+      </Formik>
+    </div>
+  )
+};
+
+const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: () => void, next: () => void, formData: any, squadId: string }) => {
   const [userbanks, setUserBanks] = useState<any[]>([]);
-  const [showBanks, setShowBanks] = useState(false)
+  const [showBanks, setShowBanks] = useState(false);
+  const [bankInfoId, setBankInfoId] = useState("");
 
   const validationSchema = Yup.object({
     bankName: Yup.string()
@@ -163,12 +308,13 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
       .required("*Account Number is required")
   });
 
+
   const initialValues = {
-    bankName: formData.bankName,
-    accountName: formData.accountName,
-    institutionNumber: formData.institutionNumber,
-    transitNumber: formData.transitNumber,
-    accountNumber: formData.accountNumber
+    bankName: "",
+    accountName: "",
+    institutionNumber: "",
+    transitNumber: "",
+    accountNumber: ""
   };
 
   const progress = (step / 3) * 100;
@@ -200,49 +346,51 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={async (values) => {
-            setFormData({
-              ...formData,
-              bankName: values.bankName,
-              accountName: values.accountName,
-              institutionNumber: values.institutionNumber,
-              transitNumber: values.transitNumber,
-              accountNumber: values.accountNumber
-            });
-
-            const payload = {
-              bankName: values.bankName,
-              accountName: values.accountName,
-              institutionNumber: values.institutionNumber,
-              transitNumber: values.transitNumber,
-              accountNumber: values.accountNumber
-            }
-            if (values) {
-              try {
-                if (!userbanks.includes(payload)) {
-                  const res = await userServices.bank.createBank(useAuth.getState().profile.id, payload)
-                  if (res) {
-                    next();
+            try {
+              if (!bankInfoId) {
+                const addBankPayload = {
+                  bankName: values.bankName,
+                  accountName: values.accountName,
+                  institutionNumber: values.institutionNumber,
+                  transitNumber: values.transitNumber,
+                  accountNumber: values.accountNumber
+                }
+                const res = await userServices.bank.createBank(useAuth.getState().profile.id, addBankPayload)
+                if (res) {
+                  const joinSquadPayload = {
+                    ...formData,
+                    bankInfoId: res.data.id
+                  }
+                  const response = await squadServices.joinSquad(squadId, joinSquadPayload);
+                  if (response) {
+                    window.open(response.data.authorisationUrl, "_blank", "noopener,noreferrer");
+                    // next();
                   }
                 }
-                next();
-              } catch (error) {
-                console.log(error)
+              } else {
+                const joinSquadPayload = {
+                  ...formData,
+                  bankInfoId
+                }
+                const response = await squadServices.joinSquad(squadId, joinSquadPayload)
+                if (response) {
+                  window.open(response.data.authorisationUrl, "_blank", "noopener,noreferrer");
+
+                  // next();
+                }
               }
+            } catch (error) {
+              console.log(error)
+              toast.error("Failed to join squad")
             }
           }}
         >
-          {({ isSubmitting , getFieldProps, setFieldValue, setValues}) => (
+          {({ isSubmitting, getFieldProps, setFieldValue, setValues }) => (
             <Form className='flex flex-col gap-1.5'>
-              {/* <TextInput
-                name='bankName'
-                type='text'
-                label="Select Bank*"
-                placeholder='Select Bank'
-              /> */}
               <div className='flex flex-col  w-full text-xs md:text-sm lg:text-base'>
                 <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
-                <select onChange={(e) =>  setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode }) } name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
-                  <option>Select Bank</option>
+                <select onChange={(e) => setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode })} name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                  <option disabled>Select Bank</option>
                   {
                     banks.docs.map((bank: any) => (
                       <option key={bank._id} value={bank.bankName}>{bank.bankName}</option>
@@ -295,7 +443,17 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
                       userbanks.length > 0 ? <div className='space-y-3'>
                         {
                           userbanks.map((bank: any) => (
-                            <div className='cursor-pointer w-full px-3 py-2 rounded-lg border border-primary bg-[#F8F8F8]' key={bank.id}>
+                            <div onClick={() => {
+                              setBankInfoId(bank.id);
+                              setValues({
+                                bankName: bank.bankName,
+                                accountName: bank.accountName,
+                                institutionNumber: bank.institutionNumber,
+                                transitNumber: bank.transitNumber,
+                                accountNumber: bank.accountNumber
+                              })
+                            }}
+                              className={`cursor-pointer w-full px-3 py-2 rounded-lg ${bankInfoId === bank.id ? "border-2" : "border"} border-primary bg-[#F8F8F8]`} key={bank.id}>
                               <h2 className='text-[#5A5C5E] font-bold'>{bank.bankName}</h2>
                               <div className='space-y-0.5 my-2'>
                                 <div className='text-xs flex justify-between'>
@@ -348,31 +506,6 @@ const Step2 = ({ step, back, next, formData, setFormData }: { step: number, back
     </div>
   )
 }
-
-const Step3 = ({ step, next, formData }: { step: number, next: () => void, formData: any }) => {
-  const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
-  const hasPosition1To5 = formData.positions.some((position: string) => guarantorRequiredPositions.includes(position));
-  const progress = (step / 3) * 100;
-
-  if (!hasPosition1To5) {
-    next();
-  }
-
-  return (
-    <div className='max-w-[630px]'>
-      <div className='flex justify-between'>
-        <h1 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4">
-          Provide Guarantor
-        </h1>
-        <CircularProgressBar progress={progress} currentStep={step} />
-      </div>
-      <p>
-        For position within 1-5, you need to provide and upload a guarantor information and document which would need to be verify before you can proceed and you can select from existing or previous verified guarantor.
-      </p>
-      <FileUploadForm next={next} />
-    </div>
-  )
-};
 
 const SuccessModal = () => {
   return (
