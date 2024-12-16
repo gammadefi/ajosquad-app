@@ -18,10 +18,6 @@ export const userServices = {
     updateUser: async(userId: string, payload: any) =>{
       const response = await createApiClient().patch(userApiRoutes.user.updateUser(userId), payload);
       return response.data;
-    },
-    updatePassword:  async(userId: string, payload: any) =>{
-      const response = await createApiClient().patch(userApiRoutes.user.updatePassword(userId), payload);
-      return response.data;
     }
   },
   kyc: {

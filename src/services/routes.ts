@@ -21,8 +21,7 @@ export const userApiRoutes = {
     getMe: "/user/me",
     getUserById: (userId: string) => `/user/${userId}`,
     getAllUsers: "/user",
-    updateUser: (userId: string) => `/user/${userId}`,
-    updatePassword: (userId: string) => `/user/${userId}/update-password`
+    updateUser: (userId: string) => `/user/${userId}`
   },
   kyc: {
     getKYC: (userId: string) => `/user/${userId}/kyc`,
