@@ -5,7 +5,8 @@ export const authApiRoutes = {
   verifyOtp: "/auth/verify-otp",
   forgotPassword: "/auth/forgot-password",
   resetPassword: "/auth/reset-password",
-  sendOtp: "/auth/send-otp"
+  sendOtp: "/auth/send-otp",
+  // google: "/auth/login/google"
 }
 
 export const squadApiRoutes = {
@@ -34,8 +35,8 @@ export const userApiRoutes = {
     createBank: (userId: string) => `/user/${userId}/bank`,
   },
   guarantor: {
-    getAllGuarantors: (userId: string) => `/user/${userId}/guarantor`,
-    getGuarantor: (userId: string, guarantorId: string) => `/user/${userId}/guarantor/${guarantorId}`,
+    getAllGuarantors: (userId: string) => `/guarantor/query?id=${userId}`,
+    getGuarantor: (userId: string, guarantorId: string) => `/guarantor/${guarantorId}`,
     addGuarantor: (userId: string) => `/user/${userId}/guarantor`,
     updateGuarantor: (userId: string, guarantorId: string) => `/user/${userId}/guarantor/${guarantorId}`
   }

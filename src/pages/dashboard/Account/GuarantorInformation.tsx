@@ -40,7 +40,7 @@ const GuarantorInformation = () => {
           </div>
           :
           (
-            guarantors.length > 0 ?
+           guarantors && guarantors.length > 0 ?
               <div className='my-5 place-content-center grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8'>
                 {
                   guarantors.map((guarantor: any) => (

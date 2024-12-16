@@ -10,6 +10,10 @@ export const authServices = {
     const response = await createApiClient().post(authApiRoutes.signUp, payload);
     return response.data;
   },
+  // google: async () => {
+  //   const response = await createApiClient().get(authApiRoutes.google);
+  //   return response.data;
+  // },
   refreshToken: async (payload: any) => {
     const response = await createApiClient().post(authApiRoutes.refreshToken, payload);
     return response.data;
