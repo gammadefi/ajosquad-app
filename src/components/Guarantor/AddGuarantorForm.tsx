@@ -4,9 +4,9 @@ import * as Yup from "yup";
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import FileUpload from '../FormInputs/FIleUpload2';
-import { userServices } from '../../services/user';
 import { useAuth } from '../../zustand/auth.store';
 import toast from 'react-hot-toast';
+import { guarantorServices } from '../../services/guarantor';
 
 const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
   const [hasAddedGuarantor, setHasAddedGuarantor] = useState(false);
@@ -67,10 +67,11 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       "city": values.city,
                       "state": values.state,
                       "zipCode": values.zipCode,
-                      "document_url": values.guarantorDocument
+                      "document_url": values.guarantorDocument,
+                      "user_id": useAuth.getState().profile.id
                     }
                     try {
-                      const res = await userServices.guarantor.addGuarantor(useAuth.getState().profile.id, payload)
+                      const res = await guarantorServices.addGuarantor(payload)
                       if (res) {
                         setHasAddedGuarantor(true)
                       }
@@ -139,7 +140,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                 }}
               </Formik>
             </div>
-          </div >
+          </div>
       }
     </>
   )

@@ -43,3 +43,10 @@ export const userApiRoutes = {
     updateGuarantor: (userId: string, guarantorId: string) => `/user/${userId}/guarantor/${guarantorId}`
   }
 }
+
+export const guarantorApiRoutes = {
+  getAllGuarantors: "/guarantor/query",
+  getGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`,
+  addGuarantor: "/guarantor",
+  updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
+}
