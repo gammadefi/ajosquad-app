@@ -46,10 +46,8 @@ const PasswordSetting = () => {
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
-                    onSubmit={async (values, { setSubmitting }) => {
+                    onSubmit={async (values, { resetForm }) => {
                         if (values) {
-                            setSubmitting(true);
-
                             const payload = {
                                 currentPassword: values.currentPassword,
                                 newPassword: values.newPassword,
@@ -58,7 +56,8 @@ const PasswordSetting = () => {
                             try {
                                 const response = await userServices.user.updatePassword(useAuth.getState().profile.id, payload);
                                 if (response) {
-                                    toast.success("Successfully updated password")
+                                    toast.success("Successfully updated password");
+                                    resetForm();
                                 }
                             } catch (error: any) {
                                 console.log(error);
