@@ -15,8 +15,12 @@ export const userServices = {
       const response = await createApiClient().get(userApiRoutes.user.getAllUsers);
       return response.data;
     },
-    updateUser: async (userId: string, payload: any) => {
-      const response = await createApiClient().patch(userApiRoutes.user.updateUser(userId), payload);
+    updateUserPersonalInfo: async (userId: string, payload: any) => {
+      const response = await createApiClient().patch(userApiRoutes.user.updateUserPersonal(userId), payload);
+      return response.data;
+    },
+    updateUserEmployerInfo: async (userId: string, payload: any) => {
+      const response = await createApiClient().patch(userApiRoutes.user.updateUserEmployer(userId), payload);
       return response.data;
     },
     changePassword: async (payload: any, userId: string) => {
