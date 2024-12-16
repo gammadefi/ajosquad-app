@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { InfoCard } from '../../components/InfoCard/InfoCard'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { Table, TableEmpty } from '../../components/Table/Table'
 import { Label } from '../../components/Label/Label'
 import { mockData } from '../../samples/mockdata'
+import useFetchWithParams from '../../hooks/useFetchWithParams'
+import { ActivityService } from '../../services/activity'
 
 const AccountActivity = () => {
     const columns = [
@@ -33,7 +35,29 @@ const AccountActivity = () => {
         },
     ];
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
+    const { data: activities, isLoading, refetch } = useFetchWithParams(
+        ["query-admin-activities", {
+
+        }],
+        ActivityService.getActivities,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+    console.log(activities)
+
+    const handleCurrentPage = (val: any) => {
+        setCurrentPage(val);
+        // setFilterParams({ ...filterParams, pageNum: val - 1 });
+    };
 
     return (
         <div className='px-3  md:px-6'>
@@ -63,7 +87,13 @@ const AccountActivity = () => {
                     columns={columns}
                     loading={false}
                     pagination={
-                        mockData.pagination
+                        {
+                            page: currentPage,
+                            pageSize,
+                            setPage: handleCurrentPage,
+                            totalRows: 100
+                        }
+
                     }
 
                 />

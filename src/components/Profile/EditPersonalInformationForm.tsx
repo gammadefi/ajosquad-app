@@ -6,7 +6,7 @@ import TextInput from '../FormInputs/TextInput2';
 import SuccessModal from './SuccessModal';
 import { userServices } from '../../services/user';
 import { AxiosResponse } from 'axios';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../zustand/auth.store';
 
@@ -15,11 +15,17 @@ const updateUserProfile = async ({ payload }: { payload: any }) => {
   return res.data
 };
 
+const fetchUser = async () => {
+  const res: AxiosResponse = await userServices.user.getMe();
+  return res.data;
+};
+
 const EditPersonalInformationForm = () => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const [hasUpdated, setHasUpdated] = useState(false);
   const { setUserProfile } = useAuth()
   const queryClient = useQueryClient();
+  const { data: userData, isLoading, error } = useQuery(['user'], fetchUser);
 
   const validationSchema = Yup.object({
     firstName: Yup.string()
@@ -51,17 +57,16 @@ const EditPersonalInformationForm = () => {
 
   useEffect(() => {
     const fetchUserBank = async () => {
-      const res: AxiosResponse = await userServices.user.getMe();
-      const userData = res.data;
+ 
       setInitialValues({
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
         email: userData.email_address || "",
-        phone: userData.phone || "",
-        homeAddress: userData.homeAddress || "",
-        city: userData.city || "",
-        state: userData.state || "",
-        zipCode: userData.zipCode || ""
+        phone: userData.KYC.phoneNumber || "",
+        homeAddress: userData.KYC.homeAddress || "",
+        city: userData.KYC.city || "",
+        state: userData.KYC.state || "",
+        zipCode: userData.KYC.zipCode || ""
       })
     }
     fetchUserBank();

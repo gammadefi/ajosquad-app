@@ -13,6 +13,7 @@ import Modal from "../../components/Modal/Modal";
 import { useAuth } from "../../zustand/auth.store";
 import VerifyAccount from "./VerifyAccount";
 import { authServices } from "../../services/auth";
+import { useMutation } from "react-query";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -48,6 +49,10 @@ export default function Login() {
       toast.error("Error while making request")
     }
   }
+
+  const handleGoogleLogin = () => {
+    window.location.href = "https://api.ajosquad.com/auth/login/google";
+  };
 
   return (
     <main className='h-full lg:h-fit flex flex-col gap-5 lg:rounded-xl lg:px-6 lg:py-5 lg:shadow-[0_8px_16px_0px_rgba(0,0,0,0.08)]'>
@@ -163,7 +168,7 @@ export default function Login() {
         <span>Or Continue with</span>
       </div>
       <div className="w-full flex gap-3 text-[#3E3E3E]">
-        <button className="w-full flex justify-center items-center gap-1 p-3 border border-black rounded-xl">
+        <button onClick={() => handleGoogleLogin()} className="w-full flex justify-center items-center gap-1 p-3 border border-black rounded-xl">
           <FcGoogle size={20} />
           Google
         </button>

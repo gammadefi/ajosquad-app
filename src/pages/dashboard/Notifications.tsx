@@ -1,12 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TabBar from '../../components/Tab/TabBar'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { GoStar, GoStarFill, GoTrash } from "react-icons/go";
 import { Paginator } from '../../components/Table/Paginator';
 import { Pagination } from '../../components/Table/Table';
+import useFetchWithParams from '../../hooks/useFetchWithParams';
+import { NotificationService } from '../../services/notification';
+import PageLoader from '../../components/spinner/PageLoader';
 
 const Notifications = () => {
     const tabs = ["All", "Archived"]
+    const [activeTab, setActiveTab] = useState(tabs[0])
+    const [search, setSearch] = useState("")
+    const [currentPage, setCurrentPage] = useState(1)
+
+    const { data: Notifications, isLoading, refetch } = useFetchWithParams(
+        ["query-all-notifications", {
+            archived: activeTab && activeTab === "Archived"
+        }],
+        NotificationService.getNotifications,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
     return (
         <div className='px-3  md:px-6'>
             <div className='flex rounded-t-md bg-[#E6F0FF] px-3 h-[44px] gap-3 items-center'>
@@ -17,24 +39,33 @@ const Notifications = () => {
             <div className='flex items-center my-8 justify-between'>
                 <h3 className='font-semibold '>{"188"} Notification</h3>
                 <div>
-                    <SearchInput placeholder='search...' />
+                    <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='search...' />
 
                 </div>
             </div>
 
 
 
-            <TabBar tabs={tabs} />
-            <div className='py-6 divide-y'>
-                <Notification isFavourite={false} />
-                <Notification isFavourite={true} />
-                <Notification isFavourite={false} />
+            <TabBar onChange={(val: string) => setActiveTab(val)} tabs={tabs} />
 
-            </div>
-            <div className='flex justify-center md:justify-end'>
-                <Pagination  page={1} pageSize={10} totalRows={188} loading={false} currentLength={188} />
-                {/* <Paginator  /> */}
-            </div>
+            {
+                isLoading ? <PageLoader /> :
+                    <>
+                        <div className='py-6 divide-y'>
+                            <Notification isFavourite={false} />
+                            <Notification isFavourite={true} />
+                            <Notification isFavourite={false} />
+
+                        </div>
+                        <div className='flex justify-center md:justify-end'>
+                            <Pagination setPage={(page: any) => setCurrentPage(page)} page={currentPage} pageSize={10} totalRows={188} loading={false} currentLength={188} />
+                            {/* <Paginator  /> */}
+                        </div>
+                    </>
+            }
+
+
+
         </div>
     )
 }
