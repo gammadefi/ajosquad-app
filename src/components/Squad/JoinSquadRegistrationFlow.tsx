@@ -15,7 +15,7 @@ import toast from 'react-hot-toast';
 import { guarantorServices } from '../../services/guarantor';
 import { squadServices } from '../../services/squad';
 
-const JoinSquadRegistrationFlow = ({ squadId }: { squadId: string }) => {
+const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition }: { squadId: string, selecetedPosition:string[] }) => {
   const [formData, setFormData] = useState({
     desiredPosition: [],
     bankInfoId: ""
@@ -37,7 +37,7 @@ const JoinSquadRegistrationFlow = ({ squadId }: { squadId: string }) => {
 
   return (
     <div className="relative">
-      {step === 1 && <Step1 step={step} next={handleNextStep} formData={formData} setFormData={handleFormDataChange} />}
+      {step === 1 && <Step1 step={step} selecetedPosition={selecetedPosition} next={handleNextStep} formData={formData} setFormData={handleFormDataChange} />}
       {step === 2 && <Step2 step={step} formData={formData} back={handlePreviousStep} next={handleNextStep} setFormData={setFormData} />}
       {step === 3 && <Step3 step={step} back={handlePreviousStep} next={handleNextStep} formData={formData} squadId={squadId} />}
       {step === 4 && <SuccessModal />}
@@ -47,7 +47,7 @@ const JoinSquadRegistrationFlow = ({ squadId }: { squadId: string }) => {
 
 export default JoinSquadRegistrationFlow;
 
-const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () => void, formData: any, setFormData: any }) => {
+const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step: number, next: () => void, formData: any, setFormData: any, selecetedPosition: string[] }) => {
   const positions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const progress = (step / 3) * 100;
 
@@ -59,14 +59,15 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
         'single-position',
         'You can select only one checkbox from positions 1 to 5.',
         (checkboxes: any) => {
-          const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
-          const selectedPositions = guarantorRequiredPositions.filter(position => checkboxes.includes(position))
+          const guarantorRequiredPositions = ["1", "2", "3", "4", "5"];
+          const selectedPositions = guarantorRequiredPositions.filter(position => checkboxes.includes(position));
           return selectedPositions.length <= 1;
-        }),
+        }
+      ),
   });
 
   const initialValues = {
-    selectedOptions: formData.desiredPosition,
+    selectedOptions: formData.desiredPosition || [],
   };
 
   return (
@@ -90,26 +91,33 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
             next();
           }}
         >
-          {() => (
+          {({ values }) => (
             <Form>
               <div className="grid gap-4 grid-cols-2 items-center">
-                {positions.map((position, index) => (
-                  <div key={index} className="py-2 px-4 flex items-center border gap-2">
-                    <Field
-                      type="checkbox"
-                      name="selectedOptions"
-                      value={position}
-                      className="w-5 h-5"
-                    />
-                    <div className='flex flex-col'>
-                      <label className='text-sm font-medium'>Position {position}</label>
+                {positions.map((position, index) => {
+                  const isDisabled = selecetedPosition.includes(`POSITION_${position}`);
+                  console.log(isDisabled, selecetedPosition)
+                  return (
+                    <div key={index} className="py-2 h-[48px] px-4 flex items-center border gap-2">
                       {
-                        index < 5 &&
-                        <span className='text-[#D42620] text-xs'>Guarantor Needed</span>
+                        isDisabled ? <input type="checkbox" checked disabled className="w-5 h-5" /> :  <Field
+                          type="checkbox"
+                          name="selectedOptions"
+                          value={position}
+  
+                          className="w-5 h-5"
+                        />
                       }
+                     
+                      <div className='flex flex-col'>
+                        <label className='text-sm font-medium'>Position {position}</label>
+                        {index < 5 && (
+                          <span className='text-[#D42620] text-xs'>Guarantor Needed</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <ErrorMessage
                 name="selectedOptions"
@@ -136,8 +144,9 @@ const Step1 = ({ step, next, formData, setFormData }: { step: number, next: () =
         </Formik>
       </div>
     </div>
-  )
-}
+  );
+};
+
 
 const Step2 = ({ step, back, next, formData, setFormData }: { step: number, next: () => void, back: () => void, formData: any, setFormData: any }) => {
   const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
@@ -363,7 +372,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
                   }
                   const response = await squadServices.joinSquad(squadId, joinSquadPayload);
                   if (response) {
-                    window.open(response.data.authorisationUrl, "_blank", "noopener,noreferrer");
+                    window.open(response.data.authorisationUrl, "noopener,noreferrer");
                     // next();
                   }
                 }
@@ -374,7 +383,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
                 }
                 const response = await squadServices.joinSquad(squadId, joinSquadPayload)
                 if (response) {
-                  window.open(response.data.authorisationUrl, "_blank", "noopener,noreferrer");
+                  window.open(response.data.authorisationUrl, "noopener,noreferrer");
 
                   // next();
                 }

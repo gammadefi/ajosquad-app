@@ -18,7 +18,7 @@ const Squad = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("activeTab") || "upcoming";
-  const squadCartegory = searchParams.get("squadType") || "brass";
+  const squadCartegory = searchParams.get("squadType") || "Brass";
 
   const { data: squads, isLoading, refetch } = useFetchWithParams(
     ["query-all-squads", {
@@ -37,7 +37,19 @@ const Squad = () => {
 
 
 
-  console.log(squads);
+
+  const selectedPositions: string[] = Array.from(
+    new Set(
+      squads?.data?.length > 0 ?
+        squads.data.flatMap((squad: any) =>
+          squad.squadMembers.flatMap((member: any) => member.position)
+        ) : []
+    )
+  );
+
+  
+
+  console.log(squads, selectedPositions);
 
   return (
     <div className='px-3 md:px-6'>
@@ -53,10 +65,10 @@ const Squad = () => {
       <div className='mt-5'>
         <SquadCategoryTabBar
           tabs={[
-            "brass",
-            "bronze",
-            "silver",
-            "gold"
+            "Brass",
+            "Bronze",
+            "Silver",
+            "Gold"
           ]}
           activeTab={squadCartegory}
         />
@@ -81,6 +93,9 @@ const Squad = () => {
                 category={squad.category}
                 squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
                 numOfMaxMembers={10}
+                selectedPositions={squad?.squadMembers?.length > 0 
+                  ? squad.squadMembers.map((member: any) => member.position).flat() 
+                  : []}
               />
             ))
           }
