@@ -5,7 +5,7 @@ import { FaArrowRight } from 'react-icons/fa6';
 import TextInput from '../FormInputs/TextInput2';
 import SuccessModal from './SuccessModal';
 
-const EditEmployerInformationForm = () => {
+const EditEmployerInformationForm = ({onClose} : {onClose : () => void}) => {
   const [hasUpdated, setHasUpdated] = useState(false);
 
   const validationSchema = Yup.object({
@@ -29,8 +29,8 @@ const EditEmployerInformationForm = () => {
   return (
     <>
       {
-        hasUpdated ?
-          <SuccessModal title='Employer' />
+        hasUpdated ? 
+          <SuccessModal onClose={onClose} title='Employer' />
           :
           <div className='md:w-[600px]'>
             <h2 className='text-3xl font-semibold'>Edit Employer Information</h2>

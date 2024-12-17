@@ -6,20 +6,22 @@ import TextInput from '../FormInputs/TextInput2';
 import SuccessModal from './SuccessModal';
 import { userServices } from '../../services/user';
 import { AxiosResponse } from 'axios';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../zustand/auth.store';
 
-const updateUserProfile = async ({ payload }: { payload: any }) => {
-  const res: AxiosResponse = await userServices.user.updateUser(useAuth.getState().profile.id, payload)
-  return res.data
+
+const fetchUser = async () => {
+  const res: AxiosResponse = await userServices.user.getMe();
+  return res.data;
 };
 
-const EditPersonalInformationForm = () => {
+const EditPersonalInformationForm = ({onClose} : {onClose : () => void}) => {
   const [initialValues, setInitialValues] = useState<any>(null);
+  const profile = useAuth((s) => s.profile)
   const [hasUpdated, setHasUpdated] = useState(false);
   const { setUserProfile } = useAuth()
-  const queryClient = useQueryClient();
+  const { data: userData, isLoading, error } = useQuery(['user'], fetchUser);
 
   const validationSchema = Yup.object({
     firstName: Yup.string()
@@ -28,14 +30,14 @@ const EditPersonalInformationForm = () => {
     lastName: Yup.string()
       .trim()
       .required("*Last Name is required"),
-    email: Yup.string()
+    email_address: Yup.string()
       .trim()
       .email("*Email must be a valid address")
       .required("*Email is required"),
     homeAddress: Yup.string()
       .trim()
       .required("*Home Address is required"),
-    phone: Yup.string()
+    phoneNumber: Yup.string()
       .trim()
       .required('Phone number is required'),
     city: Yup.string()
@@ -51,13 +53,12 @@ const EditPersonalInformationForm = () => {
 
   useEffect(() => {
     const fetchUserBank = async () => {
-      const res: AxiosResponse = await userServices.user.getMe();
-      const userData = res.data;
+
       setInitialValues({
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
-        email: userData.email_address || "",
-        phone: userData.phone || "",
+        email_address: userData.email_address || "",
+        phoneNumber: userData.phoneNumber || "",
         homeAddress: userData.homeAddress || "",
         city: userData.city || "",
         state: userData.state || "",
@@ -67,11 +68,17 @@ const EditPersonalInformationForm = () => {
     fetchUserBank();
   }, [])
 
-  const mutation = useMutation(updateUserProfile, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["user"]);
-    },
-  });
+  const mutation = useMutation(
+    async (values: any) => {
+      return userServices.user.updateUserPersonalInfo(profile.id, values)
+    }
+    , {
+      onSuccess: (res:any) => {
+        // queryClient.invalidateQueries(["user"]);
+        setUserProfile(res.data)
+        setHasUpdated(true)
+      },
+    });
 
   if (!initialValues) {
     return (
@@ -85,7 +92,7 @@ const EditPersonalInformationForm = () => {
     <>
       {
         hasUpdated ?
-          <SuccessModal title='Personal' />
+          <SuccessModal onClose={() => onClose() } title='Personal' />
           :
           <div className='md:w-[600px]'>
             <h2 className='text-3xl font-semibold'>Edit Personal Information</h2>
@@ -94,20 +101,7 @@ const EditPersonalInformationForm = () => {
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={async (values) => {
-                  if (values) {
-                    const payload = {
-                      "firstName": values.firstName
-                    }
-                    try {
-                      const res = await mutation.mutateAsync({ payload });
-                      if (res) {
-                        setUserProfile(res)
-                        setHasUpdated(true);
-                      }
-                    } catch (error) {
-                      toast.error("Failed to update profile")
-                    }
-                  }
+                  mutation.mutate(values)
                 }}
               >
                 {({ isSubmitting }) => {
@@ -126,7 +120,7 @@ const EditPersonalInformationForm = () => {
                         />
                       </div>
                       <TextInput
-                        name='email'
+                        name='email_address'
                         type='email'
                         label="Email"
                         placeholder='Email address'
@@ -137,7 +131,7 @@ const EditPersonalInformationForm = () => {
                         placeholder='Home Address'
                       />
                       <TextInput
-                        name='phone'
+                        name='phoneNumber'
                         label="Phone Number"
                       />
                       <div className='grid md:grid-cols-3 gap-3'>

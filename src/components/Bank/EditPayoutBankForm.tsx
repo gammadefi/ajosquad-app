@@ -8,10 +8,11 @@ import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import { useMutation, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
+import { guarantorServices } from '../../services/guarantor';
 
 const updateBankInformation = async ({ bankId, payload }: { bankId: string, payload: any }) => {
   // TODO: api call to update bank info 
-  const res: AxiosResponse = await userServices.guarantor.updateGuarantor(useAuth.getState().profile.id, bankId, payload)
+  const res: AxiosResponse = await guarantorServices.updateGuarantor(bankId, payload)
   return res.data
 };
 
