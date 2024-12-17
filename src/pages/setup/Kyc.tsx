@@ -11,7 +11,11 @@ import * as Yup from 'yup';
 import PageLoader from '../../components/spinner/PageLoader'
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string()
+    firstName: Yup.string()
+        .required('Name is required')
+        .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
+        .min(2, 'Name should be at least 2 characters long'),
+    lastName: Yup.string()
         .required('Name is required')
         .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
         .min(2, 'Name should be at least 2 characters long'),
@@ -75,7 +79,8 @@ const Kyc = () => {
     const profile = useAuth((s) => s.profile)
     const form = useFormik({
         initialValues: {
-            "name": "Sample User",
+            "firstName": "Sample User",
+            "lastNamr": "Sample User",
             "email": "sampleuser@mail.com",
             "phoneNumber": "35587891047",
             "homeAddress": "Sample Address",
@@ -251,6 +256,10 @@ const Kyc = () => {
                                         <div className='rounded-[10px] border p-4'>
                                             <h3 className='text-base md:text-lg font-semibold'>Personal Information</h3>
                                             <div className='mt-3'>
+                                                <div className='grid grid-cols-2 gap-2'>
+                                                    <TextInput name='firstName' label='First Name *' placeholder='Enter your first name' />
+                                                    <TextInput name='lastName' label='Last Name *' placeholder='Enter your last name' />
+                                                </div>
                                                 <TextInput name='name' label='Name *' placeholder='Enter your name' />
                                                 <TextInput name='email' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
                                                 <TextInput name='phoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
