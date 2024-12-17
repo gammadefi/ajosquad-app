@@ -56,7 +56,7 @@ export const useAuth = create(
     ),
     {
       name: "Ajosquad-auth",
-      getStorage: () => sessionStorage,
+      getStorage: () => localStorage,
     }
   )
 );
