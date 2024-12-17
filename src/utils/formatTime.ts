@@ -60,3 +60,31 @@ export function formatDate2(dateString: string) {
 
   return formattedDate;
 }
+
+export function formatStartDate(startDate: string): string {
+  const currentDate: Date = new Date();
+  const inputDate: Date = new Date(startDate);
+
+  // Reset time to midnight for accurate day comparison
+  currentDate.setHours(0, 0, 0, 0);
+  inputDate.setHours(0, 0, 0, 0);
+
+  const differenceInMs: number = inputDate.getTime() - currentDate.getTime();
+  const differenceInDays: number = Math.floor(differenceInMs / (1000 * 60 * 60 * 24));
+
+  if (differenceInDays === 0) {
+    return "Started"; // Today
+  } else if (differenceInDays < 0) {
+    return "Started"; // Past
+  } else {
+    const weeks: number = Math.floor(differenceInDays / 7);
+    if (weeks >= 1) {
+      return `Starts in ${weeks} week${weeks > 1 ? "s" : ""}`;
+    } else {
+      return `Starts in ${differenceInDays} day${differenceInDays > 1 ? "s" : ""}`;
+    }
+  }
+}
+
+// Example usage:
+// Output depends on the current date

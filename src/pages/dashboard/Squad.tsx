@@ -7,6 +7,7 @@ import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
 import dayjs from 'dayjs';
 import TabBar2 from '../../components/Tab/TabBar2';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
+import { useAuth } from '../../zustand/auth.store';
 
 // const fetchSquads = async () => {
 //   const res: AxiosResponse = await squadServices.getAllSquads();
@@ -19,10 +20,11 @@ const Squad = () => {
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const squadCartegory = searchParams.get("squadType") || "Brass";
+  const profile = useAuth((s) => s.profile);
 
   const { data: squads, isLoading, refetch } = useFetchWithParams(
     ["query-all-squads", {
-      category: squadCartegory, status: activeTab.toLowerCase()
+      category: squadCartegory, status: activeTab == "pending" ? "upcoming" : activeTab.toLowerCase()
     }],
     squadServices.getAllSquads,
     {
@@ -37,19 +39,15 @@ const Squad = () => {
 
 
 
+  function hasUser(squadData: any, userId: string): boolean {
+    return squadData.squadMembers.some((member: any) => member.userId === userId);
+  }
 
-  const selectedPositions: string[] = Array.from(
-    new Set(
-      squads?.data?.length > 0 ?
-        squads.data.flatMap((squad: any) =>
-          squad.squadMembers.flatMap((member: any) => member.position)
-        ) : []
-    )
-  );
+  console.log("test")
 
-  
 
-  console.log(squads, selectedPositions);
+
+  // console.log(squads, selectedPositions);
 
   return (
     <div className='px-3 md:px-6'>
@@ -83,21 +81,58 @@ const Squad = () => {
         squads &&
         <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
           {
-            squads.data.map((squad: any, index: number) => (
-              <SquadCard
-                key={index}
-                id={squad.id}
-                payoutAmount={squad.amount}
-                date={new Date(squad.createdAt)}
-                title={squad.name}
-                category={squad.category}
-                squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
-                numOfMaxMembers={10}
-                selectedPositions={squad?.squadMembers?.length > 0 
-                  ? squad.squadMembers.map((member: any) => member.position).flat() 
-                  : []}
-              />
-            ))
+            activeTab == "pending" ? squads.data.filter((squad: any) =>
+              squad.status === "upcoming" &&
+              squad.squadMembers?.some((member: any) => member.userId === profile.id)
+            ).map((squad: any, index: number) => {
+              console.log(squad, squad?.squadMembers?.find((member: any) => member.userId === profile.id))
+              return (
+                <SquadCard
+                  key={index}
+                  id={squad.id}
+                  payoutAmount={squad.amount}
+                  date={new Date(squad.createdAt)}
+                  startDate={squad.startDate}
+                  title={squad.name}
+                  refetch={refetch}
+                  category={squad.category}
+                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                  numOfMaxMembers={10}
+                  selectedPositions={squad?.squadMembers?.length > 0
+                    ? squad.squadMembers.map((member: any) => member.position).flat()
+                    : []}
+                  hasJoinedSquad={
+                    hasUser(squad, profile.id)
+
+
+                  }
+                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                />
+              )
+            }) :
+              squads.data.map((squad: any, index: number) => (
+                <SquadCard
+                  key={index}
+                  id={squad.id}
+                  payoutAmount={squad.amount}
+                  date={new Date(squad.createdAt)}
+                  startDate={squad.startDate}
+                  title={squad.name}
+                  refetch={refetch}
+                  category={squad.category}
+                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                  numOfMaxMembers={10}
+                  selectedPositions={squad?.squadMembers?.length > 0
+                    ? squad.squadMembers.map((member: any) => member.position).flat()
+                    : []}
+                  hasJoinedSquad={
+                    hasUser(squad, profile.id)
+                  }
+                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                />
+              ))
           }
         </div>
       }
