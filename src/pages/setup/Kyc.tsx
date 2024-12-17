@@ -80,7 +80,7 @@ const Kyc = () => {
     const form = useFormik({
         initialValues: {
             "firstName": "Sample User",
-            "lastNamr": "Sample User",
+            "lastName": "Sample User",
             "email": "sampleuser@mail.com",
             "phoneNumber": "35587891047",
             "homeAddress": "Sample Address",
@@ -260,7 +260,6 @@ const Kyc = () => {
                                                     <TextInput name='firstName' label='First Name *' placeholder='Enter your first name' />
                                                     <TextInput name='lastName' label='Last Name *' placeholder='Enter your last name' />
                                                 </div>
-                                                <TextInput name='name' label='Name *' placeholder='Enter your name' />
                                                 <TextInput name='email' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
                                                 <TextInput name='phoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
                                                 <TextInput name='homeAddress' label='Home Address *' wrapperClass='mt-3' placeholder='Enter your Home address' />
