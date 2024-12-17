@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
         .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
         .min(2, 'Name should be at least 2 characters long'),
 
-    email: Yup.string()
+    email_address: Yup.string()
         .email('Invalid email format')
         .required('Email is required'),
 
@@ -63,6 +63,7 @@ const validationSchema = Yup.object().shape({
         .max(15, 'Employer phone number should not exceed 15 digits'),
 
     others: Yup.string()
+        .required('field is required')
         .nullable() // Optional field, can be null
         .max(500, 'Others field should not exceed 500 characters'),
 });
@@ -79,17 +80,17 @@ const Kyc = () => {
     const profile = useAuth((s) => s.profile)
     const form = useFormik({
         initialValues: {
-            "firstName": "Sample User",
-            "lastName": "Sample User",
-            "email": "sampleuser@mail.com",
-            "phoneNumber": "35587891047",
-            "homeAddress": "Sample Address",
-            "city": "Sample City",
-            "state": "Sample State",
-            "zipCode": "123456",
-            "jobTitle": "Sample Job",
-            "employerName": "Sample Employer",
-            "employerPhoneNumber": "34378208154",
+            "firstName": profile.firstName,
+            "lastName": profile.lastName,
+            "email_address": profile.email_address,
+            "phoneNumber": profile.phoneNumber,
+            "homeAddress": profile.homeAddress,
+            "city": profile.city,
+            "state": profile.state,
+            "zipCode": profile.zipCode,
+            "jobTitle": profile.jobTitle,
+            "employerName": profile.employerName,
+            "employerPhoneNumber": profile.employerPhoneNumber,
             "others": ""
         },
         validationSchema: validationSchema,
