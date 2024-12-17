@@ -17,10 +17,11 @@ type SquadCardType = {
   numOfMaxMembers: number,
   date: Date,
   category: string,
-  squadDuration: number
+  squadDuration: number,
+  selectedPositions: string[]
 }
 
-const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, squadDuration }: SquadCardType) => {
+const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, squadDuration, selectedPositions }: SquadCardType) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openJoinSquadForm, setOpenJoinSquadForm] = useState<boolean>(false);
 
@@ -43,7 +44,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
           <p className='text-sm'>CA$ 300.00 / Every 2 weeks</p>
           <span className='text-xs flex items-center gap-1'><LuCalendarDays className='w-5 h-5' /> {formattedDate}</span>
         </div>
-        <button onClick={() => setOpenModal(!openModal)} className="w-full rounded-lg p-0.5 bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]">
+        <button disabled={selectedPositions.length === 10} onClick={() => setOpenModal(!openModal)} className="w-full rounded-lg p-0.5 bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]">
           <div className="bg-white flex justify-center font-medium items-center gap-2 py-2 px-10 rounded-[calc(0.5rem-2px)]">
             <span>Join Squad</span>
             <FaArrowRight />
@@ -55,7 +56,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
         setOpenJoinSquadForm(false)
       }}>
 
-        <JoinSquadRegistrationFlow squadId={id} />
+        <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} />
       </Modal>
     </>
   )
