@@ -47,6 +47,7 @@ const Squad = () => {
     )
   );
 
+  
 
   console.log(squads, selectedPositions);
 
