@@ -20,7 +20,7 @@ export const squadServices = {
     return response.data;
   },
   addNewSquadPosition: async (id: string, payload: any) => {
-    const response = await createApiClient().post(squadApiRoutes.addNewSquadPosition(id), payload);
+    const response = await createApiClient().patch(squadApiRoutes.addNewSquadPosition(id), payload);
     return response.data;
   } 
 }

@@ -11,12 +11,16 @@ import * as Yup from 'yup';
 import PageLoader from '../../components/spinner/PageLoader'
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string()
+    firstName: Yup.string()
+        .required('Name is required')
+        .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
+        .min(2, 'Name should be at least 2 characters long'),
+    lastName: Yup.string()
         .required('Name is required')
         .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
         .min(2, 'Name should be at least 2 characters long'),
 
-    email: Yup.string()
+    email_address: Yup.string()
         .email('Invalid email format')
         .required('Email is required'),
 
@@ -59,6 +63,7 @@ const validationSchema = Yup.object().shape({
         .max(15, 'Employer phone number should not exceed 15 digits'),
 
     others: Yup.string()
+        .required('field is required')
         .nullable() // Optional field, can be null
         .max(500, 'Others field should not exceed 500 characters'),
 });
@@ -85,7 +90,7 @@ const Kyc = () => {
             "zipCode": profile.zipCode,
             "jobTitle": profile.jobTitle,
             "employerName": profile.employerName,
-            "employerPhoneNumber":profile.employerPhoneNumber,
+            "employerPhoneNumber": profile.employerPhoneNumber,
             "others": ""
         },
         validationSchema: validationSchema,
@@ -252,7 +257,10 @@ const Kyc = () => {
                                         <div className='rounded-[10px] border p-4'>
                                             <h3 className='text-base md:text-lg font-semibold'>Personal Information</h3>
                                             <div className='mt-3'>
-                                                <TextInput name='name' label='Name *' placeholder='Enter your name' />
+                                                <div className='grid grid-cols-2 gap-2'>
+                                                    <TextInput name='firstName' label='First Name *' placeholder='Enter your first name' />
+                                                    <TextInput name='lastName' label='Last Name *' placeholder='Enter your last name' />
+                                                </div>
                                                 <TextInput name='email' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
                                                 <TextInput name='phoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
                                                 <TextInput name='homeAddress' label='Home Address *' wrapperClass='mt-3' placeholder='Enter your Home address' />

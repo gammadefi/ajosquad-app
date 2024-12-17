@@ -16,7 +16,7 @@ const Notifications = () => {
 
     const { data: Notifications, isLoading, refetch } = useFetchWithParams(
         ["query-all-notifications", {
-            archived: activeTab && activeTab === "Archived"
+            // archived: activeTab && activeTab === "Archived"
         }],
         NotificationService.getNotifications,
         {
