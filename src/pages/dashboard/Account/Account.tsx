@@ -34,6 +34,7 @@ const Account = () => {
     return (
         <div className='px-3  md:px-6'>
             <TabBar2
+                isDashboard={false}
                 tabs={tabs}
                 activeTab={activeTab}
             />
