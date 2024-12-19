@@ -58,6 +58,7 @@ const Squad = () => {
           "completed",
           "pending"
         ]}
+        isDashboard={false}
         activeTab={activeTab}
       />
       <div className='mt-5'>

@@ -31,11 +31,12 @@ const ActiveSquadDetails = () => {
             <div className='flex gap-2 my-6 items-center'>
                 <div>
                     <h2 className='text-lg font-semibold'>Brass 2.0 Squad</h2>
-                    
+
                 </div>
             </div>
 
             <TabBar2
+                isDashboard={false}
                 tabs={tabs}
                 activeTab={activeTab}
             />

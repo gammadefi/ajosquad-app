@@ -30,6 +30,7 @@ const Account = () => {
             <TabBar2
                 tabs={tabs}
                 activeTab={activeTab}
+                isDashboard={false}
             />
             <div className='mt-6'>
                 {displayAccountContent(activeTab)}
