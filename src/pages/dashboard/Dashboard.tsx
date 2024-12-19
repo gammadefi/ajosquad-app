@@ -210,7 +210,7 @@ const Dashboard = () => {
                       squads &&
                       <div className='space-y-2 pb-5'>
                         <div className='flex flex-col gap-1.5'>
-                          <div onClick={() => setShowBrassSquad(!showBrassSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBrassSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border-primary"}`}>
+                          <div onClick={() => setShowBrassSquad(!showBrassSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBrassSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Brass Squad</h3>
                               <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBrassSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
@@ -245,7 +245,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         <div className='flex flex-col gap-1.5'>
-                          <div onClick={() => setShowBronzeSquad(!showBronzeSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBronzeSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border-primary"}`}>
+                          <div onClick={() => setShowBronzeSquad(!showBronzeSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBronzeSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Bronze Squad</h3>
                               <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBronzeSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
@@ -280,7 +280,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         <div className='flex flex-col gap-1.5'>
-                          <div onClick={() => setShowSilverSquad(!showSilverSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showSilverSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border-primary"}`}>
+                          <div onClick={() => setShowSilverSquad(!showSilverSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showSilverSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Silver Squad</h3>
                               <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showSilverSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
@@ -315,7 +315,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         <div className='flex flex-col gap-1.5'>
-                          <div onClick={() => setShowGoldSquad(!showGoldSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showGoldSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border-primary"}`}>
+                          <div onClick={() => setShowGoldSquad(!showGoldSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showGoldSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Gold Squad</h3>
                               <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showGoldSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
