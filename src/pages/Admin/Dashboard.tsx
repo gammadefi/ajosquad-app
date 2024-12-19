@@ -15,10 +15,12 @@ import SearchInput from '../../components/FormInputs/SearchInput';
 import { Table, TableEmpty } from '../../components/Table/TableTwo';
 import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
+import Filter from '../../components/Filter/Filter';
 
 const Dashboard = () => {
   const [kycVerified, setKycVerified] = React.useState(true)
   const [activeSquad, setActiveSquad] = React.useState(true)
+  const [showFilter, setShowFilter] = React.useState(false)
 
   const allData: any = {
     "24h": {
@@ -291,10 +293,9 @@ const Dashboard = () => {
 
                 <div className='flex items-center gap-2'>
                   <SearchInput placeholder='Search...' />
-                  <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                  <button onClick={() => setShowFilter(true)} className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                  <Filter open={showFilter} filterBy={["date"]} onClose={() => setShowFilter(false)} />
                 </div>
-
-
               </div>
 
               {

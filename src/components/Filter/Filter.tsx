@@ -9,6 +9,7 @@ interface FilterITF {
     onClear?: () => void;
     onFilter?: () => void;
     open?: boolean;
+    filterBy: ("date" | "amount" | "status" | "squad" | "position")[];
     onClose?: () => void;
 
 }
@@ -17,6 +18,7 @@ const Filter: FunctionComponent<FilterITF> = ({
     onFilter = () => { },
     onClear = () => { },
     open,
+    filterBy,
     onClose = () => { } }) => {
     const [status, setStatus] = useState("");
     const [squad, setSquad] = useState("");
@@ -80,7 +82,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     </svg>
                                 </button>
                             </div>
-                            <div className="modal-body p-5 w-full">
+                            <div className="modal-body p-5 w-full min-w-96">
                                 <div className='flex items-center gap-2 mb-4'>
                                     <div>
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -96,116 +98,151 @@ const Filter: FunctionComponent<FilterITF> = ({
                                 </div>
 
                                 <div className='w-full flex flex-col md:flex-row justify-between my-5 gap-3'>
-                                    <div>
-                                        <select name="status" value={status} onChange={(e) => setStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
-                                            <option disabled value="">Status</option>
-                                            <option value="paid">Paid</option>
-                                            <option value="upcoming">Upcoming</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <select name="squad" value={squad} onChange={(e) => setSquad(e.target.value)} id="squad" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
-                                            <option disabled value="">Squad</option>
-                                            <option value="brass1.0">Brass 1.0</option>
-                                            <option value="bronze12.0">Bronze 12.0</option>
-                                            <option value="silver6.0">Silver 6.0</option>
-                                            <option value="gold12.0">Gold 12.0</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <select name="position" value={position} onChange={(e) => setPosition(e.target.value)} id="position" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
-                                            <option disabled value="">Position</option>
-                                            <option value="position-1">Position 1</option>
-                                            <option value="position-2">Position 2</option>
-                                            <option value="position-3">Position 3</option>
-                                            <option value="position-4">Position 4</option>
-                                            <option value="position-5">Position 5</option>
-                                            <option value="position-6">Position 6</option>
-                                            <option value="position-7">Position 7</option>
-                                            <option value="position-8">Position 8</option>
-                                            <option value="position-9">Position 9</option>
-                                            <option value="position-10">Position 10</option>
-                                        </select>
-                                    </div>
-                                    <div onClick={() => setShowAmountFilter(!showAmountFilter)} id="status" className='bg-[#F5F5F9] cursor-pointer py-2.5 px-2 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
-                                        <span>Amount</span>
-                                        <FaChevronDown size={10} />
-                                    </div>
                                     {
-                                        showAmountFilter && <div className='flex md:hidden gap-4'>
-                                            <div className='flex flex-col'>
-                                                <label htmlFor="fromAmount">From</label>
-                                                <input value={amount.fromAmount} onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (/^\d*\.?\d*$/.test(value)) {
-                                                        setAmount({ ...amount, fromAmount: value })
-                                                    }
-                                                }} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-full md:w-40 py-2 px-3 rounded-lg' />
+                                        filterBy.includes("status") && (
+                                            <div>
+                                                <select name="status" value={status} onChange={(e) => setStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                    <option disabled value="">Status</option>
+                                                    <option value="paid">Paid</option>
+                                                    <option value="upcoming">Upcoming</option>
+                                                </select>
                                             </div>
-                                            <div className='flex flex-col'>
-                                                <label htmlFor="toAmount">To</label>
-                                                <input value={amount.toAmount} onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (/^\d*\.?\d*$/.test(value)) {
-                                                        setAmount({ ...amount, toAmount: value })
-                                                    }
-                                                }} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-full md:w-40 py-2 px-3 rounded-lg' />
-                                            </div>
-                                        </div>
+                                        )
                                     }
-
-                                    <div onClick={() => setShowDateFilter(!showDateFilter)} id="status" className='bg-[#F5F5F9] cursor-pointer py-2.5 px-2 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
-                                        <span>Date</span>
-                                        <FaChevronDown size={10} />
-                                    </div>
                                     {
-                                        showDateFilter && <div className='flex md:hidden gap-4'>
-                                            <div className='flex flex-col'>
-                                                <label htmlFor="fromDate">From</label>
-                                                <input type="date" value={date.fromDate} onChange={(e) => setDate({ ...date, fromDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                        filterBy.includes("squad") && (
+                                            <div>
+                                                <select name="squad" value={squad} onChange={(e) => setSquad(e.target.value)} id="squad" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                    <option disabled value="">Squad</option>
+                                                    <option value="brass1.0">Brass 1.0</option>
+                                                    <option value="bronze12.0">Bronze 12.0</option>
+                                                    <option value="silver6.0">Silver 6.0</option>
+                                                    <option value="gold12.0">Gold 12.0</option>
+                                                </select>
                                             </div>
-                                            <div className='flex flex-col'>
-                                                <label htmlFor="toDate">To</label>
-                                                <input type="date" value={date.toDate} onChange={(e) => setDate({ ...date, toDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                        )
+                                    }
+                                    {
+                                        filterBy.includes("position") && (
+                                            <div>
+                                                <select name="position" value={position} onChange={(e) => setPosition(e.target.value)} id="position" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                    <option disabled value="">Position</option>
+                                                    <option value="position-1">Position 1</option>
+                                                    <option value="position-2">Position 2</option>
+                                                    <option value="position-3">Position 3</option>
+                                                    <option value="position-4">Position 4</option>
+                                                    <option value="position-5">Position 5</option>
+                                                    <option value="position-6">Position 6</option>
+                                                    <option value="position-7">Position 7</option>
+                                                    <option value="position-8">Position 8</option>
+                                                    <option value="position-9">Position 9</option>
+                                                    <option value="position-10">Position 10</option>
+                                                </select>
                                             </div>
-                                        </div>
+                                        )
+                                    }
+                                    {
+                                        filterBy.includes("amount") && (
+                                            <>
+                                                <div onClick={() => setShowAmountFilter(!showAmountFilter)} id="status" className='bg-[#F5F5F9] cursor-pointer py-2.5 px-2 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                    <span>Amount</span>
+                                                    <FaChevronDown size={10} />
+                                                </div>
+                                                {
+                                                    showAmountFilter && <div className='flex md:hidden gap-4'>
+                                                        <div className='flex flex-col'>
+                                                            <label htmlFor="fromAmount">From</label>
+                                                            <input value={amount.fromAmount} onChange={(e) => {
+                                                                const value = e.target.value;
+                                                                if (/^\d*\.?\d*$/.test(value)) {
+                                                                    setAmount({ ...amount, fromAmount: value })
+                                                                }
+                                                            }} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-full md:w-40 py-2 px-3 rounded-lg' />
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <label htmlFor="toAmount">To</label>
+                                                            <input value={amount.toAmount} onChange={(e) => {
+                                                                const value = e.target.value;
+                                                                if (/^\d*\.?\d*$/.test(value)) {
+                                                                    setAmount({ ...amount, toAmount: value })
+                                                                }
+                                                            }} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-full md:w-40 py-2 px-3 rounded-lg' />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </>
+                                        )
+                                    }
+                                    {
+                                        filterBy.includes("date") && (
+                                            <>
+                                                <div onClick={() => setShowDateFilter(!showDateFilter)} id="status" className='bg-[#F5F5F9] cursor-pointer py-2.5 px-2 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                    <span>Date</span>
+                                                    <FaChevronDown size={10} />
+                                                </div>
+                                                {
+                                                    showDateFilter && <div className='flex md:hidden gap-4'>
+                                                        <div className='flex flex-col'>
+                                                            <label htmlFor="fromDate">From</label>
+                                                            <input type="date" value={date.fromDate} onChange={(e) => setDate({ ...date, fromDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <label htmlFor="toDate">To</label>
+                                                            <input type="date" value={date.toDate} onChange={(e) => setDate({ ...date, toDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </>
+                                        )
                                     }
                                 </div>
                                 <div className='flex justify-between items-end'>
                                     <div className='space-y-2'>
                                         {
-                                            showAmountFilter && <div className='hidden md:flex  gap-4'>
-                                                <div className='flex flex-col'>
-                                                    <label htmlFor="fromAmount">From</label>
-                                                    <input value={amount.fromAmount} onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        if (/^\d*\.?\d*$/.test(value)) {
-                                                            setAmount({ ...amount, fromAmount: value })
-                                                        }
-                                                    }} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
-                                                </div>
-                                                <div className='flex flex-col'>
-                                                    <label htmlFor="toAmount">To</label>
-                                                    <input value={amount.toAmount} onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        if (/^\d*\.?\d*$/.test(value)) {
-                                                            setAmount({ ...amount, toAmount: value })
-                                                        }
-                                                    }} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
-                                                </div>
-                                            </div>
+                                            filterBy.includes("amount") && (
+                                                <>
+                                                    {
+                                                        showAmountFilter && <div className='hidden md:flex  gap-4'>
+                                                            <div className='flex flex-col'>
+                                                                <label htmlFor="fromAmount">From</label>
+                                                                <input value={amount.fromAmount} onChange={(e) => {
+                                                                    const value = e.target.value;
+                                                                    if (/^\d*\.?\d*$/.test(value)) {
+                                                                        setAmount({ ...amount, fromAmount: value })
+                                                                    }
+                                                                }} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <label htmlFor="toAmount">To</label>
+                                                                <input value={amount.toAmount} onChange={(e) => {
+                                                                    const value = e.target.value;
+                                                                    if (/^\d*\.?\d*$/.test(value)) {
+                                                                        setAmount({ ...amount, toAmount: value })
+                                                                    }
+                                                                }} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </>
+                                            )
                                         }
                                         {
-                                            showDateFilter && <div className='hidden md:flex  gap-4'>
-                                                <div className='flex flex-col'>
-                                                    <label htmlFor="fromDate">From</label>
-                                                    <input type="date" value={date.fromDate} onChange={(e) => setDate({ ...date, fromDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
-                                                </div>
-                                                <div className='flex flex-col'>
-                                                    <label htmlFor="toDate">To</label>
-                                                    <input type="date" value={date.toDate} onChange={(e) => setDate({ ...date, toDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
-                                                </div>
-                                            </div>
+                                            filterBy.includes("date") && (
+                                                <>
+                                                    {
+                                                        showDateFilter && <div className='hidden md:flex  gap-4'>
+                                                            <div className='flex flex-col'>
+                                                                <label htmlFor="fromDate">From</label>
+                                                                <input type="date" value={date.fromDate} onChange={(e) => setDate({ ...date, fromDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <label htmlFor="toDate">To</label>
+                                                                <input type="date" value={date.toDate} onChange={(e) => setDate({ ...date, toDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </>
+                                            )
                                         }
                                     </div>
                                     <div className='ml-auto flex items-center gap-2'>
