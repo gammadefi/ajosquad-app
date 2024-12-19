@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { InfoCard } from '../../../components/InfoCard/InfoCard2'
 import TextInput from '../../../components/FormInputs/TextInput2'
 import { Button } from '../../../components/Button/Button'
@@ -7,8 +7,10 @@ import SearchInput from '../../../components/FormInputs/SearchInput';
 import { mockData } from '../../../samples/mockdata';
 import { Table } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
+import Filter from '../../../components/Filter/Filter2';
 
 const ReferralPoints = () => {
+    const [filterBy, setFilterBy] = useState("");
     const columns = [
         {
             header: "S/N",
@@ -56,7 +58,6 @@ const ReferralPoints = () => {
 
             <div>
                 <h3 className='text-base md:text-xl font-semibold mb-4'>Referral a Friend</h3>
-
                 <div >
                     <h4 className='mb-1 font-semibold'>Invite Link</h4>
                     <div className='flex items-center gap-2'>
@@ -66,12 +67,15 @@ const ReferralPoints = () => {
                     <small>Minimum point to redeem is CAD$50</small>
                 </div>
 
-                <div className='my-8 flex justify-between items-center '>
-                    <h3 className='text-xl font-semibold'>Referrals</h3>
-
+                <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
+                    <div className='flex justify-between'>
+                        <h3 className='text-xl font-semibold'>Referral</h3>
+                        <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Redeem Points</button>
+                    </div>
                     <div className='flex items-center gap-2'>
                         <SearchInput placeholder='Search...' />
-                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                        <Filter />
+                        <button className='hidden lg:block text-primary px-4 py-2 border text-nowrap border-primary rounded-lg font-semibold'>Redeem Points</button>
                     </div>
 
 
