@@ -82,7 +82,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     </svg>
                                 </button>
                             </div>
-                            <div className="modal-body p-5 w-full min-w-96">
+                            <div className="modal-body p-5 w-full md:min-w-96">
                                 <div className='flex items-center gap-2 mb-4'>
                                     <div>
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

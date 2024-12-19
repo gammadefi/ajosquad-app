@@ -57,9 +57,11 @@ const Payout = () => {
             </div>
 
 
-            <div className='my-8 flex justify-between items-center '>
-                <h3 className='text-xl font-semibold'>Payout Information</h3>
-
+            <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
+                <div className='flex justify-between'>
+                    <h3 className='text-xl font-semibold'>Payout Information</h3>
+                    <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                </div>
                 <div className='flex items-center gap-2'>
                     <SearchInput placeholder='Search...' />
                     <button onClick={() => setOpenFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
@@ -75,10 +77,9 @@ const Payout = () => {
                             Filter By
                         </span>
                     </button>
-                    <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
+                    <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
-
-
+                <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
             </div>
 
             {
