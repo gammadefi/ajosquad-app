@@ -27,7 +27,7 @@ const Profile = () => {
           </div>
           :
           error ?
-            <>Error fetching user detalis</>
+            <p>Error fetching user detalis</p>
             :
             <div className='my-5 space-y-4'>
               <div className='relative w-fit'>
@@ -37,7 +37,7 @@ const Profile = () => {
               <div>
                 <h2 className='text-lg font-semibold'>{user.firstName + " " + user.lastName}</h2>
                 <p><span className='text-[#787A7D]'>ID: </span>{user.id}</p>
-                <p className='text-[#787A7D]'>Toronto, Canada.</p>
+                <p className='text-[#787A7D]'>{user.city}, {user.state}</p>
               </div>
               <div className='flex flex-col lg:flex-row gap-3'>
                 <div className='border border-[#E2DFDF] rounded-lg py-4 px-4 md:py-5 md:px-6 h-60 w-full lg:w-[420px]'>
