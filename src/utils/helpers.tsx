@@ -140,7 +140,6 @@ export const trimObject = (obj: any) => {
     }
 
   }
-
   return obj;
 
 };
@@ -166,4 +165,15 @@ export function paramsObjectToQueryString(payload: any) {
   return queryString;
 
 }
+
+  interface PaginationInfo {
+    currentPage: number;
+    pageSize: number;
+  }
+
+
+  export const generateSerialNumber = (index: number, pageInfo: PaginationInfo): number => {
+    const { currentPage, pageSize } = pageInfo;
+    return (currentPage - 1) * pageSize + index + 1;
+  };
 
