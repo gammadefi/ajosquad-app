@@ -7,9 +7,17 @@ import FileUpload from '../FormInputs/FIleUpload2';
 import { useAuth } from '../../zustand/auth.store';
 import toast from 'react-hot-toast';
 import { guarantorServices } from '../../services/guarantor';
+import { AxiosResponse } from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
+
+const addGuarantor = async ({ payload }: { payload: any }) => {
+  const res: AxiosResponse = await guarantorServices.addGuarantor(payload)
+  return res.data
+};
 
 const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
   const [hasAddedGuarantor, setHasAddedGuarantor] = useState(false);
+  const queryClient = useQueryClient();
 
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -29,7 +37,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
       .trim()
       .required("*State is required"),
     zipCode: Yup.string()
-      .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
+      .matches(/^\d{6}$/, 'ZIP code must be exactly 6 digits')
       .required('ZIP code is required'),
     guarantorDocument: Yup.string()
       .required("*Guarantor Document is required"),
@@ -44,6 +52,12 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     zipCode: "",
     guarantorDocument: ""
   };
+
+  const mutation = useMutation(addGuarantor, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["guarantors"]);
+    },
+  });
 
   return (
     <>
@@ -71,12 +85,12 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       "user_id": useAuth.getState().profile.id
                     }
                     try {
-                      const res = await guarantorServices.addGuarantor(payload)
+                      const res = await mutation.mutateAsync({ payload });
                       if (res) {
-                        setHasAddedGuarantor(true)
+                        setHasAddedGuarantor(true);
                       }
                     } catch (error) {
-                      toast.error("Failed to upload guarantor")
+                      toast.error("Failed to add guarantor")
                       // closeModal();
                     }
                   }
@@ -117,7 +131,10 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                           placeholder='Zip Code'
                         />
                       </div>
-                      <FileUpload name='guarantorDocument' fileType='document' />
+                      <div className='space-y-1'>
+                        <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
+                        <FileUpload name='guarantorDocument' fileType='document' />
+                      </div>
                       <div className='mt-5 flex justify-between'>
                         <button
                           onClick={closeModal}

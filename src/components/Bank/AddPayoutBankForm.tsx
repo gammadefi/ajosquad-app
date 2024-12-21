@@ -1,6 +1,5 @@
 import * as Yup from "yup";
 import { userServices } from '../../services/user';
-import { useAuth } from '../../zustand/auth.store';
 import { Form, Formik } from 'formik';
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
@@ -8,13 +7,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { AxiosResponse } from "axios";
 import { useMutation, useQueryClient } from "react-query";
+import { banks } from "../../utils/banks";
 
 const updateBankInformation = async ({ payload }: { payload: any }) => {
-  const res: AxiosResponse = await userServices.bank.createBank(useAuth.getState().profile.id, payload)
+  const res: AxiosResponse = await userServices.bank.createBank(payload)
   return res.data
 };
 
-const AddPayoutBankForm = () => {
+const AddPayoutBankForm = ({ closeModal }: { closeModal: () => void }) => {
   const [hasAddedBank, setHasAddedBank] = useState(false);
   const queryClient = useQueryClient()
 
@@ -46,7 +46,7 @@ const AddPayoutBankForm = () => {
 
   const mutation = useMutation(updateBankInformation, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["banks"]);
+      queryClient.invalidateQueries(["userBanks"]);
     },
   });
 
@@ -66,6 +66,7 @@ const AddPayoutBankForm = () => {
             </p>
             <button
               type='button'
+              onClick={closeModal}
               className='bg-primary w-full font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
             >
               Dismiss
@@ -104,14 +105,19 @@ const AddPayoutBankForm = () => {
                 }
               }}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, setValues }) => (
                 <Form className='flex flex-col gap-1.5'>
-                  <TextInput
-                    name='bankName'
-                    type='text'
-                    label="Select Bank*"
-                    placeholder='Select Bank'
-                  />
+                  <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
+                    <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
+                    <select onChange={(e) => setValues((prevValues) => ({ ...prevValues, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode || '' }))} name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                      <option value="">Select Bank</option>
+                      {
+                        banks.docs.map((bank: any) => (
+                          <option key={bank._id} value={bank.bankName}>{bank.bankName}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
                   <TextInput
                     name='accountName'
                     type='text'
@@ -121,6 +127,8 @@ const AddPayoutBankForm = () => {
                   <TextInput
                     name='institutionNumber'
                     type='text'
+                    readonly
+                    disabled
                     label="Institution Number*"
                     placeholder='Institution Number'
                   />

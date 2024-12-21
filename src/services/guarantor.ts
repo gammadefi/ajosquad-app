@@ -17,5 +17,9 @@ export const guarantorServices = {
   updateGuarantor: async(guarantorId: string, payload: any) =>{
     const response = await createApiClient().patch(guarantorApiRoutes.updateGuarantor(guarantorId), payload);
     return response.data;
+  },
+  deleteGuarantor: async(guarantorId: string) =>{
+    const response = await createApiClient().delete(guarantorApiRoutes.updateGuarantor(guarantorId));
+    return response.data;
   }
 }
