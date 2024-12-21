@@ -69,10 +69,10 @@ const BankCard = ({ id, accountName, bankName, accountNumber, institutionNumber,
         </div>
       </div>
       <Modal open={showEditBankInformationModal} onClick={() => setShowEditBankInformationModal(false)}>
-        <EditPayoutBankForm bankId={id} />
+        <EditPayoutBankForm bankId={id} closeModal={() => setShowEditBankInformationModal(false)} />
       </Modal>
       <Modal open={showDeleteBankModal} onClick={() => setShowDeleteBankModal(false)}>
-        <DeleteBank bankId={id} />
+        <DeleteBank bankId={id} closeModal={() => setShowDeleteBankModal(false)} />
       </Modal>
     </div>
   )

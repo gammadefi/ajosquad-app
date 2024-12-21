@@ -5,6 +5,7 @@ import { useRef, useState } from "react"
 import Modal from "../Modal/Modal"
 import UpdateGuarantorForm from "./UpdateGuarantorForm"
 import { convertToThumbnailUrl } from "../../utils/helpers"
+import DeleteGuarantor from "./DeleteGuarantor"
 
 export type GuarantorCardProps = {
   id: string,
@@ -48,7 +49,7 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
             {
               showOptions && <div className='absolute -top-20 -left-20 flex flex-col gap-2 items-start bg-white pl-3 pr-14 py-3 rounded-md'>
                 <button onClick={() => setShowUpdateGuarantorInformationModal(true)}>Edit</button>
-                <button>Delete</button>
+                <button onClick={() => setShowDeleteGuarantorModal(true)}>Delete</button>
               </div>
             }
           </div>
@@ -57,9 +58,9 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
       <Modal open={showUpdateGuarantorInformationModal} onClick={() => setShowUpdateGuarantorInformationModal(false)}>
         <UpdateGuarantorForm closeModal={() => setShowUpdateGuarantorInformationModal(false)} guarantorId={id} />
       </Modal>
-      {/* <Modal open={showDeleteBankModal} onClick={() => setShowDeleteBankModal(false)}>
+      <Modal open={showDeleteGuarantorModal} onClick={() => setShowDeleteGuarantorModal(false)}>
         <DeleteGuarantor guarantorId={id} />
-      </Modal> */}
+      </Modal>
     </>
   )
 }

@@ -330,7 +330,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
 
   useEffect(() => {
     const fetchUserBanks = async () => {
-      const res: AxiosResponse = await userServices.bank.getAllBanks(useAuth.getState().profile.id);
+      const res: AxiosResponse = await userServices.bank.getAllBanks();
       console.log(res.data);
       setUserBanks(res.data)
     }
@@ -364,7 +364,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
                   transitNumber: values.transitNumber,
                   accountNumber: values.accountNumber
                 }
-                const res = await userServices.bank.createBank(useAuth.getState().profile.id, addBankPayload)
+                const res = await userServices.bank.createBank(addBankPayload)
                 if (res) {
                   const joinSquadPayload = {
                     ...formData,
@@ -396,7 +396,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
         >
           {({ isSubmitting, getFieldProps, setFieldValue, setValues }) => (
             <Form className='flex flex-col gap-1.5'>
-              <div className='flex flex-col  w-full text-xs md:text-sm lg:text-base'>
+              <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
                 <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
                 <select onChange={(e) => setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode })} name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
                   <option disabled>Select Bank</option>
