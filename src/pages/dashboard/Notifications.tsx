@@ -7,6 +7,7 @@ import { Pagination } from '../../components/Table/Table';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
 import { NotificationService } from '../../services/notification';
 import PageLoader from '../../components/spinner/PageLoader';
+import { fToNow } from '../../utils/formatTime';
 
 const Notifications = () => {
     const tabs = ["All", "Archived"]
@@ -14,9 +15,10 @@ const Notifications = () => {
     const [search, setSearch] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
 
-    const { data: Notifications, isLoading, refetch } = useFetchWithParams(
+    const { data: notifications, isLoading, refetch } = useFetchWithParams(
         ["query-all-notifications", {
-            // archived: activeTab && activeTab === "Archived"
+            archived: activeTab && activeTab === "Archived",
+            page: currentPage
         }],
         NotificationService.getNotifications,
         {
@@ -28,6 +30,8 @@ const Notifications = () => {
             refetchOnMount: true,
         }
     )
+
+    console.log(notifications)
 
     return (
         <div className='px-3  md:px-6'>
@@ -52,13 +56,16 @@ const Notifications = () => {
                 isLoading ? <PageLoader /> :
                     <>
                         <div className='py-6 divide-y'>
-                            <Notification isFavourite={false} />
+                            {
+                                notifications.data.length > 0 && notifications.data.map((notification: any, index: number) => <Notification data={notification} key={index} isFavourite={false} />)
+                            }
+                            {/* <Notification isFavourite={false} />
                             <Notification isFavourite={true} />
-                            <Notification isFavourite={false} />
+                            <Notification isFavourite={false} /> */}
 
                         </div>
                         <div className='flex justify-center md:justify-end'>
-                            <Pagination setPage={(page: any) => setCurrentPage(page)} page={currentPage} pageSize={10} totalRows={188} loading={false} currentLength={188} />
+                            <Pagination setPage={(page: any) => setCurrentPage(page)} page={currentPage} pageSize={10} totalRows={notifications.totalPages} loading={false} currentLength={188} />
                             {/* <Paginator  /> */}
                         </div>
                     </>
@@ -70,22 +77,22 @@ const Notifications = () => {
     )
 }
 
-const Notification = ({ isFavourite, }: { isFavourite: boolean }) => {
+const Notification = ({ isFavourite, data }: { isFavourite: boolean, data:any }) => {
     return (
         <div className='h-[44px] flex gap-1 items-center justify-between w-full'>
             <div className='flex gap-2 items-center'>
                 <input type='checkbox' className='h-4 w-4 ' />
                 <button>{
-                    isFavourite ? <GoStarFill size={18} color='#F8DC0B' /> : <GoStar size={18} />
+                    data.starred ? <GoStarFill size={18} color='#F8DC0B' /> : <GoStar size={18} />
                 }</button>
 
             </div>
-            <h3 className='font-semibold'>Welcome</h3>
+            <h3 className='font-semibold'>{data.header}</h3>
             <div >
-                <h3 className='truncate lg:whitespace-normal md:w-full lg:max-w-full max-w-40'>Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar  risus risus...</h3>
+                <h3 className='truncate lg:whitespace-normal md:w-full lg:max-w-full max-w-40'>{data.description}</h3>
             </div>
             <div className='flex gap-2 items-center'>
-                <h3 className='text-sm whitespace-nowrap'>Just Now</h3>
+                <h3 className='text-sm whitespace-nowrap'>{fToNow(data.createdAt)}</h3>
                 <button className='h-6 flex justify-center items-center w-6 rounded-full bg-[#FBE9E9] '>
                     <GoTrash color='#D42620' />
                 </button>

@@ -35,7 +35,7 @@ const Drawer = ({ isOpen, setIsOpen, hasHero }: INO) => {
 
                     <div
                         className={clsx(
-                            " py-8 transition-[padding] ",
+                            " py-8 relativetransition-[padding] ",
                             isCollapsed ? "" : "px-4 w-full"
                         )}
                     >
@@ -47,7 +47,28 @@ const Drawer = ({ isOpen, setIsOpen, hasHero }: INO) => {
                             )}
 
                         />
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            type="button"
+                            className="focus:outline-none px-1 py-1 border-black right-4 rounded-full border top-10 absolute ml-auto focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
                     </div>
+
                     <nav
                         id="Sidebar-nav"
                         onMouseEnter={() => {

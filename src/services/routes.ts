@@ -14,7 +14,8 @@ export const squadApiRoutes = {
   getSquad: (id: string) => `/ajosquad/squad/${id}`,
   createSquad: "/ajosquad/squad",
   joinSquad: (id: string) => `/ajosquad/squad/${id}/join`,
-  addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`
+  addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`,
+  connectBank : "/ajosquad/payments/connect-bank"
 }
 
 export const userApiRoutes = {

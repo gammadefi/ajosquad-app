@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import User from '../../icons/reusables/user'
 import { LuCalendarDays } from "react-icons/lu";
 import dayjs from 'dayjs'
@@ -9,6 +9,9 @@ import JoinSquadRegistrationFlow from './JoinSquadRegistrationFlow';
 import { useCADFormatter } from '../../hooks/useCADFormatter';
 import { formatStartDate } from '../../utils/formatTime';
 import UpdateSquadPositionFlow from './UpdateSquadPositionFlow';
+import CustomModal from '../Modal/CustomModal';
+import { useMutation } from 'react-query';
+import { squadServices } from '../../services/squad';
 
 dayjs.extend(advancedFormat)
 
@@ -32,8 +35,6 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
   const [openJoinSquadForm, setOpenJoinSquadForm] = useState<boolean>(false);
-
-  console.log(myPosition)
 
   const formattedPayoutAmount = useCADFormatter(payoutAmount);
   const formattedDate = dayjs(date).format('Do MMM, YYYY | h:mm A');
@@ -67,26 +68,28 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
             </div>
           </button>
         }
-       
+
       </div>
-      <Modal open={openModal} onClick={() => {
+      <CustomModal open={openModal} onClick={() => {
         setOpenModal(!openModal)
         setOpenJoinSquadForm(false)
         refetch()
 
       }}>
+        {
+          openJoinSquadForm ? <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} />
+        }
 
-        <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} />
-        
-      </Modal>
+
+      </CustomModal>
       <Modal open={openUpdateModal} onClick={() => {
         setOpenUpdateModal(!openUpdateModal)
         // setOpenJoinSquadForm(false)'
         refetch()
       }}>
 
-        <UpdateSquadPositionFlow information={information}  myPositions={myPosition} selecetedPosition={selectedPositions} squadId={id} />
-        
+        <UpdateSquadPositionFlow information={information} myPositions={myPosition} selecetedPosition={selectedPositions} squadId={id} />
+
       </Modal>
     </>
   )
@@ -96,10 +99,64 @@ export default SquadCard
 
 const ConnectBank = ({ squadType, onClick }: { squadType: string, onClick: () => void }) => {
   const [hasConnectedBank, setHasConnectedBank] = useState(false);
+  const [authorisationUrl, setAuthorisationUrl] = useState<any>(null); // [authorisationUrl]
+
+  const [connected, setConnected] = useState(localStorage.getItem('connectedGocardless'));
+
+  useEffect(() => {
+    const handleStorageChange = (event:any) => {
+      if (event.key === 'connectedGocardless') {
+        setConnected(event.newValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (connected === 'true') {
+      console.log('GoCardless connected successfully. Perform action here.');
+      // Add your success logic here
+      if(authorisationUrl !== "" ) {
+        setHasConnectedBank(true)
+        localStorage.removeItem("connectedGocardless")
+      }
+    } else if (connected === 'false') {
+      console.log('GoCardless connection failed. Perform action here.');
+      // Add your failure logic here
+    }
+  }, [connected]);
+
+  const handleConnectBank = useMutation(async () => {
+    const currentHost = window.location.origin; // Gets the current hostname (e.g., "https://ajosquad-app.vercel.app")
+    const basePath = "/squad/connect-gocardless"; // Common path for both URLs
+  
+    const payload = {
+      client_url: `${currentHost}${basePath}?status=success`,
+      exit_url: `${currentHost}${basePath}?status=failed`,
+    };
+  
+    return await squadServices.connectBank(payload);
+  },
+  {
+    onSuccess: (data) => {
+      console.log(data);
+      if(data.data.message === "User is already connected to GoCardless") {
+        setHasConnectedBank(true)
+      }
+      setAuthorisationUrl(data.data.authorizationUrl)
+    }
+  }
+
+);
+
   return (
     <>
       {
-        !hasConnectedBank ?
+        !hasConnectedBank && !authorisationUrl ?
           <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
             <img src="./Bank.svg" alt="Email verified" className='w-52 h-52' />
             <div>
@@ -113,7 +170,7 @@ const ConnectBank = ({ squadType, onClick }: { squadType: string, onClick: () =>
             <button
               type='submit'
               onClick={() => {
-                setHasConnectedBank(true);
+                handleConnectBank.mutate()
               }}
               className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
             >
@@ -122,24 +179,34 @@ const ConnectBank = ({ squadType, onClick }: { squadType: string, onClick: () =>
             </button>
           </div>
           :
-          <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
-            <img src="./Bank.svg" alt="Email verified" className='w-52 h-52' />
-            <div>
-              <h3 className='font-bold text-2xl text-center'>
-                Bank Connected
-              </h3>
-            </div>
-            <p className='text-sm text-center'>
-              Bank connected to your account successfully, proceed to choose a position and complete the Squad joining process.
-            </p>
-            <button
-              onClick={() => onClick()}
-              className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
-            >
-              Proceed
-              <FaArrowRight />
-            </button>
+
+          !hasConnectedBank && authorisationUrl ? <div className='relative md:min-w-[600px] min-w-[300px] w-full h-[100vh]'>
+            <iframe
+              src={authorisationUrl}
+              title="Connect to GoCardless"
+              className="w-full h-full border-0"
+              allow="fullscreen"
+            ></iframe>
           </div>
+            :
+            <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
+              <img src="./Bank.svg" alt="Email verified" className='w-52 h-52' />
+              <div>
+                <h3 className='font-bold text-2xl text-center'>
+                  Bank Connected
+                </h3>
+              </div>
+              <p className='text-sm text-center'>
+                Bank connected to your account successfully, proceed to choose a position and complete the Squad joining process.
+              </p>
+              <button
+                onClick={() => onClick()}
+                className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
+              >
+                Proceed
+                <FaArrowRight />
+              </button>
+            </div>
       }
     </>
   )

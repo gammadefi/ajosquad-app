@@ -2,6 +2,7 @@ import { SideItem } from "../../../containers/dashboard/Sidebar";
 import { DashboardWrapper } from "../../../containers/dashboard/DashboardWrapper";
 import { LayoutOutlet } from "../../../containers/dashboard/LayoutWrapper";
 import { useAuth } from "../../../zustand/auth.store";
+import { useLocation } from "react-router-dom";
 
 type Route = { name: string; path: string; iconName: string };
 
@@ -50,14 +51,28 @@ export const sidebarEnd: Record<string, Route[]> = {
 
 export const DashboardLayout = () => {
   const role = useAuth((s) => s.role) as keyof typeof sidebar;
+  const { pathname } = useLocation()
+
 
   console.log(role)
 
   const routes = sidebar[role]?.concat(sidebarMid[role], sidebarEnd[role]) || [];
 
+  const specialROutes = [
+    "/squad/connect-gocardless"
+  ]
+
   return (
-    <DashboardWrapper sidebar={routes}>
-      <LayoutOutlet />
-    </DashboardWrapper>
+    <>
+      {
+        specialROutes.includes(pathname) ?
+          <LayoutOutlet />
+          :
+          <DashboardWrapper sidebar={routes}>
+            <LayoutOutlet />
+          </DashboardWrapper>
+      }
+    </>
+
   );
 };

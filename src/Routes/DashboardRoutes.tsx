@@ -30,6 +30,12 @@ export const AjosquadDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
+        path: "/squad/connect-gocardless"
+      },
+      () => import("../pages/dashboard/ConnectGoCardless")
+    ),
+    LazyRoute(
+      {
         path: "/payment",
       },
       () => import("../pages/dashboard/Payment")

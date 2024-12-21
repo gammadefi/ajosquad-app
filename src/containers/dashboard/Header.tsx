@@ -34,7 +34,7 @@ const DashboardHeader = ({ title = "" }: { title?: any }) => {
 
             {
               role === "USER" &&
-              <Link className="hidden md:block" to={"/helpdesk"} >
+              <Link className="hidden md:block" to={"/help"} >
                 <img src="/help_outline.svg" />
               </Link>
             }
