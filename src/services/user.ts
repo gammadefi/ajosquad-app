@@ -43,16 +43,24 @@ export const userServices = {
     }
   },
   bank: {
-    getAllBanks: async (userId: string) => {
-      const response = await createApiClient().get(userApiRoutes.bank.getAllBanks(userId));
+    getAllBanks: async () => {
+      const response = await createApiClient().get(userApiRoutes.bank.getAllBanks);
       return response.data;
     },
-    getBank: async (userId: string, bankId: string) => {
-      const response = await createApiClient().get(userApiRoutes.bank.getBank(userId, bankId));
+    getBank: async (bankId: string) => {
+      const response = await createApiClient().get(userApiRoutes.bank.getBank(bankId));
       return response.data;
     },
-    createBank: async (userId: string, payload: any) => {
-      const response = await createApiClient().post(userApiRoutes.bank.createBank(userId), payload);
+    createBank: async (payload: any) => {
+      const response = await createApiClient().post(userApiRoutes.bank.createBank, payload);
+      return response.data;
+    },
+    updateBank: async (bankId: string, payload: any) => {
+      const response = await createApiClient().patch(userApiRoutes.bank.updateBank(bankId), payload);
+      return response.data;
+    },
+    deleteBank: async (bankId: string) => {
+      const response = await createApiClient().delete(userApiRoutes.bank.deleteBank(bankId));
       return response.data;
     }
   },
@@ -62,15 +70,15 @@ export const userServices = {
       return response.data;
     },
     getGuarantor: async (userId: string, guarantorId: string) => {
-      const response = await createApiClient().get(userApiRoutes.guarantor.getGuarantor(userId, guarantorId));
+      const response = await createApiClient().get(userApiRoutes.guarantor.getGuarantor(guarantorId));
       return response.data;
     },
     addGuarantor: async (userId: string, payload: any) => {
-      const response = await createApiClient().post(userApiRoutes.guarantor.addGuarantor(userId), payload);
+      const response = await createApiClient().post(userApiRoutes.guarantor.addGuarantor, payload);
       return response.data;
     },
     updateGuarantor: async (userId: string, guarantorId: string, payload: any) => {
-      const response = await createApiClient().patch(userApiRoutes.guarantor.updateGuarantor(userId, guarantorId), payload);
+      const response = await createApiClient().patch(userApiRoutes.guarantor.updateGuarantor(guarantorId), payload);
       return response.data;
     }
   }

@@ -22,7 +22,7 @@ const SearchInput = ({
 
 	return (
 		<div
-			className="h-10 hidden relative border-[#C8CCD0]  bg-[#F5F5F9] px-3 border-[0.4px] shadow-sm rounded-md md:w-full md:flex items-center"
+			className="h-10 relative border-[#C8CCD0]  bg-[#F5F5F9] px-3 border-[0.4px] shadow-sm rounded-md md:w-full md:flex items-center"
 		>
 			<img
 				src="/icons/close.svg"

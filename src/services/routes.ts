@@ -14,7 +14,8 @@ export const squadApiRoutes = {
   getSquad: (id: string) => `/ajosquad/squad/${id}`,
   createSquad: "/ajosquad/squad",
   joinSquad: (id: string) => `/ajosquad/squad/${id}/join`,
-  addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`
+  addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`,
+  connectBank : "/ajosquad/payments/connect-bank"
 }
 
 export const userApiRoutes = {
@@ -33,15 +34,18 @@ export const userApiRoutes = {
     updateKYC: (userId: string) => `/user/${userId}/kyc`
   },
   bank: {
-    getAllBanks: (userId: string) => `/user/${userId}/bank`,
-    getBank: (userId: string, bankId: string) => `/user/${userId}/bank/${bankId}`,
-    createBank: (userId: string) => `/user/${userId}/bank`,
+    getAllBanks: "/ajosquad/bank",
+    getBank: (bankId: string) => `/ajosquad/bank/${bankId}`,
+    createBank: "/ajosquad/bank",
+    updateBank: (bankId: string) => `/ajosquad/bank/${bankId}`,
+    deleteBank: (bankId: string) => `/ajosquad/bank/${bankId}`
   },
   guarantor: {
     getAllGuarantors: (userId: string) => `/guarantor/query?id=${userId}`,
-    getGuarantor: (userId: string, guarantorId: string) => `/guarantor/${guarantorId}`,
-    addGuarantor: (userId: string) => `/user/${userId}/guarantor`,
-    updateGuarantor: (userId: string, guarantorId: string) => `/user/${userId}/guarantor/${guarantorId}`
+    getGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`,
+    addGuarantor: "/guarantor",
+    updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`,
+    deleteGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
   }
 }
 

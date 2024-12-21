@@ -2,21 +2,19 @@ import { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import * as Yup from "yup";
 import { userServices } from '../../services/user';
-import { useAuth } from '../../zustand/auth.store';
 import { Form, Formik } from 'formik';
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import { useMutation, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
-import { guarantorServices } from '../../services/guarantor';
+import { banks } from '../../utils/banks';
 
 const updateBankInformation = async ({ bankId, payload }: { bankId: string, payload: any }) => {
-  // TODO: api call to update bank info 
-  const res: AxiosResponse = await guarantorServices.updateGuarantor(bankId, payload)
+  const res: AxiosResponse = await userServices.bank.updateBank(bankId, payload)
   return res.data
 };
 
-const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
+const EditPayoutBankForm = ({ bankId, closeModal }: { bankId: string, closeModal: () => void }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const [hasUpdated, setHasUpdated] = useState(false);
   const queryClient = useQueryClient();
@@ -41,7 +39,7 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
 
   useEffect(() => {
     const fetchUserBank = async () => {
-      const res: AxiosResponse = await userServices.bank.getBank(useAuth.getState().profile.id, bankId);
+      const res: AxiosResponse = await userServices.bank.getBank(bankId);
       const userBankInformation = res.data;
       setInitialValues({
         bankName: userBankInformation.bankName || "",
@@ -56,7 +54,7 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
 
   const mutation = useMutation(updateBankInformation, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["banks"]);
+      queryClient.invalidateQueries(["userBanks"]);
     },
   });
 
@@ -84,6 +82,7 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
             </p>
             <button
               type='button'
+              onClick={closeModal}
               className='bg-primary w-full font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
             >
               Dismiss
@@ -102,6 +101,7 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={async (values) => {
+                console.log(values)
                 if (values) {
                   const payload = {
                     bankName: values.bankName,
@@ -116,19 +116,24 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
                       setHasUpdated(true);
                     }
                   } catch (error) {
-                    toast.error("Failed to update guarantor")
+                    toast.error("Failed to update user bank details")
                   }
                 }
               }}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, setValues }) => (
                 <Form className='flex flex-col gap-1.5'>
-                  <TextInput
-                    name='bankName'
-                    type='text'
-                    label="Select Bank*"
-                    placeholder='Select Bank'
-                  />
+                  <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
+                    <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
+                    <select defaultValue={initialValues.bankName} name='bankName' onChange={(e) => setValues((prevValues: any) => ({ ...prevValues, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode || '' }))} className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                      <option disabled value="">Select Bank</option>
+                      {
+                        banks.docs.map((bank: any) => (
+                          <option key={bank._id} value={bank.bankName}>{bank.bankName}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
                   <TextInput
                     name='accountName'
                     type='text'
@@ -138,6 +143,8 @@ const EditPayoutBankForm = ({ bankId }: { bankId: string }) => {
                   <TextInput
                     name='institutionNumber'
                     type='text'
+                    readonly
+                    disabled
                     label="Institution Number*"
                     placeholder='Institution Number'
                   />

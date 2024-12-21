@@ -48,6 +48,7 @@ const MemberDetails = () => {
             </div>
 
             <TabBar2
+                isDashboard={false}
                 tabs={tabs}
                 activeTab={activeTab}
             />

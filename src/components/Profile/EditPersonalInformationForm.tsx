@@ -16,43 +16,45 @@ const fetchUser = async () => {
   return res.data;
 };
 
-const EditPersonalInformationForm = ({onClose} : {onClose : () => void}) => {
+const validationSchema = Yup.object({
+  firstName: Yup.string()
+    .trim()
+    .required("*First Name is required"),
+  lastName: Yup.string()
+    .trim()
+    .required("*Last Name is required"),
+  email_address: Yup.string()
+    .trim()
+    .email("*Email must be a valid address")
+    .required("*Email is required"),
+  homeAddress: Yup.string()
+    .trim()
+    .required("*Home Address is required"),
+  phoneNumber: Yup.string()
+    .trim()
+    .required('Phone number is required'),
+  city: Yup.string()
+    .trim()
+    .required("*City is required"),
+  state: Yup.string()
+    .trim()
+    .required("*State is required"),
+  zipCode: Yup.string()
+    .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
+    .required('ZIP code is required'),
+});
+
+const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const profile = useAuth((s) => s.profile)
+  const queryClient = useQueryClient();
   const [hasUpdated, setHasUpdated] = useState(false);
   const { setUserProfile } = useAuth()
   const { data: userData, isLoading, error } = useQuery(['user'], fetchUser);
 
-  const validationSchema = Yup.object({
-    firstName: Yup.string()
-      .trim()
-      .required("*First Name is required"),
-    lastName: Yup.string()
-      .trim()
-      .required("*Last Name is required"),
-    email_address: Yup.string()
-      .trim()
-      .email("*Email must be a valid address")
-      .required("*Email is required"),
-    homeAddress: Yup.string()
-      .trim()
-      .required("*Home Address is required"),
-    phoneNumber: Yup.string()
-      .trim()
-      .required('Phone number is required'),
-    city: Yup.string()
-      .trim()
-      .required("*City is required"),
-    state: Yup.string()
-      .trim()
-      .required("*State is required"),
-    zipCode: Yup.string()
-      .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
-      .required('ZIP code is required'),
-  });
 
   useEffect(() => {
-    const fetchUserBank = async () => {
+    const fetchUserData = async () => {
 
       setInitialValues({
         firstName: userData.firstName || "",
@@ -65,7 +67,7 @@ const EditPersonalInformationForm = ({onClose} : {onClose : () => void}) => {
         zipCode: userData.zipCode || ""
       })
     }
-    fetchUserBank();
+    fetchUserData();
   }, [])
 
   const mutation = useMutation(
@@ -73,10 +75,8 @@ const EditPersonalInformationForm = ({onClose} : {onClose : () => void}) => {
       return userServices.user.updateUserPersonalInfo(profile.id, values)
     }
     , {
-      onSuccess: (res:any) => {
-        // queryClient.invalidateQueries(["user"]);
-        setUserProfile(res.data)
-        setHasUpdated(true)
+      onSuccess: () => {
+        queryClient.invalidateQueries(["user"]);
       },
     });
 
@@ -92,7 +92,7 @@ const EditPersonalInformationForm = ({onClose} : {onClose : () => void}) => {
     <>
       {
         hasUpdated ?
-          <SuccessModal onClose={() => onClose() } title='Personal' />
+          <SuccessModal onClose={() => onClose()} title='Personal' />
           :
           <div className='md:w-[600px]'>
             <h2 className='text-3xl font-semibold'>Edit Personal Information</h2>
@@ -101,7 +101,15 @@ const EditPersonalInformationForm = ({onClose} : {onClose : () => void}) => {
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={async (values) => {
-                  mutation.mutate(values)
+                  try {
+                    const res = await mutation.mutateAsync(values);
+                    if (res) {
+                      setUserProfile(res.data);
+                      setHasUpdated(true);
+                    }
+                  } catch (error) {
+                    toast.error("An error occurred")
+                  }
                 }}
               >
                 {({ isSubmitting }) => {

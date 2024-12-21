@@ -8,6 +8,8 @@ import React, {
 
 import { RouteObject } from "react-router-dom";
 
+import axios from 'axios';
+
 export const LazyRoute = (
   obj: RouteObject,
   factory: () => Promise<{ default: React.ComponentType<any> }>
@@ -77,72 +79,101 @@ export const convertToThumbnailUrl = (
   // Construct the transformed URL
   return `${baseUrl}/upload/f_${format},w_${width}/${resource}`;
 };
-          
-          
-  export const isJsonString = (value: string): boolean => {
-    
-    try {
-    
-      const parsed = JSON.parse(value);
-    
-      return typeof parsed === 'object' && parsed !== null;
-    
-    } catch (error) {
-    
-      return false;
-    
-    }
-    
+
+export const getFileSize = async (url: string): Promise<string> => {
+  try {
+    const response = await axios.head(url);
+    const contentLength = response.headers['content-length'];
+    const sizeInBytes = parseInt(contentLength, 10);
+    const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+    return sizeInKB;
+  } catch (error) {
+    console.error('Error fetching file size:', error);
+    throw error;
   }
-  
-  export const isEmpty = (value: any) =>
-    
-    value === undefined ||
-    
-    value === null ||
-    
-    (typeof value === "object" && Object.keys(value).length === 0) ||
-    
-    (typeof value === "string" && value.trim().length === 0) ||
-    
-    (typeof value === "object" && value.toString().length === 0);
-  
-    
-  export const trimObject = (obj: any) => {
-    
-    for (const propName in obj) {
-      
-      if (isEmpty(obj[propName])) {
-      
-        delete obj[propName];
-      
-      }
-    
+}
+
+export const truncateString = (str: string, maxLength: number): string => {
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.slice(0, maxLength) + '...';
+}
+
+export const isJsonString = (value: string): boolean => {
+
+  try {
+
+    const parsed = JSON.parse(value);
+
+    return typeof parsed === 'object' && parsed !== null;
+
+  } catch (error) {
+
+    return false;
+
+  }
+
+}
+
+export const isEmpty = (value: any) =>
+
+  value === undefined ||
+
+  value === null ||
+
+  (typeof value === "object" && Object.keys(value).length === 0) ||
+
+  (typeof value === "string" && value.trim().length === 0) ||
+
+  (typeof value === "object" && value.toString().length === 0);
+
+
+export const trimObject = (obj: any) => {
+
+  for (const propName in obj) {
+
+    if (isEmpty(obj[propName])) {
+
+      delete obj[propName];
+
     }
-  
-    return obj;
-  
-  };
-  
-  export function paramsObjectToQueryString(payload: any) {
-  
-    const trimmedPayload = trimObject(payload);
-  
-    const paramPayloadToArr = Object.keys(trimmedPayload);
-  
-    if (!trimmedPayload || paramPayloadToArr.length < 1) return "";
-  
-    const queryString = paramPayloadToArr.reduce((acc, element, index, array) => {
-  
-      acc = `${array[0] === element ? "?" : ""}${acc}${element}=${trimmedPayload[element]
-  
+
+  }
+  return obj;
+
+};
+
+export function paramsObjectToQueryString(payload: any) {
+
+  const trimmedPayload = trimObject(payload);
+
+  const paramPayloadToArr = Object.keys(trimmedPayload);
+
+  if (!trimmedPayload || paramPayloadToArr.length < 1) return "";
+
+  const queryString = paramPayloadToArr.reduce((acc, element, index, array) => {
+
+    acc = `${array[0] === element ? "?" : ""}${acc}${element}=${trimmedPayload[element]
+
       }${array[array.length - 1] !== element ? "&" : ""}`;
-  
-      return acc;
-  
-    }, "");
-  
-    return queryString;
-  
+
+    return acc;
+
+  }, "");
+
+  return queryString;
+
+}
+
+  interface PaginationInfo {
+    currentPage: number;
+    pageSize: number;
   }
+
+
+  export const generateSerialNumber = (index: number, pageInfo: PaginationInfo): number => {
+    const { currentPage, pageSize } = pageInfo;
+    return (currentPage - 1) * pageSize + index + 1;
+  };
 

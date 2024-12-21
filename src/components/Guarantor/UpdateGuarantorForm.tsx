@@ -4,11 +4,11 @@ import * as Yup from "yup";
 import TextInput from '../FormInputs/TextInput2';
 import { FaArrowRight } from 'react-icons/fa6';
 import FileUpload from '../FormInputs/FIleUpload2';
-import { useAuth } from '../../zustand/auth.store';
 import toast from 'react-hot-toast';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import { guarantorServices } from '../../services/guarantor';
+import { getFileSize, truncateString } from '../../utils/helpers';
 
 const updateGuarantor = async ({ guarantorId, payload }: { guarantorId: string, payload: any }) => {
   const res: AxiosResponse = await guarantorServices.updateGuarantor(guarantorId, payload)
@@ -17,6 +17,8 @@ const updateGuarantor = async ({ guarantorId, payload }: { guarantorId: string, 
 
 const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => void, guarantorId: string }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
+  const [fileSize, setFileSize] = useState<string>('');
+  const [showFileUploadInput, setShowFileUploadInput] = useState(false);
   const [hasUpdatedGuarantor, setHasUpdatedGuarantor] = useState(false);
   const queryClient = useQueryClient();
 
@@ -57,6 +59,9 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
         zipCode: guarantorInformation.zipCode || "",
         guarantorDocument: guarantorInformation.document_url || ""
       })
+
+      const res2 = await getFileSize(guarantorInformation.document_url);
+      setFileSize(res2);
     }
     fetchUserBank();
   }, [])
@@ -101,7 +106,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                     }
                     try {
                       const res = await mutation.mutateAsync({ guarantorId, payload });
-                      if(res) {
+                      if (res) {
                         setHasUpdatedGuarantor(true);
                       }
                     } catch (error) {
@@ -111,7 +116,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                   }
                 }}
               >
-                {({ isSubmitting }) => {
+                {({ values, isSubmitting }) => {
                   return (
                     <Form className='max-h-[500px] overflow-scroll flex flex-col gap-4 my-3'>
                       <TextInput
@@ -149,7 +154,14 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                       </div>
                       <div className='space-y-1'>
                         <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
-                        <FileUpload name='guarantorDocument' fileType='document' />
+                        <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
+                          <p>{truncateString(initialValues.guarantorDocument, 30)} {fileSize}Kb</p>
+                          <span onClick={() => setShowFileUploadInput(!showFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                        </div>
+                        {
+                          showFileUploadInput &&
+                          <FileUpload name='guarantorDocument' fileType='document' />
+                        }
                       </div>
                       <div className='mt-5 flex justify-between'>
                         <button

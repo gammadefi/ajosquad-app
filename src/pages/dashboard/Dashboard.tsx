@@ -13,10 +13,43 @@ import { Table } from '../../components/Table/TableTwo';
 import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
 import SearchInput from '../../components/FormInputs/SearchInput';
+import useFetchWithParams from '../../hooks/useFetchWithParams';
+import { useLocation } from 'react-router-dom';
+import { squadServices } from '../../services/squad';
+import TabBar2 from '../../components/Tab/TabBar2';
+import { BsChevronDown } from 'react-icons/bs';
+import SquadCard from '../../components/Squad/SquadCard';
+import dayjs from 'dayjs';
 
 const Dashboard = () => {
-  const [kycVerified, setKycVerified] = React.useState(true)
-  const [activeSquad, setActiveSquad] = React.useState(true)
+  const [kycVerified, setKycVerified] = React.useState(true);
+  const [activeSquad, setActiveSquad] = React.useState(true);
+  const [showBrassSquad, setShowBrassSquad] = React.useState(false);
+  const [showBronzeSquad, setShowBronzeSquad] = React.useState(false);
+  const [showSilverSquad, setShowSilverSquad] = React.useState(false);
+  const [showGoldSquad, setShowGoldSquad] = React.useState(false);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const activeTab = searchParams.get("activeTab") || "upcoming";
+  const profile = useAuth((s) => s.profile);
+
+
+  const { data: squads, isLoading, refetch } = useFetchWithParams(
+    ["query-all-squads", {
+      status: activeTab == "pending" ? "upcoming" : activeTab.toLowerCase()
+    }],
+    squadServices.getAllSquads,
+    {
+      onSuccess: (data: any) => {
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+  console.log(squads)
 
   const allData: any = {
     "24h": {
@@ -88,6 +121,10 @@ const Dashboard = () => {
   // Get data for the selected range
   const { xAxisLabel, seriesData } = allData[selectedRange];
 
+  function hasUser(squadData: any, userId: string): boolean {
+    return squadData.squadMembers.some((member: any) => member.userId === userId);
+  }
+
   return (
 
 
@@ -115,7 +152,7 @@ const Dashboard = () => {
 
             </div>
 
-            <div className='grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+            <div className='lg:h-[630px] grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
               <div className='col-span-3'>
                 <GraphWrapper graphTitle="Overall Sale">
                   <div className='flex mb-4 justify-between items-center gap-3'>
@@ -147,10 +184,174 @@ const Dashboard = () => {
                   />
                 </GraphWrapper>
               </div>
-              <div className='col-span-3 w-full md:col-span-3 lg:col-span-2 border-[0.4px] rounded-[10px] shadow'>
-                <div className='border-b h-[52px] py-3 px-5 flex items-center '>
-                  <h3 className='text-lg font-semibold'>Squad</h3>
-
+              <div className='h-full overflow-y-scroll col-span-3 w-full md:col-span-3 lg:col-span-2 border-[0.4px] rounded-[10px] shadow'>
+                <div className='space-y-3'>
+                  <h3 className='border-b py-3 px-5 text-lg font-semibold'>Squad</h3>
+                  <div className='px-3 py-2 sticky top-0 bg-white'>
+                    <TabBar2
+                      tabs={[
+                        "Upcoming",
+                        "Active",
+                        "Completed",
+                        "Pending"
+                      ]}
+                      isDashboard={true}
+                      activeTab={activeTab}
+                    />
+                  </div>
+                  {
+                    isLoading &&
+                    <div className='mt-10 flex justify-center'>
+                      <img src="./logo.png" alt="" className='h-20 w-20' />
+                    </div>
+                  }
+                  <div className='px-3'>
+                    {
+                      squads &&
+                      <div className='space-y-2 pb-5'>
+                        <div className='flex flex-col gap-1.5'>
+                          <div onClick={() => setShowBrassSquad(!showBrassSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBrassSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
+                            <div className='flex gap-2 items-center'>
+                              <h3 className='text-lg'>Brass Squad</h3>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBrassSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                            </div>
+                            <BsChevronDown size={20} className={`transition-all duration-200 ${showBrassSquad && "rotate-180"}`} />
+                          </div>
+                          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showBrassSquad ? "max-h-screen" : "max-h-0"}`}>
+                            {
+                              squads.data.filter((squad: any) => squad.category === 'Brass').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                    ? squad.squadMembers.map((member: any) => member.position).flat()
+                                    : []}
+                                  hasJoinedSquad={
+                                    hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                              ))
+                            }
+                          </div>
+                        </div>
+                        <div className='flex flex-col gap-1.5'>
+                          <div onClick={() => setShowBronzeSquad(!showBronzeSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBronzeSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
+                            <div className='flex gap-2 items-center'>
+                              <h3 className='text-lg'>Bronze Squad</h3>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBronzeSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                            </div>
+                            <BsChevronDown size={20} className={`transition-all duration-200 ${showBronzeSquad && "rotate-180"}`} />
+                          </div>
+                          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showBronzeSquad ? "max-h-screen" : "max-h-0"}`}>
+                            {
+                              squads.data.filter((squad: any) => squad.category === 'Bronze').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                    ? squad.squadMembers.map((member: any) => member.position).flat()
+                                    : []}
+                                  hasJoinedSquad={
+                                    hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                              ))
+                            }
+                          </div>
+                        </div>
+                        <div className='flex flex-col gap-1.5'>
+                          <div onClick={() => setShowSilverSquad(!showSilverSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showSilverSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
+                            <div className='flex gap-2 items-center'>
+                              <h3 className='text-lg'>Silver Squad</h3>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showSilverSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                            </div>
+                            <BsChevronDown size={20} className={`transition-all duration-200 ${showSilverSquad && "rotate-180"}`} />
+                          </div>
+                          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showSilverSquad ? "max-h-screen" : "max-h-0"}`}>
+                            {
+                              squads.data.filter((squad: any) => squad.category === 'Silver').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                    ? squad.squadMembers.map((member: any) => member.position).flat()
+                                    : []}
+                                  hasJoinedSquad={
+                                    hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                              ))
+                            }
+                          </div>
+                        </div>
+                        <div className='flex flex-col gap-1.5'>
+                          <div onClick={() => setShowGoldSquad(!showGoldSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showGoldSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
+                            <div className='flex gap-2 items-center'>
+                              <h3 className='text-lg'>Gold Squad</h3>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showGoldSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                            </div>
+                            <BsChevronDown size={20} className={`transition-all duration-200 ${showGoldSquad && "rotate-180"}`} />
+                          </div>
+                          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showGoldSquad ? "max-h-screen" : "max-h-0"}`}>
+                            {
+                              squads.data.filter((squad: any) => squad.category === 'Gold').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                    ? squad.squadMembers.map((member: any) => member.position).flat()
+                                    : []}
+                                  hasJoinedSquad={
+                                    hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                              ))
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
                 </div>
 
               </div>
@@ -165,10 +366,7 @@ const Dashboard = () => {
                   <SearchInput placeholder='Search...' />
                   <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
                 </div>
-
-
               </div>
-
               {
                 mockData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
                   data={mockData.data}
@@ -183,8 +381,6 @@ const Dashboard = () => {
 
 
             </div>
-
-
           </div>
       }
     </div>
