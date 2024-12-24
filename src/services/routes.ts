@@ -15,7 +15,12 @@ export const squadApiRoutes = {
   createSquad: "/ajosquad/squad",
   joinSquad: (id: string) => `/ajosquad/squad/${id}/join`,
   addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`,
-  connectBank : "/ajosquad/payments/connect-bank"
+  connectBank : "/ajosquad/payments/connect-bank",
+  getSquadStats: "/ajosquad/squad/stats",
+  getSquadStatsByStatus: (status: string) => `/ajosquad/squad/stats/status?status=${status}`,
+  getSquadMembers: "/ajosquad/squad/squadmembers",
+  getUserSquads: (id: string) =>  `/ajosquad/squad/user/${id}`,
+
 }
 
 export const userApiRoutes = {
