@@ -6,9 +6,30 @@ import { InfoCard } from '../../../components/InfoCard/InfoCard2';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { useQuery } from 'react-query';
+import { squadServices } from '../../../services/squad';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import PageLoader from '../../../components/spinner/PageLoader';
 
 const CompletedSquad = () => {
     const navigate = useNavigate()
+
+    const [currentPage, setCurrentPage] = React.useState(1)
+    const { data: stats, isLoading, error } = useQuery(['admin-squad-stats-upcoming'], () => squadServices.getSquadStatsByStatus("active"));
+
+    const { data: squads, isLoading: isLoadingSquads } = useFetchWithParams([`query-all-completed-squads`,
+        {
+            status: "active",
+            page: currentPage
+        }],
+        squadServices.getAllSquads,
+        {
+            onSuccess: (data: any) => {
+                console.log(data)
+            }
+        })
+
+
     const columns = [
         {
             header: "S/N",
@@ -46,21 +67,21 @@ const CompletedSquad = () => {
                 <div>
                     <h3 className='text-base md:text-xl font-semibold'>Completed Squad</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                    You can view all completed squad here, its transaction record and its member.
+                        You can view all completed squad here, its transaction record and its member.
                     </p>
                 </div>
-              
+
 
 
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard header="Total Completed Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Brass Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Bronze Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Silver Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Gold Squad" iconName='tick-square' value="50" />
-                
+                <InfoCard isLoading={isLoading} header="Total Active Squad" iconName='tick-square' value={stats && stats.data.total} />
+                <InfoCard isLoading={isLoading} header="Brass Squad" iconName='tick-square' value={stats && stats.data.brass} />
+                <InfoCard isLoading={isLoading} header="Bronze Squad" iconName='tick-square' value={stats && stats.data.bronze} />
+                <InfoCard isLoading={isLoading} header="Silver Squad" iconName='tick-square' value={stats && stats.data.silver} />
+                <InfoCard isLoading={isLoading} header="Gold Squad" iconName='tick-square' value={stats && stats.data.gold} />
+
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
@@ -77,20 +98,27 @@ const CompletedSquad = () => {
 
                 </div>
 
-                
-            {
-                mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
-                 <Table
-                    clickRowAction={(row:any) => navigate(`/squad/completed-squad/${row.id}`) }
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
 
-                />
-            }
+                {
+                   isLoadingSquads ? <PageLoader /> :
+                   squads && squads.data?.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                        <Table
+                            clickRowAction={(row: any) => navigate(`/squad/completed-squad/${row.id}`)}
+                            data={squads && squads?.data}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                                {
+                                    page: currentPage,
+                                    setPage: setCurrentPage,
+                                    pageSize: 10,
+                                    totalRows: squads?.total,
+
+                                }
+                            }
+
+                        />
+                }
 
 
             </div>

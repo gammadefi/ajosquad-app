@@ -8,9 +8,15 @@ import { mockData } from '../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { squadServices } from '../../../services/squad';
 
 const Index = () => {
     const navigate = useNavigate()
+      const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats );
+    
+      
+    
     const columns = [
         {
             header: "S/N",
@@ -41,6 +47,8 @@ const Index = () => {
             view: (row: any) => <Label variant="success" >{row?.status}</Label>,
         },
     ];
+
+    console.log(isLoading)
     return (
         <div className='px-3  md:px-6'>
             <div className='flex flex-wrap justify-between items-center'>
@@ -56,31 +64,31 @@ const Index = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard header="Squad Member" iconName='people' action={{
+                <InfoCard header="Squad Member" iconName='people' isLoading={isLoading} action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/squad/squad-member")
                     }
-                }} value="50" />
-                <InfoCard header="Completed Squad" iconName='tick-square' action={{
+                }} value={stats && stats.data.inactiveMembers + stats.data.activeMembers } />
+                <InfoCard header="Completed Squad" iconName='tick-square' isLoading={isLoading} action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/squad/completed-squad")
 
                     }
-                }} value="50" />
-                <InfoCard header="Active Squad" iconName='activity' action={{
+                }} value={stats && stats.data.completedSquads.toString() } />
+                <InfoCard header="Active Squad" iconName='activity' isLoading={isLoading} action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/squad/active-squad")
                     }
-                }} value="50" />
-                <InfoCard header="Upcoming Squad" iconName='timer' action={{
+                }} value={stats && stats.data.activeSquads.toString() } />
+                <InfoCard header="Upcoming Squad" iconName='timer' isLoading={isLoading} action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/squad/upcoming-squad")
                     }
-                }} value="50" />
+                }} value={stats && stats.data.upcomingSquads.toString() } />
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
@@ -114,6 +122,8 @@ const Index = () => {
             </div>
         </div>
     )
+
+
 }
 
 export default Index

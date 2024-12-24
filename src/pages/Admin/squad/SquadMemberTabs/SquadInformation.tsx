@@ -3,8 +3,25 @@ import { Label } from '../../../../components/Label/Label';
 import { mockData } from '../../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../../components/Table/Table';
 import SearchInput from '../../../../components/FormInputs/SearchInput';
+import useFetchWithParams from '../../../../hooks/useFetchWithParams';
+import { squadServices } from '../../../../services/squad';
+import { useParams } from 'react-router-dom';
 
 const SquadInformation = () => {
+    const [currentPage, setCurrentPage] = React.useState(1)
+    const {id} : any = useParams()
+
+    useFetchWithParams([`query-all-user-squads`,
+        {
+            page: currentPage
+        }],
+        squadServices.getUserSquad(id),
+        {
+            onSuccess: (data: any) => {
+                console.log(data)
+            }
+        })
+
     const columns = [
         {
             header: "S/N",

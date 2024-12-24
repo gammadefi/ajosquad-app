@@ -3,6 +3,7 @@ import React from "react";
 import {
   IsPosOrNeg,
 } from "../../utils/percentageUtil";
+import Spinner from "../spinner/Spinner";
 
 export interface InfoProps {
   header: string;
@@ -10,6 +11,7 @@ export interface InfoProps {
   percentage?: string;
   className?: string;
   iconName?: string;
+  isLoading?: boolean;
   iconBg?: "#470E81" | "#FCB706" | "#169D1B" | "#9B8442" | "#A077E6" | "#F03738",
   onfilterChange?: (e: any) => void,
   action?: {
@@ -26,6 +28,7 @@ export const InfoCard = ({
   iconName,
   iconBg,
   action,
+  isLoading=true
 
 
 }: InfoProps) => {
@@ -40,7 +43,7 @@ export const InfoCard = ({
       </div>
 
       <div className='flex items-center justify-between'>
-        {value && <h3 className='text-xl text-black font-semibold'>{value}</h3>}
+        {isLoading ? <Spinner color="black" width={10} height={10} />  : <h3 className='text-xl text-black font-semibold'>{value && value.toString()}</h3>}
 
         {
           action && (
