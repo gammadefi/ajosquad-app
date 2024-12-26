@@ -4,7 +4,6 @@ import { Button } from '../Button/Button';
 import { FaChevronDown } from 'react-icons/fa6';
 import { useSearchParams } from 'react-router-dom';
 
-
 interface FilterITF {
     onClear?: () => void;
     onFilter?: () => void;
@@ -20,16 +19,17 @@ const Filter: FunctionComponent<FilterITF> = ({
     open,
     filterBy,
     onClose = () => { } }) => {
-    const [status, setStatus] = useState("");
-    const [squad, setSquad] = useState("");
-    const [position, setPosition] = useState("");
+    const [searchParams] = useSearchParams();
+    const [status, setStatus] = useState(searchParams.get("status") || "");
+    const [squad, setSquad] = useState(searchParams.get("squad") || "");
+    const [position, setPosition] = useState(searchParams.get("position") || "");
     const [amount, setAmount] = useState({
-        minAmount: "",
-        maxAmount: ""
+        minAmount: searchParams.get("minAmount") || "",
+        maxAmount: searchParams.get("maxAmount") || ""
     })
     const [date, setDate] = useState({
-        startDate: "",
-        endDate: ""
+        startDate: searchParams.get("startDate") || "",
+        endDate: searchParams.get("endDate") || ""
     })
     const [showAmountFilter, setShowAmountFilter] = useState(false);
     const [showDateFilter, setShowDateFilter] = useState(false);
