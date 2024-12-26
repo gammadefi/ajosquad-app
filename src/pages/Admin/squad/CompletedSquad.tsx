@@ -15,11 +15,11 @@ const CompletedSquad = () => {
     const navigate = useNavigate()
 
     const [currentPage, setCurrentPage] = React.useState(1)
-    const { data: stats, isLoading, error } = useQuery(['admin-squad-stats-upcoming'], () => squadServices.getSquadStatsByStatus("active"));
+    const { data: stats, isLoading, error } = useQuery(['admin-squad-stats-completed'], () => squadServices.getSquadStatsByStatus("completed"));
 
     const { data: squads, isLoading: isLoadingSquads } = useFetchWithParams([`query-all-completed-squads`,
         {
-            status: "active",
+            status: "completed",
             page: currentPage
         }],
         squadServices.getAllSquads,

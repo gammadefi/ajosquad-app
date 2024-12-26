@@ -10,6 +10,7 @@ import Transaction from './SquadMemberTabs/Transaction'
 import { useQuery } from 'react-query'
 import { userServices } from '../../../services/user'
 import PageLoader from '../../../components/spinner/PageLoader'
+import GuarantorInformation from './SquadMemberTabs/GuarantorInformation'
 
 const SquadMemberDetails = () => {
     const profile = useAuth((s) => s.profile)
@@ -33,7 +34,7 @@ const SquadMemberDetails = () => {
             case tabs[2]:
                 return <Transaction />
             case tabs[3]:
-                return ""
+                return <GuarantorInformation />
             default:
                 return <Profile />
             // return <BioProfile />

@@ -75,7 +75,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
   if (!initialValues) {
     return (
       <div className='w-[350px] h-[400px] md:w-[600px] flex items-center justify-center'>
-        <img src="./logo.png" alt="" className='h-20 w-20' />
+        <img src="/logo.png" alt="" className='h-20 w-20' />
       </div>
     )
   }

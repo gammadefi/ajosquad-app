@@ -1,10 +1,11 @@
 import { createApiClient } from "../utils/api"
+import { paramsObjectToQueryString } from "../utils/helpers";
 import { guarantorApiRoutes } from "./routes"
 
 export const guarantorServices = {
-  getAllGuarantors: async() => {
-    const response = await createApiClient().get(guarantorApiRoutes.getAllGuarantors);
-    return response.data;
+  getAllGuarantors: async(payload?: any) => {
+    const response = await createApiClient().get(guarantorApiRoutes.getAllGuarantors + paramsObjectToQueryString(payload));
+    return response;
   },
   getGuarantor: async(guarantorId: string) => {
     const response = await createApiClient().get(guarantorApiRoutes.getGuarantor(guarantorId));

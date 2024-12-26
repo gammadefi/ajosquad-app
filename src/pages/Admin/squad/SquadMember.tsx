@@ -22,6 +22,7 @@ const SquadMember = () => {
 
     const { data: members, isLoading:isMembersLoading } = useFetchWithParams([`query-all-members`, {
         searchName: search,
+        page:currentPage
     }], squadServices.getSquadMembers, {
         onSuccess: (data: any) => {
             console.log(data)
@@ -98,7 +99,13 @@ const SquadMember = () => {
                         columns={columns}
                         loading={false}
                         pagination={
-                            mockData.pagination
+                            {
+                                page: currentPage,
+                                setPage: (page) => setCurrentPage(page),
+                                pageSize: 10,
+                                totalRows: members?.total,
+
+                            }
                         }
 
                     />

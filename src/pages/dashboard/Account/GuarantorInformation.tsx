@@ -5,14 +5,23 @@ import AddGuarantorForm from '../../../components/Guarantor/AddGuarantorForm';
 import { useQuery } from 'react-query';
 import GuarantorCard from '../../../components/Guarantor/GuarantorCard';
 import { guarantorServices } from '../../../services/guarantor';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
 
 const fetchGuarantors = async () => {
   const res = await guarantorServices.getAllGuarantors();
-  return res.guarantors;
+  return res.data.guarantors;
 };
 
 const GuarantorInformation = () => {
-  const { data: guarantors, isLoading, error } = useQuery(['guarantors'], fetchGuarantors);
+  const { data: guarantors, isLoading, error, refetch } = useFetchWithParams(['guarantors',
+    {
+
+    }
+  ], guarantorServices.getAllGuarantors, {
+    onSuccess: (data: any) => {
+      console.log(data)
+    }
+  });
 
   const [showAddGuarantorForm, setShowAddGuarantorForm] = useState(false);
 
@@ -41,10 +50,10 @@ const GuarantorInformation = () => {
             <p className='text-center my-5 font-medium'>Error fetching guarantors</p>
             :
             (
-              guarantors.length > 0 ?
+              guarantors.guarantors.length > 0 ?
                 <div className='my-5 place-content-center grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8'>
                   {
-                    guarantors.map((guarantor: any) => (
+                    guarantors.guarantors.map((guarantor: any) => (
                       <GuarantorCard
                         key={guarantor.id}
                         id={guarantor.id}
@@ -60,10 +69,13 @@ const GuarantorInformation = () => {
                 <p className='my-5'>No guarantors yet. Please add a guarantor</p>
             )
       }
-      <Modal open={showAddGuarantorForm} onClick={() => {
+      <Modal open={showAddGuarantorForm} onClick={async() => {
+       await refetch()
         setShowAddGuarantorForm(false)
+        
       }}>
-        <AddGuarantorForm closeModal={() => {
+        <AddGuarantorForm closeModal={async () => {
+          await refetch()
           setShowAddGuarantorForm(false)
         }
         } />

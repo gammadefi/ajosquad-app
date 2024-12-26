@@ -152,7 +152,7 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
     ),
     LazyRoute(
       {
-        path: "/user-management",
+        path: "/staff-management",
       },
       () => import("../pages/Admin/UserManagment")
     ),
