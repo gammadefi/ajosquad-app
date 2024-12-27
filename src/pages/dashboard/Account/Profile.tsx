@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { FaCamera } from "react-icons/fa6";
 import { PiPencilSimpleLine } from "react-icons/pi";
 import Modal from '../../../components/Modal/Modal';
-import EditPersonalInformationForm from '../../../components/Profile/EditPersonalInformationForm';
-import EditEmployerInformationForm from '../../../components/Profile/EditEmployerInformationForm';
+import EditPersonalInformationForm from '../../../components/Profile/user/EditPersonalInformationForm';
+import EditEmployerInformationForm from '../../../components/Profile/user/EditEmployerInformationForm';
 import { AxiosResponse } from 'axios';
 import { userServices } from '../../../services/user';
 import { useQuery } from 'react-query';

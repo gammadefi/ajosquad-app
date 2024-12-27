@@ -60,3 +60,7 @@ export const guarantorApiRoutes = {
   addGuarantor: "/guarantor",
   updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
 }
+
+export const adminApiRoutes = {
+  updateAdminInformation: "/admin/personal-info"
+}

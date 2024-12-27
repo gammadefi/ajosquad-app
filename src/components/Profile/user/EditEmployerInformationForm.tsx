@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import * as Yup from "yup";
 import { Form, Formik } from 'formik';
 import { FaArrowRight } from 'react-icons/fa6';
-import TextInput from '../FormInputs/TextInput2';
-import SuccessModal from './SuccessModal';
+import TextInput from '../../FormInputs/TextInput2';
+import SuccessModal from '../SuccessModal';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AxiosResponse } from 'axios';
-import { userServices } from '../../services/user';
-import { useAuth } from '../../zustand/auth.store';
+import { userServices } from '../../../services/user';
+import { useAuth } from '../../../zustand/auth.store';
 import toast from 'react-hot-toast';
 
 const validationSchema = Yup.object({

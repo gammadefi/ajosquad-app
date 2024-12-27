@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react'
 import * as Yup from "yup";
 import { Form, Formik } from 'formik';
 import { FaArrowRight } from 'react-icons/fa6';
-import TextInput from '../FormInputs/TextInput2';
-import SuccessModal from './SuccessModal';
-import { userServices } from '../../services/user';
+import TextInput from '../../FormInputs/TextInput2';
+import SuccessModal from '../SuccessModal';
+import { userServices } from '../../../services/user';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../zustand/auth.store';
+import { useAuth } from '../../../zustand/auth.store';
+import { adminServices } from '../../../services/admin';
 
 
-const fetchUser = async () => {
+const fetchAdminUser = async () => {
   const res: AxiosResponse = await userServices.user.getMe();
   return res.data;
 };
@@ -27,44 +28,26 @@ const validationSchema = Yup.object({
     .trim()
     .email("*Email must be a valid address")
     .required("*Email is required"),
-  homeAddress: Yup.string()
-    .trim()
-    .required("*Home Address is required"),
   phoneNumber: Yup.string()
     .trim()
-    .required('Phone number is required'),
-  city: Yup.string()
-    .trim()
-    .required("*City is required"),
-  state: Yup.string()
-    .trim()
-    .required("*State is required"),
-  zipCode: Yup.string()
-    .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
-    .required('ZIP code is required'),
+    .required('Phone number is required')
 });
 
-const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {
+const EditAdminInformationForm = ({ onClose }: { onClose: () => void }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
-  const profile = useAuth((s) => s.profile)
   const queryClient = useQueryClient();
   const [hasUpdated, setHasUpdated] = useState(false);
   const { setUserProfile } = useAuth()
-  const { data: userData, isLoading, error } = useQuery(['user'], fetchUser);
+  const { data: adminData } = useQuery(['adminUser'], fetchAdminUser);
 
 
   useEffect(() => {
     const fetchUserData = async () => {
-
       setInitialValues({
-        firstName: userData.firstName || "",
-        lastName: userData.lastName || "",
-        email_address: userData.email_address || "",
-        phoneNumber: userData.phoneNumber || "",
-        homeAddress: userData.homeAddress || "",
-        city: userData.city || "",
-        state: userData.state || "",
-        zipCode: userData.zipCode || ""
+        firstName: adminData.firstName || "",
+        lastName: adminData.lastName || "",
+        email_address: adminData.email_address || "",
+        phoneNumber: adminData.phoneNumber || ""
       })
     }
     fetchUserData();
@@ -72,11 +55,11 @@ const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {
 
   const mutation = useMutation(
     async (values: any) => {
-      return userServices.user.updateUserPersonalInfo(profile.id, values)
+      return adminServices.updateAdminInformation(values)
     }
     , {
       onSuccess: () => {
-        queryClient.invalidateQueries(["user"]);
+        queryClient.invalidateQueries(["adminUser"]);
       },
     });
 
@@ -92,7 +75,7 @@ const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {
     <>
       {
         hasUpdated ?
-          <SuccessModal onClose={() => onClose()} title='Personal' />
+          <SuccessModal onClose={() => onClose()} title='Profile' />
           :
           <div className='md:w-[600px]'>
             <h2 className='text-3xl font-semibold'>Edit Personal Information</h2>
@@ -134,31 +117,9 @@ const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {
                         placeholder='Email address'
                       />
                       <TextInput
-                        name='homeAddress'
-                        label="Home Address"
-                        placeholder='Home Address'
-                      />
-                      <TextInput
                         name='phoneNumber'
                         label="Phone Number"
                       />
-                      <div className='grid md:grid-cols-3 gap-3'>
-                        <TextInput
-                          name='city'
-                          label="City"
-                          placeholder='City'
-                        />
-                        <TextInput
-                          name='state'
-                          label="State"
-                          placeholder='State'
-                        />
-                        <TextInput
-                          name='zipCode'
-                          label="Zip Code"
-                          placeholder='Zip Code'
-                        />
-                      </div>
                       <div className='mt-5 flex justify-between'>
                         <button
                           type="button"
@@ -188,4 +149,4 @@ const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
-export default EditPersonalInformationForm
+export default EditAdminInformationForm
