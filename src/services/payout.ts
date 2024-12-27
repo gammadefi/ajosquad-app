@@ -8,5 +8,9 @@ export const PayoutService = {
         const response = await createApiClient().get(`ajosquad/payout${paramsObjectToQueryString(payload)}`);
         return response 
     
-    }
+    },
+    getTotalPayout: async (payload:any) => {     
+        const response = await createApiClient().get(`ajosquad/payout/total${paramsObjectToQueryString(payload)}`);
+        return response 
+    },
 }

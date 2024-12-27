@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [kycVerified, setKycVerified] = React.useState(true)
   const [activeSquad, setActiveSquad] = React.useState(true)
   const [showFilter, setShowFilter] = React.useState(false)
+  
 
   const allData: any = {
     "24h": {
