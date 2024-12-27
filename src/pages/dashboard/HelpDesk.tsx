@@ -1,9 +1,17 @@
 import { IoLogoWhatsapp } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
-import SearchInput from "../../components/FormInputs/SearchInput";
 import Accordion from "../../components/Accordion/Accordion";
+import { faqs } from "../../utils/faq";
+import { useMemo, useState } from "react";
 
 const HelpDesk = () => {
+  const [query, setQuery] = useState("");
+
+  const processedFaqs = useMemo(() => {
+    return [...faqs]
+      .filter(item => item.question.toLowerCase().includes(query.toLowerCase().trim()))
+  }, [query]);
+
   return (
     <main className='py-10 px-3 md:px-6 flex flex-col lg:flex-row lg:justify-between'>
       <div className="flex gap-5 flex-col md:flex-row lg:flex-col lg:w-2/5">
@@ -24,35 +32,17 @@ const HelpDesk = () => {
       <div className="lg:w-1/2 space-y-5">
         <h2 className="font-bold text-[#2B2C34] text-xl">Frequently Asked Questions (FAQs)</h2>
         <div className="flex gap-4 items-center py-2 pl-3 pr-5 rounded-lg border border-[#C8CCD0]">
-          <input type="text" placeholder="Search" className="p-1 w-full focus:outline-none" />
+          <input type="text" placeholder="Search"  value={query}
+        onChange={(e) => setQuery(e.target.value)} className="p-1 w-full focus:outline-none" />
           <button>
             <CiSearch size={24} />
           </button>
         </div>
-        <Accordion
-          title="What is Ajosquad?"
-          content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
-        />
-        <Accordion
-          title="What is Ajosquad?"
-          content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
-        />
-        <Accordion
-          title="What is Ajosquad?"
-          content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
-        />
-        <Accordion
-          title="What is Ajosquad?"
-          content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
-        />
-        <Accordion
-          title="What is Ajosquad?"
-          content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
-        />
-        <Accordion
-          title="What is Ajosquad?"
-          content="Lorem ipsum dolor sit amet consectetur. et Adipiscing vel consequat ut sit molestie nd tincidunt risus faucibus. Pulvinar dolor ghe  laoreet vel lectus. A natoque faucibus var dignissim venenatis sit duis eu neque bge consectetur. Quis sagittis dui odio eget odio. Ultricies imperdiet duis odio integer tristique neque gravida nec. "
-        />
+        {
+          processedFaqs.map((faq) => (
+            <Accordion key={faq.question} question={faq.question} answer={faq.answer} />
+          ))
+        }
       </div>
     </main>
   )
