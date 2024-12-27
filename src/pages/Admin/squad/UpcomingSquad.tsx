@@ -6,37 +6,65 @@ import { InfoCard } from '../../../components/InfoCard/InfoCard2';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { useQuery } from 'react-query';
+import { squadServices } from '../../../services/squad';
+import { fDate } from '../../../utils/formatTime';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import { generateSerialNumber } from '../../../utils/helpers';
+import PageLoader from '../../../components/spinner/PageLoader';
 
 const UpcomingSquad = () => {
     const navigate = useNavigate()
+    const [currentPage, setCurrentPage] = React.useState(1)
+    const { data: stats, isLoading, error } = useQuery(['admin-squad-stats-upcoming'], () => squadServices.getSquadStatsByStatus("upcoming"));
+
+    const { data: squads, isLoading: isLoadingSquads } = useFetchWithParams([`query-all-upcoming-squads`,
+        {
+            status: "upcoming",
+            page: currentPage
+        }],
+        squadServices.getAllSquads,
+        {
+            onSuccess: (data: any) => {
+                console.log(data)
+            }
+        })
+
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
-            header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
-        },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
-        },
-        {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Squad Name",
+            view: (row: any) => <div>{row.name}</div>,
         },
         {
             header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            view: (row: any) => <div>CAD$ {row.amount.toLocaleString()}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            header: "Payment Description",
+            view: (row: any) => <div>{row.description}</div>,
         },
         {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            header: "Memebrs",
+            view: (row: any) => <div>{row.squadMembers.length}</div>,
+        },
+        {
+            header: "Date created",
+            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
+        },
+        {
+            header: "Start Date",
+            view: (row: any) => <div>{fDate(row.startDate)}</div>,
+        },
+        {
+            header: "End Date",
+            view: (row: any) => <div>{fDate(row.endDate)}</div>,
         },
     ];
     return (
@@ -55,11 +83,11 @@ const UpcomingSquad = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard header="Total Active Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Brass Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Bronze Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Silver Squad" iconName='tick-square' value="50" />
-                <InfoCard header="Gold Squad" iconName='tick-square' value="50" />
+                <InfoCard isLoading={isLoading} header="Total Active Squad" iconName='tick-square' value={stats && stats.data.total} />
+                <InfoCard isLoading={isLoading} header="Brass Squad" iconName='tick-square' value={stats && stats.data.brass} />
+                <InfoCard isLoading={isLoading} header="Bronze Squad" iconName='tick-square' value={stats && stats.data.bronze} />
+                <InfoCard isLoading={isLoading} header="Silver Squad" iconName='tick-square' value={stats && stats.data.silver} />
+                <InfoCard isLoading={isLoading} header="Gold Squad" iconName='tick-square' value={stats && stats.data.gold} />
 
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
@@ -78,15 +106,21 @@ const UpcomingSquad = () => {
                 </div>
 
 
-                {
-                    mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                {isLoadingSquads ? <PageLoader /> :
+                    squads && squads.data?.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
                         <Table
                             clickRowAction={(row: any) => navigate(`/squad/upcoming-squad/${row?.id}`)}
-                            data={mockData.data}
+                            data={squads && squads?.data}
                             columns={columns}
                             loading={false}
                             pagination={
-                                mockData.pagination
+                                {
+                                    page: currentPage,
+                                    setPage: setCurrentPage,
+                                    pageSize: 10,
+                                    totalRows: squads?.total,
+
+                                }
                             }
 
                         />

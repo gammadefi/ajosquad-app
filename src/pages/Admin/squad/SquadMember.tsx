@@ -6,39 +6,53 @@ import { InfoCard } from '../../../components/InfoCard/InfoCard2';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowRoundBack } from "react-icons/io";
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import { squadServices } from '../../../services/squad';
+import { generateSerialNumber } from '../../../utils/helpers';
+import { fDate } from '../../../utils/formatTime';
+import PageLoader from '../../../components/spinner/PageLoader';
+import { useQuery } from 'react-query';
 
 const SquadMember = () => {
     const navigate = useNavigate()
-    const columns = [
-        {
-            header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
-        },
-        {
-            header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
-        },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
-        },
-        {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
-        },
-        {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
-        },
-        {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
-        },
-        {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
-        },
-    ];
+    const [search, setSearch] = React.useState('')
+    const [currentPage, setCurrentPage] = React.useState(1)
+          const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats );
+    
+
+    const { data: members, isLoading:isMembersLoading } = useFetchWithParams([`query-all-members`, {
+        searchName: search,
+        page:currentPage
+    }], squadServices.getSquadMembers, {
+        onSuccess: (data: any) => {
+            console.log(data)
+        }
+    })
+     const columns = [
+            {
+                header: "S/N",
+                view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                    pageSize: 10,
+                    currentPage
+                })}</div>
+            },
+            {
+                header: "Member Name",
+                view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
+            },
+            {
+                header: "Member ID",
+                view: (row: any) => <div>{row.id}</div>,
+            },
+            {
+                header: "Member Email",
+                view: (row: any) => <div>{row.email_address}</div>,
+            },
+            {
+                header: "Date Joined",
+                view: (row: any) => <div>{fDate(row.createdAt)}</div>,
+            }
+        ];
     return (
         <div className='px-3  md:px-6'>
             <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button>
@@ -55,9 +69,9 @@ const SquadMember = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-3'>
-                <InfoCard header="Squad Member" iconName='people' value="50" />
-                <InfoCard header="Completed Square" iconName='profile-2user-active' value="50" />
-                <InfoCard header="Points" iconName='profile-2user-inactive' value="50" />
+                <InfoCard isLoading={isLoading} header="Squad Member" iconName='people' value={stats && stats.data.inactiveMembers + stats.data.activeMembers } />
+                <InfoCard isLoading={isLoading} header="Active Member" iconName='profile-2user-active' value={stats && stats.data.activeMembers } />
+                <InfoCard isLoading={isLoading} header="Inactive Member" iconName='profile-2user-inactive' value={stats && stats.data.inactiveMembers} />
 
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
@@ -68,7 +82,7 @@ const SquadMember = () => {
                     <h3 className='text-xl font-semibold'>All Members</h3>
 
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
+                        <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
                         <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
                     </div>
 
@@ -77,14 +91,21 @@ const SquadMember = () => {
 
 
                 {
-                    mockData.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                     isMembersLoading ? <PageLoader /> :
+                     members && members.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
                      <Table
-                        data={mockData.data}
+                        data={members.data}
                        clickRowAction={(row:any) => navigate(`/squad/squad-member/${row.id}`)}
                         columns={columns}
                         loading={false}
                         pagination={
-                            mockData.pagination
+                            {
+                                page: currentPage,
+                                setPage: (page) => setCurrentPage(page),
+                                pageSize: 10,
+                                totalRows: members?.total,
+
+                            }
                         }
 
                     />

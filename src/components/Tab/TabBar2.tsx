@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 interface TabBar2ITF {
   tabs: string[],
@@ -10,9 +10,13 @@ const TabBar2 = ({ tabs, activeTab, isDashboard }: TabBar2ITF) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+
+
+
+
   const handleTabChange = (val: string) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set("activeTab", val.toLowerCase());
+    searchParams.set("activeTab", val);
     navigate(`${location.pathname}?${searchParams.toString()}`)
   }
 

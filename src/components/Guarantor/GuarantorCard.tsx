@@ -11,7 +11,7 @@ export type GuarantorCardProps = {
   id: string,
   name: string,
   imgUrl: string,
-  verificationStatus: boolean,
+  verificationStatus: string,
   uploadDate: string
 }
 
@@ -30,7 +30,7 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
   );
   return (
     <>
-      <div className="rounded-xl border-[0.5px] border-[#B4B8BB] w-full md:max-w-[319px]">
+      <div className="rounded-xl border-[0.5px] border-[#B4B8BB]  w-full md:max-w-[319px]">
         <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl">
           <a href={imgUrl} target="_blank" rel="noopener noreferrer" download="Guarantor form">
             <img src={previewImageUrl || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
@@ -40,7 +40,7 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
           <div>
             <div className="flex items-center gap-3">
               <h2 className="font-bold text-sm">{name}</h2>
-              <span className={`px-3 py-0.5 rounded-xl font-medium text-xs ${verificationStatus ? "text-[#036B26] bg-[#E7F6EC]" : "bg-red-200 text-red-700"}`}>{verificationStatus ? "Verified" : "Unverified"}</span>
+              <span className={`px-3 mr-1 border py-1 rounded-lg text-xs ${verificationStatus === "verified" ? "text-[#036B26] bg-[#E7F6EC]" : verificationStatus === "failed" ? "bg-[#fde4dc] text-red-700" : "bg-[#FDF1DC] text-[#AD3307]"}`}>{verificationStatus}</span>
             </div>
             <span className="text-xs">{timeAgo(new Date(uploadDate))}</span>
           </div>

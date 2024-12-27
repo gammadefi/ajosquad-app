@@ -3,37 +3,52 @@ import { Label } from '../../../../components/Label/Label';
 import { mockData } from '../../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../../components/Table/Table';
 import SearchInput from '../../../../components/FormInputs/SearchInput';
+import { useParams } from 'react-router-dom';
+import useFetchWithParams from '../../../../hooks/useFetchWithParams';
+import { squadServices } from '../../../../services/squad';
+import PageLoader from '../../../../components/spinner/PageLoader';
+import { generateSerialNumber } from '../../../../utils/helpers';
+import { fDate } from '../../../../utils/formatTime';
 
 const AllMembers = () => {
+    const { id } = useParams()
+    const [search, setSearch] = React.useState("")
+    const [currentPage, setCurrentPage] = React.useState(1)
+
+    const { data: members, isLoading } = useFetchWithParams([`query-all-members`, {
+        squadId: id,
+        searchName: search,
+    }], squadServices.getSquadMembers, {
+        onSuccess: (data: any) => {
+            console.log(data)
+        }
+    })
+
+    console.log(id, members)
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
+        },
+        {
+            header: "Member Name",
+            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
         },
         {
             header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
             header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.email_address}</div>,
         },
         {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
-        },
-        {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
-        },
-        {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
-        },
-        {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
-        },
+            header: "Date Joined",
+            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
+        }
     ];
     return (
         <div>
@@ -42,8 +57,8 @@ const AllMembers = () => {
                     <h3 className='text-xl font-semibold'>Squad</h3>
 
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
-                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                        <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
+                        {/* <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button> */}
                     </div>
 
 
@@ -51,15 +66,22 @@ const AllMembers = () => {
 
 
                 {
-                    [].length === 0 ? <TableEmpty title='No squad yet' image='/empty-states/transaction.png' subtitle="This user has not joined a squad" /> : <Table
-                        data={mockData.data}
-                        columns={columns}
-                        loading={false}
-                        pagination={
-                            mockData.pagination
-                        }
+                    isLoading ? <PageLoader /> :
+                        members && members.data.length === 0 ? <TableEmpty title='No member yet' image='/empty-states/transaction.png' subtitle="This user has not joined a squad" /> : <Table
+                            data={members.data}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                                {
+                                    page: currentPage,
+                                    setPage: setCurrentPage,
+                                    pageSize: 10,
+                                    totalRows: members?.total,
 
-                    />
+                                }
+                            }
+
+                        />
                 }
 
 

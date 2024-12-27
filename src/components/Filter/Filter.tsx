@@ -4,7 +4,6 @@ import { Button } from '../Button/Button';
 import { FaChevronDown } from 'react-icons/fa6';
 import { useSearchParams } from 'react-router-dom';
 
-
 interface FilterITF {
     onClear?: () => void;
     onFilter?: () => void;
@@ -20,16 +19,17 @@ const Filter: FunctionComponent<FilterITF> = ({
     open,
     filterBy,
     onClose = () => { } }) => {
-    const [status, setStatus] = useState("");
-    const [squad, setSquad] = useState("");
-    const [position, setPosition] = useState("");
+    const [searchParams] = useSearchParams();
+    const [status, setStatus] = useState(searchParams.get("status") || "");
+    const [squad, setSquad] = useState(searchParams.get("squad") || "");
+    const [position, setPosition] = useState(searchParams.get("position") || "");
     const [amount, setAmount] = useState({
-        fromAmount: "",
-        toAmount: ""
+        minAmount: searchParams.get("minAmount") || "",
+        maxAmount: searchParams.get("maxAmount") || ""
     })
     const [date, setDate] = useState({
-        fromDate: "",
-        toDate: ""
+        startDate: searchParams.get("startDate") || "",
+        endDate: searchParams.get("endDate") || ""
     })
     const [showAmountFilter, setShowAmountFilter] = useState(false);
     const [showDateFilter, setShowDateFilter] = useState(false);
@@ -41,7 +41,7 @@ const Filter: FunctionComponent<FilterITF> = ({
     })
 
     const handleOnFilter = () => {
-        const filters = { squad, position, status, fromDate: date.fromDate, toDate: date.toDate, fromAmount: amount.fromAmount, toAmount: amount.toAmount }
+        const filters = { squad, position, status, startDate: date.startDate, endDate: date.endDate, minAmount: amount.minAmount, maxAmount: amount.maxAmount }
         const filteredParams = new URLSearchParams();
         Object.entries(filters).forEach(([key, value]) => {
             if (value.trim() !== "") {
@@ -103,6 +103,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                             <div>
                                                 <select name="status" value={status} onChange={(e) => setStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <option disabled value="">Status</option>
+                                                    <option value="pending">Pending</option>
                                                     <option value="paid">Paid</option>
                                                     <option value="upcoming">Upcoming</option>
                                                 </select>
@@ -152,19 +153,19 @@ const Filter: FunctionComponent<FilterITF> = ({
                                                     showAmountFilter && <div className='flex md:hidden gap-4'>
                                                         <div className='flex flex-col'>
                                                             <label htmlFor="fromAmount">From</label>
-                                                            <input value={amount.fromAmount} onChange={(e) => {
+                                                            <input value={amount.minAmount} onChange={(e) => {
                                                                 const value = e.target.value;
                                                                 if (/^\d*\.?\d*$/.test(value)) {
-                                                                    setAmount({ ...amount, fromAmount: value })
+                                                                    setAmount({ ...amount, minAmount: value })
                                                                 }
                                                             }} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-full md:w-40 py-2 px-3 rounded-lg' />
                                                         </div>
                                                         <div className='flex flex-col'>
                                                             <label htmlFor="toAmount">To</label>
-                                                            <input value={amount.toAmount} onChange={(e) => {
+                                                            <input value={amount.maxAmount} onChange={(e) => {
                                                                 const value = e.target.value;
                                                                 if (/^\d*\.?\d*$/.test(value)) {
-                                                                    setAmount({ ...amount, toAmount: value })
+                                                                    setAmount({ ...amount, maxAmount: value })
                                                                 }
                                                             }} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-full md:w-40 py-2 px-3 rounded-lg' />
                                                         </div>
@@ -184,11 +185,11 @@ const Filter: FunctionComponent<FilterITF> = ({
                                                     showDateFilter && <div className='flex md:hidden gap-4'>
                                                         <div className='flex flex-col'>
                                                             <label htmlFor="fromDate">From</label>
-                                                            <input type="date" value={date.fromDate} onChange={(e) => setDate({ ...date, fromDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                            <input type="date" value={date.startDate} onChange={(e) => setDate({ ...date, startDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
                                                         </div>
                                                         <div className='flex flex-col'>
                                                             <label htmlFor="toDate">To</label>
-                                                            <input type="date" value={date.toDate} onChange={(e) => setDate({ ...date, toDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                            <input type="date" value={date.endDate} onChange={(e) => setDate({ ...date, endDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
                                                         </div>
                                                     </div>
                                                 }
@@ -205,19 +206,19 @@ const Filter: FunctionComponent<FilterITF> = ({
                                                         showAmountFilter && <div className='hidden md:flex  gap-4'>
                                                             <div className='flex flex-col'>
                                                                 <label htmlFor="fromAmount">From</label>
-                                                                <input value={amount.fromAmount} onChange={(e) => {
+                                                                <input value={amount.minAmount} onChange={(e) => {
                                                                     const value = e.target.value;
                                                                     if (/^\d*\.?\d*$/.test(value)) {
-                                                                        setAmount({ ...amount, fromAmount: value })
+                                                                        setAmount({ ...amount, minAmount: value })
                                                                     }
                                                                 }} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
                                                             </div>
                                                             <div className='flex flex-col'>
                                                                 <label htmlFor="toAmount">To</label>
-                                                                <input value={amount.toAmount} onChange={(e) => {
+                                                                <input value={amount.maxAmount} onChange={(e) => {
                                                                     const value = e.target.value;
                                                                     if (/^\d*\.?\d*$/.test(value)) {
-                                                                        setAmount({ ...amount, toAmount: value })
+                                                                        setAmount({ ...amount, maxAmount: value })
                                                                     }
                                                                 }} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
                                                             </div>
@@ -233,11 +234,11 @@ const Filter: FunctionComponent<FilterITF> = ({
                                                         showDateFilter && <div className='hidden md:flex  gap-4'>
                                                             <div className='flex flex-col'>
                                                                 <label htmlFor="fromDate">From</label>
-                                                                <input type="date" value={date.fromDate} onChange={(e) => setDate({ ...date, fromDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                                <input type="date" value={date.startDate} onChange={(e) => setDate({ ...date, startDate: e.target.value })} placeholder='CAD$ 0.00' name="fromAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
                                                             </div>
                                                             <div className='flex flex-col'>
                                                                 <label htmlFor="toDate">To</label>
-                                                                <input type="date" value={date.toDate} onChange={(e) => setDate({ ...date, toDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
+                                                                <input type="date" value={date.endDate} onChange={(e) => setDate({ ...date, endDate: e.target.value })} placeholder='CAD$ 0.00' name="toAmount" className='border border-[#D0D5DD] focus:outline-none w-40 py-2 px-3 rounded-lg' />
                                                             </div>
                                                         </div>
                                                     }
@@ -252,9 +253,6 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     </button> */}
                                     </div>
                                 </div>
-
-
-
                             </div>
                         </div>
                     </div>

@@ -3,38 +3,73 @@ import { Label } from '../../../../components/Label/Label';
 import { mockData } from '../../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../../components/Table/Table';
 import SearchInput from '../../../../components/FormInputs/SearchInput';
+import useFetchWithParams from '../../../../hooks/useFetchWithParams';
+import { squadServices } from '../../../../services/squad';
+import { useParams } from 'react-router-dom';
+import PageLoader from '../../../../components/spinner/PageLoader';
+import { generateSerialNumber } from '../../../../utils/helpers';
+import { fDate } from '../../../../utils/formatTime';
+import clsx from 'clsx';
 
 const SquadInformation = () => {
+    const [currentPage, setCurrentPage] = React.useState(1)
+    const { id }: any = useParams()
+
+    const { data: squads, isLoading } = useFetchWithParams([`query-all-user-squads-${id}`,
+    {
+        page: currentPage
+    }],
+        () => squadServices.getUserSquad(id),
+        {
+            onSuccess: (data: any) => {
+                // console.log(data)
+            }
+        })
+
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
-            header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
-        },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
-        },
-        {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Squad Name",
+            view: (row: any) => <div>{row.name}</div>,
         },
         {
             header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            view: (row: any) => <div>CAD$ {row.amount.toLocaleString()}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            header: "Memebrs",
+            view: (row: any) => <div>{row.squadMembers.length}</div>,
+        },
+        {
+            header: "Date created",
+            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
         },
         {
             header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            view: (row: any) => <span
+                className={clsx(
+                    "px-3 text-xs border py-1 rounded-lg",
+                    row.status === "completed" && "bg-[#E7F6EC] text-[#036B26]",
+                   ( row.status === "upcoming" || row.status === "active")  && "bg-[#FDF1DC] text-[#AD3307]",)}
+            >{row.status}</span>,
         },
+        // {
+        //     header: "Start Date",
+        //     view: (row: any) => <div>{fDate(row.startDate)}</div>,
+        // },
+        // {
+        //     header: "End Date",
+        //     view: (row: any) => <div>{fDate(row.endDate)}</div>,
+        // },
     ];
+
+    console.log(isLoading, squads)
     return (
         <div>
             <div>
@@ -51,15 +86,23 @@ const SquadInformation = () => {
 
 
                 {
-                    [].length === 0 ? <TableEmpty title='No squad yet' image='/empty-states/transaction.png' subtitle="This user has not joined a squad" /> : <Table
-                        data={mockData.data}
-                        columns={columns}
-                        loading={false}
-                        pagination={
-                            mockData.pagination
-                        }
+                    isLoading ? <PageLoader /> :
 
-                    />
+                        squads && squads.data.length === 0 ? <TableEmpty title='No squad yet' image='/empty-states/transaction.png' subtitle="This user has not joined a squad" /> : <Table
+                            data={squads.data}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                                {
+                                    page: currentPage,
+                                    setPage: setCurrentPage,
+                                    pageSize: 10,
+                                    totalRows: squads?.total,
+
+                                }
+                            }
+
+                        />
                 }
 
 

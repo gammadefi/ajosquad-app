@@ -12,16 +12,23 @@ import { PayoutService } from '../../services/payout'
 import PageLoader from '../../components/spinner/PageLoader'
 import { fDate } from '../../utils/formatTime'
 import clsx from 'clsx'
+import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
+import { generateSerialNumber } from '../../utils/helpers'
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
+    const searchParamsObject = useSearchParamsToObject();
+
     const [filterParams, setFilterParams] = useState({});
     const profile = useAuth((s) => s.profile)
 
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Description",
@@ -53,11 +60,10 @@ const Payout = () => {
     const [search, setSearch] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
 
-    const { data: payouts, isLoading, refetch } = useFetchWithParams(
+    const { data: payouts, isLoading, refetch, error } = useFetchWithParams(
         [`query-all-payouts-${profile.id}`, {
-
-            page: currentPage,
-            search
+            ...searchParamsObject,
+            page: currentPage
         }],
         PayoutService.getPayouts,
         {
@@ -70,12 +76,13 @@ const Payout = () => {
         }
     )
 
-    console.log(payouts)
-
-
+    if (isLoading) return <PageLoader />
+    if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
 
     return (
         <div className='px-3  md:px-6'>
+
+
             {
                 false ? <PageLoader />
 
@@ -94,7 +101,7 @@ const Payout = () => {
                                 <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                             </div>
                             <div className='flex items-center gap-2'>
-                                <SearchInput value={search} onChange={(e) => setSearch(e.target.value) } placeholder='Search...' />
+                                <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
                                 <button onClick={() => setOpenFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
                                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <rect width="20" height="3.33333" transform="translate(0 1.66797)" fill="#464749" />
@@ -129,10 +136,10 @@ const Payout = () => {
 
                                 />
                         }
+
                     </>
 
             }
-
         </div>
     )
 }
