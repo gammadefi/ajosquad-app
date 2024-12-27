@@ -60,3 +60,7 @@ export const guarantorApiRoutes = {
   addGuarantor: "/guarantor",
   updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
 }
+
+export const statisticsApiRoutes = {
+  getUserStatDashboard: "/statistics/dashboard/transaction"
+}
