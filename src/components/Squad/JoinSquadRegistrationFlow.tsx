@@ -372,8 +372,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
                   }
                   const response = await squadServices.joinSquad(squadId, joinSquadPayload);
                   if (response) {
-                    window.open(response.data.authorisationUrl, "noopener,noreferrer");
-                    // next();
+                    next();
                   }
                 }
               } else {
@@ -383,9 +382,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
                 }
                 const response = await squadServices.joinSquad(squadId, joinSquadPayload)
                 if (response) {
-                  window.open(response.data.authorisationUrl, "noopener,noreferrer");
-
-                  // next();
+                  next();
                 }
               }
             } catch (error) {
