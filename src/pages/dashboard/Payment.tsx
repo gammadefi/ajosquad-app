@@ -17,6 +17,7 @@ const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [filterParams, setFilterParams] = useState({});
     const [searchParams, setSearchParams] = useSearchParams()
+    const [lastMonths, setLastMonths] = useState("All Time");
     const searchParamsObject = useSearchParamsToObject();
     const profile = useAuth((s) => s.profile)
     const columns = [
@@ -72,6 +73,21 @@ const Payment = () => {
         }
     )
 
+    const { data: paymentsTotal, isLoading: isLoadingCount, refetch : refetchCount } = useFetchWithParams(
+        [`query-all-total-payments-${profile.id}`, {
+            months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2" 
+        }],
+        PaymentService.getTotalPayment,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
     console.log(payments)
 
     if (isLoading) return <PageLoader />
@@ -81,7 +97,7 @@ const Payment = () => {
         <div className='px-3  md:px-6'>
             <>
                 <div>
-                    <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='Total deposit' />
+                    <InfoCard onfilterChange={(e) => setLastMonths(e) } iconName='moneys-credit'  value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
                 </div>
 
                 <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Payment</span>  Stay on top of your finances! Track every payment made on your account.</h3>

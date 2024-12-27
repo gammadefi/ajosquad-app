@@ -18,7 +18,7 @@ import { generateSerialNumber } from '../../utils/helpers'
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
-
+    const [lastMonths, setLastMonths] = useState("All Time");
     const [filterParams, setFilterParams] = useState({});
     const profile = useAuth((s) => s.profile)
 
@@ -76,9 +76,26 @@ const Payout = () => {
         }
     )
 
+    const { data: payoutsTotal, isLoading: isLoadingCount, refetch : refetchCount } = useFetchWithParams(
+        [`query-all-total-payouts-${profile.id}`, {
+            months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2" 
+        }],
+        PayoutService.getTotalPayout,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
+
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
 
+    console.log(lastMonths)
     return (
         <div className='px-3  md:px-6'>
 
@@ -90,7 +107,7 @@ const Payout = () => {
                     <>
 
                         <div>
-                            <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrwal' />
+                            <InfoCard onfilterChange={(e) => setLastMonths(e) } iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
                         </div>
 
                         <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Payout</span>  Track your payouts easily. See every transaction in one place.</h3>

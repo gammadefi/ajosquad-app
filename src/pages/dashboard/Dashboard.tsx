@@ -20,6 +20,8 @@ import TabBar2 from '../../components/Tab/TabBar2';
 import { BsChevronDown } from 'react-icons/bs';
 import SquadCard from '../../components/Squad/SquadCard';
 import dayjs from 'dayjs';
+import { PayoutService } from '../../services/payout';
+import { PaymentService } from '../../services/payment';
 
 const Dashboard = () => {
   const [kycVerified, setKycVerified] = React.useState(true);
@@ -28,6 +30,9 @@ const Dashboard = () => {
   const [showBronzeSquad, setShowBronzeSquad] = React.useState(false);
   const [showSilverSquad, setShowSilverSquad] = React.useState(false);
   const [showGoldSquad, setShowGoldSquad] = React.useState(false);
+  const [lastMonths, setLastMonths] = React.useState("All Time");
+  const [lastMonthsPayment, setLastMonthsPayment] = React.useState("All Time");
+
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -49,7 +54,35 @@ const Dashboard = () => {
     }
   )
 
-  console.log(squads)
+  const { data: payoutsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
+    [`query-all-total-payouts-${profile.id}`, {
+      months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
+    }],
+    PayoutService.getTotalPayout,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+  const { data: paymentsTotal, isLoading: isLoadingCount2, refetch: refetchCount2 } = useFetchWithParams(
+    [`query-all-total-payments-${profile.id}`, {
+      months: lastMonthsPayment === "All Time" ? "" : lastMonthsPayment === "Last Month" ? "1" : "2"
+    }],
+    PaymentService.getTotalPayment,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
 
   const allData: any = {
     "24h": {
@@ -146,8 +179,8 @@ const Dashboard = () => {
             </div>
 
             <div className='grid my-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='Total deposit' />
-              <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrwal' />
+              <InfoCard onfilterChange={(e) => setLastMonthsPayment(e) } iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
+              <InfoCard onfilterChange={(e) => setLastMonths(e) } iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
               <InfoCard type='squad' iconName='people' value='2' header='Squad' />
 
             </div>
