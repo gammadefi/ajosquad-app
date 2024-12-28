@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { CgProfile } from "react-icons/cg";
 import { LiaFileContractSolid } from "react-icons/lia";
 import { useAuth } from '../../zustand/auth.store'
 import clsx from 'clsx'
@@ -22,16 +21,25 @@ import SquadCard from '../../components/Squad/SquadCard';
 import dayjs from 'dayjs';
 import { PayoutService } from '../../services/payout';
 import { PaymentService } from '../../services/payment';
+import Filter from '../../components/Filter/Filter';
+import { useQuery } from 'react-query';
+import { statisticsServices } from '../../services/statistics';
+
+const fetchDashboardGraphData = async () => {
+  const res = await statisticsServices.getUserStatDashboard();
+  return res;
+}
 
 const Dashboard = () => {
-  const [kycVerified, setKycVerified] = React.useState(true);
-  const [activeSquad, setActiveSquad] = React.useState(true);
-  const [showBrassSquad, setShowBrassSquad] = React.useState(false);
-  const [showBronzeSquad, setShowBronzeSquad] = React.useState(false);
-  const [showSilverSquad, setShowSilverSquad] = React.useState(false);
-  const [showGoldSquad, setShowGoldSquad] = React.useState(false);
-  const [lastMonths, setLastMonths] = React.useState("All Time");
-  const [lastMonthsPayment, setLastMonthsPayment] = React.useState("All Time");
+  const [kycVerified, setKycVerified] = useState(true);
+  const [activeSquad, setActiveSquad] = useState(true);
+  const [openFilter, setOpenFilter] = useState(false);
+  const [showBrassSquad, setShowBrassSquad] = useState(false);
+  const [showBronzeSquad, setShowBronzeSquad] = useState(false);
+  const [showSilverSquad, setShowSilverSquad] = useState(false);
+  const [showGoldSquad, setShowGoldSquad] = useState(false);
+  const [lastMonths, setLastMonths] = useState("All Time");
+  const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
 
 
   const location = useLocation();
@@ -39,6 +47,7 @@ const Dashboard = () => {
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const profile = useAuth((s) => s.profile);
 
+  const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
 
   const { data: squads, isLoading, refetch } = useFetchWithParams(
     ["query-all-squads", {
@@ -84,44 +93,6 @@ const Dashboard = () => {
     }
   )
 
-  const allData: any = {
-    "24h": {
-      xAxisLabel: ["12AM", "4AM", "8AM", "12PM", "4PM", "8PM", "12AM"],
-      seriesData: [
-        { name: "Deposits", data: [10, 15, 8, 20, 14, 18, 22] },
-        { name: "Services", data: [12, 10, 18, 14, 16, 10, 20] },
-      ],
-    },
-    "7d": {
-      xAxisLabel: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      seriesData: [
-        { name: "Deposits", data: [30, 40, 45, 50, 49, 60, 70] },
-        { name: "Withdrwals", data: [13, 50, 42, 60, 34, 63, 43] },
-      ],
-    },
-    "6M": {
-      xAxisLabel: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      seriesData: [
-        { name: "Deposits", data: [100, 90, 80, 85, 95, 110] },
-        { name: "Withdrwals", data: [70, 75, 60, 65, 55, 60] },
-      ],
-    },
-    "1Y": {
-      xAxisLabel: ["J", "F", "M", "A", "M", "J", "JY", "AG", "S", "O", "N", "D"],
-      seriesData: [
-        { name: "Deposits", data: [30, 40, 45, 50, 49, 60, 70, 30, 20, 50, 70, 100] },
-        { name: "Withdrwals", data: [13, 50, 42, 60, 34, 63, 43, 45, 50, 49, 60, 90] },
-      ],
-    },
-    Max: {
-      xAxisLabel: ["2019", "2020", "2021", "2022", "2023", "2024"],
-      seriesData: [
-        { name: "Deposits", data: [200, 250, 300, 350, 400, 450] },
-        { name: "Withdrwals", data: [150, 180, 210, 190, 220, 240] },
-      ],
-    },
-  };
-
   const columns = [
     {
       header: "S/N",
@@ -149,18 +120,15 @@ const Dashboard = () => {
     },
   ];
 
-  const [selectedRange, setSelectedRange] = useState("1Y"); // Default range
-
-  // Get data for the selected range
-  const { xAxisLabel, seriesData } = allData[selectedRange];
+  const [selectedRange, setSelectedRange] = useState("1Y"); 
 
   function hasUser(squadData: any, userId: string): boolean {
     return squadData.squadMembers.some((member: any) => member.userId === userId);
   }
 
+  console.log(graphData);
+
   return (
-
-
     <div>
       {
         (kycVerified === false || activeSquad === false) ? (
@@ -179,43 +147,49 @@ const Dashboard = () => {
             </div>
 
             <div className='grid my-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              <InfoCard onfilterChange={(e) => setLastMonthsPayment(e) } iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
-              <InfoCard onfilterChange={(e) => setLastMonths(e) } iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
+              <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
+              <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
               <InfoCard type='squad' iconName='people' value='2' header='Squad' />
 
             </div>
 
             <div className='lg:h-[630px] grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
               <div className='col-span-3'>
-                <GraphWrapper graphTitle="Overall Sale">
-                  <div className='flex mb-4 justify-between items-center gap-3'>
-                    <div>
-                      <h3 className='text-sm md:text-base text-[#525866]'>All Transaction</h3>
-                      <h1 className='text-lg md:text-2xl font-semibold'>CA$ 50,500.00</h1>
-                    </div>
-                    <div className="flex bg-[#F7F7F8] py-2 px-2 space-x-4 ">
-                      {["24h", "7d", "6M", "1Y", "Max"].map((range) => (
-                        <button
-                          key={range}
-                          className={`px-4 py-2 bg-white rounded-lg ${selectedRange === range
-                            ? "border-blue-600 border text-gray-800"
-                            : " text-gray-800"
-                            }`}
-                          onClick={() => setSelectedRange(range)}
-                        >
-                          {range}
-                        </button>
-                      ))}
-                    </div>
+                {
+                  isLoadingGraphData ? <>Loading</> :
+                    (
+                      graphData &&
+                      <GraphWrapper graphTitle="Overall Sale">
+                        <div className='flex mb-4 justify-between items-center gap-3'>
+                          <div>
+                            <h3 className='text-sm md:text-base text-[#525866]'>All Transaction</h3>
+                            <h1 className='text-lg md:text-2xl font-semibold'>CA$ 0.00</h1>
+                          </div>
+                          <div className="flex bg-[#F7F7F8] py-2 px-2 space-x-4 ">
+                            {["7d", "6M", "1Y", "Max"].map((range) => (
+                              <button
+                                key={range}
+                                className={`px-4 py-2 bg-white rounded-lg ${selectedRange === range
+                                  ? "border-blue-600 border text-gray-800"
+                                  : " text-gray-800"
+                                  }`}
+                                onClick={() => setSelectedRange(range)}
+                              >
+                                {range}
+                              </button>
+                            ))}
+                          </div>
 
-                  </div>
-                  <LineChart
-                    type='line'
-                    colors={["#0E8837", "#D42620",]}
-                    xAxisLabel={xAxisLabel}
-                    seriesData={seriesData}
-                  />
-                </GraphWrapper>
+                        </div>
+                        <LineChart
+                          type='line'
+                          colors={["#0E8837", "#D42620",]}
+                          xAxisLabel={graphData?.[selectedRange].xAxisLabel}
+                          seriesData={graphData?.[selectedRange].seriesData}
+                        />
+                      </GraphWrapper>
+                    )
+                }
               </div>
               <div className='h-full overflow-y-scroll col-span-3 w-full md:col-span-3 lg:col-span-2 border-[0.4px] rounded-[10px] shadow'>
                 <div className='space-y-3'>
@@ -392,13 +366,29 @@ const Dashboard = () => {
             </div>
 
             <div className='my-5'>
-              <div className='my-8 flex gap-2 items-center '>
-                <h3 className='text-xl font-semibold'>Transaction History</h3>
-
+              <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
+                <div className='flex justify-between'>
+                  <h3 className='text-xl font-semibold'>Transaction History</h3>
+                  <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                </div>
                 <div className='flex items-center gap-2'>
                   <SearchInput placeholder='Search...' />
-                  <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                  <button onClick={() => setOpenFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="20" height="3.33333" transform="translate(0 1.66797)" fill="#464749" />
+                      <rect width="20" height="3.33333" transform="translate(0 8.33203)" fill="#464749" />
+                      <rect width="20" height="3.33333" transform="translate(0 15)" fill="#464749" />
+                      <rect x="3.07617" width="3.07692" height="6.66667" rx="1.53846" fill="#464749" />
+                      <rect x="3.07617" y="13.332" width="3.07692" height="6.66667" rx="1.53846" fill="#464749" />
+                      <rect x="14.6133" y="6.66797" width="3.07692" height="6.66667" rx="1.53846" fill="#464749" />
+                    </svg>
+                    <span>
+                      Filter By
+                    </span>
+                  </button>
+                  <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
+                <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
               </div>
               {
                 mockData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table

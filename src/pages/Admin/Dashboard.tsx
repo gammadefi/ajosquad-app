@@ -1,9 +1,4 @@
-import React, { useState } from 'react'
-import { CgProfile } from "react-icons/cg";
-import { LiaFileContractSolid } from "react-icons/lia";
-import { useAuth } from '../../zustand/auth.store'
-import clsx from 'clsx'
-import People from '../../icons/reusables/people';
+import { useState } from 'react'
 import TodayDate from '../../components/common/TodayDate';
 import { InfoCard } from '../../components/InfoCard/InfoCard';
 import { GraphWrapper } from '../../components/Graph/GraphWrapper';
@@ -16,13 +11,57 @@ import { Table, TableEmpty } from '../../components/Table/TableTwo';
 import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
 import Filter from '../../components/Filter/Filter';
-import { BsChevronDown } from 'react-icons/bs';
+import { useQuery } from 'react-query';
+import { statisticsServices } from '../../services/statistics';
+import { PaymentService } from '../../services/payment';
+import { PayoutService } from '../../services/payout';
+import { useAuth } from '../../zustand/auth.store';
+import useFetchWithParams from '../../hooks/useFetchWithParams';
+
+export const fetchDashboardGraphData = async () => {
+  const res = await statisticsServices.getUserStatDashboard();
+  return res;
+}
 
 const Dashboard = () => {
-  const [kycVerified, setKycVerified] = React.useState(true)
-  const [activeSquad, setActiveSquad] = React.useState(true)
-  const [showFilter, setShowFilter] = React.useState(false)
-  
+  const [kycVerified, setKycVerified] = useState(true)
+  const [activeSquad, setActiveSquad] = useState(true)
+  const [showFilter, setShowFilter] = useState(false)
+  const [lastMonths, setLastMonths] = useState("All Time");
+  const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
+
+  const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
+  const profile = useAuth((s) => s.profile);
+
+  const { data: payoutsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
+    [`query-all-total-payouts-${profile.id}`, {
+      months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
+    }],
+    PayoutService.getTotalPayout,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+  const { data: paymentsTotal, isLoading: isLoadingCount2, refetch: refetchCount2 } = useFetchWithParams(
+    [`query-all-total-payments-${profile.id}`, {
+      months: lastMonthsPayment === "All Time" ? "" : lastMonthsPayment === "Last Month" ? "1" : "2"
+    }],
+    PaymentService.getTotalPayment,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
 
   const allData: any = {
     "24h": {
@@ -65,7 +104,6 @@ const Dashboard = () => {
   const [selectedRange, setSelectedRange] = useState("1Y"); // Default range
 
   // Get data for the selected range
-  const { xAxisLabel, seriesData } = allData[selectedRange];
 
   const columns = [
     {
@@ -95,10 +133,7 @@ const Dashboard = () => {
   ];
 
   return (
-
-
     <div>
-
       <div className='px-3 md:px-6'>
         <div className='flex justify-between items-center'>
 
@@ -108,8 +143,8 @@ const Dashboard = () => {
 
         <div className='grid my-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4'>
           <div className='lg:col-span-4 xl:col-span-4 md:col-span-2 gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 '>
-            <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='Total deposit' />
-            <InfoCard iconName='moneys-debit' value='CA$ 50,500.00' header='Total Withdrwal' />
+            <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
+            <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
             <InfoCard type='squad' iconName='people' value='2' header='Squad' />
             <div className='my-5 md:col-span-2 xl:col-span-3'>
               <div className='col-span-3'>
@@ -263,7 +298,7 @@ const Dashboard = () => {
                   <h1 className='text-lg md:text-2xl font-semibold'>CA$ 50,500.00</h1>
                 </div>
                 <div className="flex bg-[#F7F7F8] py-2 px-2 space-x-4 ">
-                  {["24h", "7d", "6M", "1Y", "Max"].map((range) => (
+                  {["7d", "6M", "1Y", "Max"].map((range) => (
                     <button
                       key={range}
                       className={`px-4 py-2 text-sm bg-white rounded-lg ${selectedRange === range
@@ -281,8 +316,8 @@ const Dashboard = () => {
               <LineChart
                 type='line'
                 colors={["#0E8837", "#D42620",]}
-                xAxisLabel={xAxisLabel}
-                seriesData={seriesData}
+                xAxisLabel={graphData?.[selectedRange].xAxisLabel}
+                seriesData={graphData?.[selectedRange].seriesData}
               />
             </GraphWrapper>
           </div>
