@@ -5,9 +5,14 @@ import { Table, TableEmpty } from '../../components/Table/Table'
 import { Label } from '../../components/Label/Label'
 import { mockData } from '../../samples/mockdata'
 import Filter from '../../components/Filter/Filter'
+import { useAuth } from '../../zustand/auth.store'
+import useFetchWithParams from '../../hooks/useFetchWithParams'
+import { PaymentService } from '../../services/payment'
 
 const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
+    const [lastMonths, setLastMonths] = useState("All Time");
+    const profile = useAuth((s) => s.profile);
 
     const columns = [
         {
@@ -36,6 +41,21 @@ const Payment = () => {
         },
     ];
 
+    const { data: paymentsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
+        [`query-all-total-payments-${profile.id}`, {
+            months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
+        }],
+        PaymentService.getTotalPayment,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
 
 
     return (
@@ -50,10 +70,10 @@ const Payment = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='Total deposit' />
-                <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='AjoSquad deposit' />
-                <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='AjoHome deposit' />
-                <InfoCard iconName='moneys-credit' value='CA$ 50,500.00' header='AjoBusiness deposit' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='AjoSquad deposit' />
+                <InfoCard iconName='moneys-credit' value='CA$ 0.00' header='AjoHome deposit' />
+                <InfoCard iconName='moneys-credit' value='CA$ 0.00' header='AjoBusiness deposit' />
             </div>
 
 

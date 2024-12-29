@@ -20,6 +20,7 @@ const Payment = () => {
     const [lastMonths, setLastMonths] = useState("All Time");
     const searchParamsObject = useSearchParamsToObject();
     const profile = useAuth((s) => s.profile)
+
     const columns = [
         {
             header: "S/N",
@@ -88,7 +89,7 @@ const Payment = () => {
         }
     )
 
-    console.log(payments)
+    // console.log(payments)
 
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>

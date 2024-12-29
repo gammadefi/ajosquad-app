@@ -8,9 +8,27 @@ import { mockData } from '../../../samples/mockdata';
 import { Table } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
 import Filter from '../../../components/Filter/Filter2';
+import { ReferralServices } from '../../../services/referral';
+import { useQuery } from 'react-query';
+import { useAuth } from '../../../zustand/auth.store';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
 
 const ReferralPoints = () => {
     const [filterBy, setFilterBy] = useState("");
+    const profile = useAuth(state => state.profile)
+    const [currentPage, setCurrentPage] = useState(1)
+
+    const {data: referralStats, isLoading} = useQuery(["referralStats", profile.id ], () => ReferralServices.getReferralStats(profile.id))
+
+    const {data: referredUsers, isLoading: isLoadingReferred} = useFetchWithParams([`getReferred-users+${profile.id}`, {
+        page: currentPage
+    } ], ReferralServices.getReferredUsers, {
+        onSuccess: (data:any) => {
+            
+        },
+        
+    })
+
     const columns = [
         {
             header: "S/N",
@@ -37,6 +55,8 @@ const ReferralPoints = () => {
             view: (row: any) => <Label variant="success" >{row?.status}</Label>,
         },
     ];
+
+    console.log(referralStats,referredUsers )
     return (
         <div>
             <div className='flex justify-between items-center'>
@@ -48,11 +68,11 @@ const ReferralPoints = () => {
 
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard header="Total Referrals" iconName='profile-2user' value="50" />
-                <InfoCard header="Approved Referrals" iconName='profile-tick' value="50" />
-                <InfoCard header="Points" iconName='ticket-discount' value="50" />
-                <InfoCard header="Redeemed Points" iconName='ticket-discount-1' value="50" />
-                <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" />
+                <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount : 0}/>
+                <InfoCard isLoading={isLoading} header="Approved Referrals" iconName='profile-tick' value={referralStats ? referralStats.stats.referralsCount : 0} />
+                <InfoCard isLoading={isLoading} header="Points" iconName='ticket-discount' value={referralStats ? referralStats.stats.referralsCount : 0} />
+                <InfoCard isLoading={isLoading} header="Redeemed Points" iconName='ticket-discount-1' value={referralStats ? referralStats.stats.referralsCount : 0} />
+                <InfoCard isLoading={isLoading} header="Cash Rewards" iconName='moneys-credit' value={`CAD$ ${referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0}`} />
 
             </div>
 
