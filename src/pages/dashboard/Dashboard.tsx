@@ -24,6 +24,7 @@ import { PaymentService } from '../../services/payment';
 import Filter from '../../components/Filter/Filter';
 import { useQuery } from 'react-query';
 import { statisticsServices } from '../../services/statistics';
+import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -39,11 +40,14 @@ const Dashboard = () => {
   const [showSilverSquad, setShowSilverSquad] = useState(false);
   const [showGoldSquad, setShowGoldSquad] = useState(false);
   const [lastMonths, setLastMonths] = useState("All Time");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
 
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const searchParamsObject = useSearchParamsToObject();
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const profile = useAuth((s) => s.profile);
 
@@ -93,6 +97,26 @@ const Dashboard = () => {
     }
   )
 
+  const {data:transactionData, isLoading:isTransactionLoading} = useFetchWithParams(
+    [`query-all-transactions-${profile.id}`, {
+      fromAmount: searchParamsObject.minAMount,
+      toAmount: searchParamsObject.maxAmount,
+      endDate: searchParamsObject.endDate,
+      startDate: searchParamsObject.startDate,
+      search,
+      page: currentPage,
+
+    } ], statisticsServices.getTransactions,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
   const columns = [
     {
       header: "S/N",
@@ -126,7 +150,7 @@ const Dashboard = () => {
     return squadData.squadMembers.some((member: any) => member.userId === userId);
   }
 
-  console.log(graphData);
+  console.log(transactionData);
 
   return (
     <div>
@@ -372,7 +396,7 @@ const Dashboard = () => {
                   <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <div className='flex items-center gap-2'>
-                  <SearchInput placeholder='Search...' />
+                  <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
                   <button onClick={() => setOpenFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <rect width="20" height="3.33333" transform="translate(0 1.66797)" fill="#464749" />
@@ -388,7 +412,7 @@ const Dashboard = () => {
                   </button>
                   <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
-                <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
+                <Filter filterBy={["amount", "date", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
               </div>
               {
                 mockData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table

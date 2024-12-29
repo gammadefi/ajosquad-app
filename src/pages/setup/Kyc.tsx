@@ -13,11 +13,11 @@ import PageLoader from '../../components/spinner/PageLoader'
 const validationSchema = Yup.object().shape({
     firstName: Yup.string()
         .required('Name is required')
-        .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
+        .matches(/^[a-zA-Z0-9\s]+$/, 'Name should only contain letters, numbers, and spaces')
         .min(2, 'Name should be at least 2 characters long'),
     lastName: Yup.string()
         .required('Name is required')
-        .matches(/^[a-zA-Z\s]+$/, 'Name should only contain letters and spaces')
+        .matches(/^[a-zA-Z0-9\s]+$/, 'Name should only contain letters, numbers, and spaces')
         .min(2, 'Name should be at least 2 characters long'),
 
     email_address: Yup.string()
@@ -36,16 +36,16 @@ const validationSchema = Yup.object().shape({
 
     city: Yup.string()
         .required('City is required')
-        .matches(/^[a-zA-Z\s]+$/, 'City should only contain letters and spaces'),
+        .matches(/^[a-zA-Z0-9\s]+$/, 'City should only contain letters, numbers, and spaces'),
 
     state: Yup.string()
-        .required('State is required')
-        .matches(/^[a-zA-Z\s]+$/, 'State should only contain letters and spaces'),
+        .required('Province is required')
+        .matches(/^[a-zA-Z0-9\s]+$/, 'Province should only contain letters, numbers, and spaces'),
 
     zipCode: Yup.string()
-        .required('Zip code is required')
-        .matches(/^\d+$/, 'Zip code should only contain digits')
-        .length(6, 'Zip code should be exactly 6 digits'),
+        .required('Posstal code is required')
+        .matches(/^[a-zA-Z0-9\s]+$/, 'Postal code should only contain letters, numbers')
+        .length(6, 'Postal code should be exactly 6 digits'),
 
     jobTitle: Yup.string()
         .required('Job title is required')
@@ -53,7 +53,7 @@ const validationSchema = Yup.object().shape({
 
     employerName: Yup.string()
         .required('Employer name is required')
-        .matches(/^[a-zA-Z\s]+$/, 'Employer name should only contain letters and spaces')
+        .matches(/^[a-zA-Z0-9\s]+$/, 'Employer name should only contain letters, numbers, and spaces')
         .min(2, 'Employer name should be at least 2 characters long'),
 
     employerPhoneNumber: Yup.string()
@@ -78,19 +78,21 @@ const Kyc = () => {
     const [verificationRef, setVerificationRef] = React.useState(null);
     const [verificationStatus, setVerificationStatus] = React.useState<any>(null);
     const profile = useAuth((s) => s.profile)
+
+    // console.log(profile.email_address)
     const form = useFormik({
         initialValues: {
-            "firstName": profile.firstName,
-            "lastName": profile.lastName,
-            "email_address": profile.email_address,
-            "phoneNumber": profile.phoneNumber,
-            "homeAddress": profile.homeAddress,
-            "city": profile.city,
-            "state": profile.state,
-            "zipCode": profile.zipCode,
-            "jobTitle": profile.jobTitle,
-            "employerName": profile.employerName,
-            "employerPhoneNumber": profile.employerPhoneNumber,
+            "firstName": profile.firstName ?? "",
+            "lastName": profile.lastName ?? "",
+            "email_address": profile.email_address ?? "",
+            "phoneNumber": profile.phoneNumber ?? "",
+            "homeAddress": profile.homeAddress ?? "",
+            "city": profile.city  ?? "",
+            "state": profile.state ?? "",
+            "zipCode": profile.zipCode ?? "",
+            "jobTitle": profile.jobTitle ?? "",
+            "employerName": profile.employerName ?? "",
+            "employerPhoneNumber": profile.employerPhoneNumber ?? "",
             "others": ""
         },
         validationSchema: validationSchema,
@@ -261,14 +263,14 @@ const Kyc = () => {
                                                     <TextInput name='firstName' label='First Name *' placeholder='Enter your first name' />
                                                     <TextInput name='lastName' label='Last Name *' placeholder='Enter your last name' />
                                                 </div>
-                                                <TextInput name='email' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
+                                                <TextInput name='email_address' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
                                                 <TextInput name='phoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
                                                 <TextInput name='homeAddress' label='Home Address *' wrapperClass='mt-3' placeholder='Enter your Home address' />
 
                                                 <div className='grid grid-cols-3 gap-2'>
                                                     <TextInput name='city' label='City *' wrapperClass='mt-3' placeholder="city" />
-                                                    <TextInput name='state' label='State *' wrapperClass='mt-3' placeholder="state" />
-                                                    <TextInput name='zipCode' label='Zip Code *' wrapperClass='mt-3' placeholder="Zip Code" />
+                                                    <TextInput name='state' label='Province *' wrapperClass='mt-3' placeholder="province" />
+                                                    <TextInput name='zipCode' label='Postal Code *' wrapperClass='mt-3' placeholder="Postal Code" />
 
 
                                                 </div>

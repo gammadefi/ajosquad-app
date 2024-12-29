@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MdOutlineUploadFile } from "react-icons/md";
+import { MdOutlineUploadFile, MdOutlineDownload } from "react-icons/md";
 import Modal from '../../../components/Modal/Modal';
 import AddGuarantorForm from '../../../components/Guarantor/AddGuarantorForm';
 import { useQuery } from 'react-query';
@@ -32,13 +32,21 @@ const GuarantorInformation = () => {
           <h2 className='font-semibold md:text-xl'>Guarantor Information</h2>
           <p className='text-black/[42%] text-sm md:text-base'>Upload Guarantor Information </p>
         </div>
-        <button
-          onClick={() => setShowAddGuarantorForm(true)}
-          className="w-fit flex items-center gap-2 justify-center border border-primary py-2 px-10 rounded-lg"
-        >
-          <MdOutlineUploadFile className='h-5 w-5' />
-          Upload Guarantor
-        </button>
+
+        <div className="flex items-center gap-3">
+          <a className="flex text-primary font-medium text-sm md:text-base items-center gap-2" href="https://res.cloudinary.com/dwk4rqxhu/image/upload/v1733312652/xjkcqusmbzon4tyjh1fg.pdf " target="_blank" rel="noreferrer" >
+            <MdOutlineDownload className='h-5 w-5' />
+            Download Guarontor form 
+          </a>
+          <button
+            onClick={() => setShowAddGuarantorForm(true)}
+            className="w-fit flex items-center gap-2 justify-center border border-primary py-2 px-10 rounded-lg"
+          >
+            <MdOutlineUploadFile className='h-5 w-5' />
+            Upload Guarantor
+          </button>
+        </div>
+       
       </div>
       {
         isLoading ?

@@ -33,6 +33,8 @@ const Dashboard = () => {
   const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
   const profile = useAuth((s) => s.profile);
 
+  console.log(graphData);
+
   const { data: payoutsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
     [`query-all-total-payouts-${profile.id}`, {
       months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
@@ -315,9 +317,9 @@ const Dashboard = () => {
               </div>
               <LineChart
                 type='line'
-                colors={["#0E8837", "#D42620",]}
-                xAxisLabel={graphData?.[selectedRange].xAxisLabel}
-                seriesData={graphData?.[selectedRange].seriesData}
+                colors={["#0E8837", "#D42620"]}
+                xAxisLabel={graphData ? graphData?.[selectedRange]?.xAxisLabel : {}}
+                seriesData={graphData ? graphData?.[selectedRange]?.seriesData : {}}
               />
             </GraphWrapper>
           </div>
