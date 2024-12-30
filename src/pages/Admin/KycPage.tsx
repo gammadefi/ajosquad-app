@@ -68,9 +68,9 @@ const KycPage = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard isLoading={isLoading} header="Total Member" iconName='profile-2user' value="50" />
-                <InfoCard isLoading={isLoading} header="Verified Member" iconName='profile-2user' value="40" />
-                <InfoCard isLoading={isLoading} header="Non-verified member" iconName='profile-2user' value="10" />
+                <InfoCard isLoading={isLoading} header="Total Member" iconName='profile-2user' value={count && count.data.totalUsers}/>
+                <InfoCard isLoading={isLoading} header="Verified Member" iconName='profile-2user' value={count && count.data.verifiedUsers}/>
+                <InfoCard isLoading={isLoading} header="Non-verified member" iconName='profile-2user' value={count && count.data.unverifiedUsers} />
 
 
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
