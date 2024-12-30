@@ -31,7 +31,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     const response = await guarantorServices.getGuarantor(id);
     return response;
   })
-  
+
   const handleNextStep = () => {
     setStep(step + 1);
   };
@@ -91,6 +91,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     onSuccess: () => {
       queryClient.invalidateQueries(["adminGuarantor"]);
       queryClient.invalidateQueries([`guarantor-${id}`]);
+      queryClient.invalidateQueries(["guarantor-stats"]);
     },
   });
 
@@ -98,6 +99,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     onSuccess: () => {
       queryClient.invalidateQueries(["adminGuarantor"]);
       queryClient.invalidateQueries([`guarantor-${id}`]);
+      queryClient.invalidateQueries(["guarantor-stats"]);
     },
   });
 
