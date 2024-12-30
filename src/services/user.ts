@@ -1,4 +1,5 @@
 import { createApiClient } from "../utils/api"
+import { paramsObjectToQueryString } from "../utils/helpers";
 import { userApiRoutes } from "./routes"
 
 export const userServices = {
@@ -11,8 +12,8 @@ export const userServices = {
       const response = await createApiClient().get(userApiRoutes.user.getUserById(userId));
       return response.data;
     },
-    getAllUsers: async () => {
-      const response = await createApiClient().get(userApiRoutes.user.getAllUsers);
+    getAllUsers: async (payload: any) => {
+      const response = await createApiClient().get(userApiRoutes.user.getAllUsers+ paramsObjectToQueryString(payload));
       return response.data;
     },
     updateUserPersonalInfo: async (userId: string, payload: any) => {
@@ -25,6 +26,10 @@ export const userServices = {
     },
     changePassword: async (payload: any, userId: string) => {
       const response = await createApiClient().patch(userApiRoutes.user.changePassword(userId), payload);
+      return response.data;
+    },
+    countAll: async () => {
+      const response = await createApiClient().get(userApiRoutes.user.countAll);
       return response.data;
     }
   },

@@ -5,7 +5,7 @@ import { Button } from '../../../components/Button/Button'
 import { IoCopyOutline } from "react-icons/io5";
 import SearchInput from '../../../components/FormInputs/SearchInput';
 import { mockData } from '../../../samples/mockdata';
-import { Table } from '../../../components/Table/Table';
+import { Table, TableEmpty } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
 import Filter from '../../../components/Filter/Filter2';
 import { ReferralServices } from '../../../services/referral';
@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { useAuth } from '../../../zustand/auth.store';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import { userServices } from '../../../services/user';
+import PageLoader from '../../../components/spinner/PageLoader';
 
 const ReferralPoints = () => {
     const [filterBy, setFilterBy] = useState("");
@@ -36,24 +37,28 @@ const ReferralPoints = () => {
             view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
         },
         {
-            header: "Description",
-            view: (row: any) => <div>{row.description}</div>,
+            header: "Member Name",
+            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
         },
         {
-            header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Member Id",
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            header: "Total Referral",
+            view: (row: any) => <div>{row.referralsCount}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            header: "Earned Point",
+            view: (row: any) => <div>{row.rewardsEarned}</div>,
         },
         {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            header: "Redeemed Point",
+            view: (row: any) => <div>{row.totalRedeemedPoints}</div>,
+        },
+        {
+            header: "Rewards Earned",
+            view: (row: any) => <Label variant="success" >CAD$ {row?.rewardsEarned.toLocaleString()}</Label>,
         },
     ];
 
@@ -69,11 +74,11 @@ const ReferralPoints = () => {
 
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount : 0}/>
-                <InfoCard isLoading={isLoading} header="Approved Referrals" iconName='profile-tick' value={referralStats ? referralStats.stats.referralsCount : 0} />
-                <InfoCard isLoading={isLoading} header="Points" iconName='ticket-discount' value={referralStats ? referralStats.stats.referralsCount : 0} />
-                <InfoCard isLoading={isLoading} header="Redeemed Points" iconName='ticket-discount-1' value={referralStats ? referralStats.stats.referralsCount : 0} />
-                <InfoCard isLoading={isLoading} header="Cash Rewards" iconName='moneys-credit' value={`CAD$ ${referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0}`} />
+                <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.data.stats.totalReferralsCount.toLocaleString() : 0}/>
+                <InfoCard isLoading={isLoading} header="Approved Referrals" iconName='profile-tick' value={referralStats ? referralStats.data.stats.totalReferralsCount.toLocaleString() : 0} />
+                <InfoCard isLoading={isLoading} header="Points" iconName='ticket-discount' value={referralStats ? referralStats.data.stats.totalReferralsCount.toLocaleString() : 0} />
+                <InfoCard isLoading={isLoading} header="Redeemed Points" iconName='ticket-discount-1' value={referralStats ? referralStats.data.stats.totalRedeemedPoints.toLocaleString() : 0} />
+                <InfoCard isLoading={isLoading} header="Cash Rewards" iconName='moneys-credit' value={`CAD$ ${referralStats ? referralStats.data.stats.totalRewardsEarned.toLocaleString() : 0}`} />
 
             </div>
 
@@ -102,15 +107,22 @@ const ReferralPoints = () => {
 
                 </div>
 
-                <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
+                {
+                    isLoadingUsers ? <PageLoader /> :
+                        users && users?.users.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                            data={users.users}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                               {
+                                page:currentPage,
+                                setPage:(page) => setCurrentPage(page),
+                                totalRows: users?.totalUsers,
+                               }
+                            }
 
-                />
+                        />
+                }
 
 
             </div>
