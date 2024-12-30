@@ -277,18 +277,11 @@ const Dashboard = () => {
                     <h3 className='font-semibold'>9</h3>
                     <h5>Squad</h5>
                   </div>
-
                 </div>
               </GraphWrapper>
             </div>
-
-
-
           </div>
-
-
         </div>
-
         <div className='grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
           <div className='col-span-3'>
             <GraphWrapper graphTitle="Overall Sale">

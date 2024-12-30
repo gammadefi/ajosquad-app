@@ -56,6 +56,7 @@ export const userApiRoutes = {
 
 export const guarantorApiRoutes = {
   getAllGuarantors: "/guarantor/query",
+  getGuarantorStats: "/guarantor/stats",
   getGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`,
   addGuarantor: "/guarantor",
   updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
