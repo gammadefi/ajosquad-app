@@ -202,7 +202,7 @@ export const AjosquadAdminDashRouter: IModuleRouter = {
       {
         path: "/referral",
       },
-      () => import("../pages/dashboard/Referral/Referral")
+      () => import("../pages/Admin/Referral/Referral")
     ),
     LazyRoute(
       {

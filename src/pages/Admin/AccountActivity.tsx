@@ -6,33 +6,37 @@ import { Label } from '../../components/Label/Label'
 import { mockData } from '../../samples/mockdata'
 import useFetchWithParams from '../../hooks/useFetchWithParams'
 import { ActivityService } from '../../services/activity'
+import PageLoader from '../../components/spinner/PageLoader'
+import { generateSerialNumber } from '../../utils/helpers'
+import { fDate } from '../../utils/formatTime'
 
 const AccountActivity = () => {
+    const [search, setSearch] = useState("")
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+           view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                           pageSize: 10,
+                           currentPage
+                       })}</div>
         },
         {
-            header: "Description",
-            view: (row: any) => <div>{row.description}</div>,
+            header: "Account ID",
+            view: (row: any) => <div>{row.userId}</div>,
         },
         {
-            header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Activity",
+            view: (row: any) => <div>{row.action}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            header: "Activity ID",
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            header: "Date of Description",
+            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
         },
-        {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
-        },
+        
     ];
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -40,7 +44,9 @@ const AccountActivity = () => {
 
     const { data: activities, isLoading, refetch } = useFetchWithParams(
         ["query-admin-activities", {
-
+            page: currentPage,
+            pageSize,
+            search,
         }],
         ActivityService.getActivities,
         {
@@ -74,16 +80,17 @@ const AccountActivity = () => {
                 <h3 className='text-xl font-semibold'>Account Activity</h3>
 
                 <div className='flex items-center gap-2'>
-                    <SearchInput placeholder='Search...' />
-                    <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                    <SearchInput value={search} onChange={(e) =>  setSearch(e.target.value)} placeholder='Search...' />
+                    {/* <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button> */}
                 </div>
 
 
             </div>
 
             {
-                [].length === 0 ? <TableEmpty title='No Activity Yet' image='/empty-states/payout.png' subtitle="On this page, you'll find a record of all activities on your platform." /> : <Table
-                    data={mockData.data}
+                isLoading ? <PageLoader /> :
+                activities.data.length === 0 ? <TableEmpty title='No Activity Yet' image='/empty-states/payout.png' subtitle="On this page, you'll find a record of all activities on your platform." /> : <Table
+                    data={activities.data}
                     columns={columns}
                     loading={false}
                     pagination={
@@ -91,7 +98,7 @@ const AccountActivity = () => {
                             page: currentPage,
                             pageSize,
                             setPage: handleCurrentPage,
-                            totalRows: 100
+                            totalRows: activities.pagination.total
                         }
 
                     }

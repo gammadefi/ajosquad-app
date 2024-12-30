@@ -140,7 +140,6 @@ const Payment = () => {
                                     pageSize: 10,
                                     setPage: setCurrentPage,
                                     totalRows: payments?.pages
-
                                 }
                             }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { InfoCard } from '../../../components/InfoCard/InfoCard2'
 import TextInput from '../../../components/FormInputs/TextInput2'
 import { Button } from '../../../components/Button/Button'
@@ -10,12 +10,38 @@ import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { squadServices } from '../../../services/squad';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import { useSearchParamsToObject } from '../../../hooks/useSearchParamsToObject';
+import { statisticsServices } from '../../../services/statistics';
+import PageLoader from '../../../components/spinner/PageLoader';
 
 const Index = () => {
     const navigate = useNavigate()
       const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats );
-    
       
+   const [search, setSearch] = useState("");
+     const searchParamsObject = useSearchParamsToObject();
+     const [currentPage, setCurrentPage] = useState(1)
+      const {data:transactionData, isLoading:isTransactionLoading} = useFetchWithParams(
+        [`query-all-transactions-admin-`, {
+          fromAmount: searchParamsObject.minAMount,
+          toAmount: searchParamsObject.maxAmount,
+          endDate: searchParamsObject.endDate,
+          startDate: searchParamsObject.startDate,
+          search,
+          type:"AjosquadPayment",
+          page: currentPage,
+    
+        } ], statisticsServices.getTransactions,
+        {
+          onSuccess: (data: any) => {
+            // console.log(data.data);
+          },
+          keepPreviousData: false,
+          refetchOnWindowFocus: false,
+          refetchOnMount: true,
+        }
+      )
     
     const columns = [
         {
@@ -106,17 +132,24 @@ const Index = () => {
                 </div>
 
                 
-            {
-                [].length === 0 ? <TableEmpty title='No transactions yet' image='/empty-states/transaction.png' subtitle="You're just getting started! No transaction has occurred yet on the platform." /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
+                {
+                isTransactionLoading ? <PageLoader /> : 
+                transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
+                  data={transactionData.data}
+                  columns={columns}
+                  loading={false}
+                  pagination={
+                    {
+                     
+                      page: currentPage,
+                      setPage: setCurrentPage,
+                      totalRows: transactionData.totalItems
+                     
                     }
+                  }
 
                 />
-            }
+              }
 
 
             </div>

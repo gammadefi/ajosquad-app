@@ -11,6 +11,10 @@ export const guarantorServices = {
     const response = await createApiClient().get(guarantorApiRoutes.getGuarantor(guarantorId));
     return response.data;
   },
+  getGuarantorStats: async() => {
+    const response = await createApiClient().get(guarantorApiRoutes.getGuarantorStats);
+    return response.data;
+  },
   addGuarantor: async(payload: any) => {
     const response = await createApiClient().post(guarantorApiRoutes.addGuarantor, payload);
     return response.data;

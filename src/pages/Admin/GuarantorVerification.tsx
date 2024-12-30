@@ -1,69 +1,91 @@
-import React from 'react'
-import { mockData } from '../../samples/mockdata';
 import { Table, TableEmpty } from '../../components/Table/Table';
 import SearchInput from '../../components/FormInputs/SearchInput';
 import { InfoCard } from '../../components/InfoCard/InfoCard2';
 import { Label } from '../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
-import { IoIosArrowRoundBack } from "react-icons/io";
+import { guarantorServices } from '../../services/guarantor';
+import useFetchWithParams from '../../hooks/useFetchWithParams';
+import { useAuth } from '../../zustand/auth.store';
+import { useQuery } from 'react-query';
+import { useState } from 'react';
+import PageLoader from '../../components/spinner/PageLoader';
+import { formatDate2 } from '../../utils/formatTime';
 
 const GuarantorVerification = () => {
-    const navigate = useNavigate()
+    const [currentPage, setCurrentPage] = useState(1);
+    const profile = useAuth((s) => s.profile);
+
+    const { data, isLoading, error } = useQuery('guarantor-stats', async () => {
+        const response = await guarantorServices.getGuarantorStats();
+        return response;
+    })
+
+    const { data: data2, isLoading: isLoading2, refetch } = useFetchWithParams(
+        [`guarantor-${profile.id}`, {
+            page: currentPage
+        }],
+        guarantorServices.getAllGuarantors,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
     const columns = [
         {
             header: "S/N",
             view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
         },
         {
+            header: "Member Name",
+            view: (row: any) => <div>{row.name}</div>,
+        },
+        {
             header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
             header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.email}</div>,
         },
         {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "File ID",
+            view: (row: any) => <div>{row.file || "N/A"}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
-        },
-        {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            header: "Date Uploaded",
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
             header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            view: (row: any) => <Label variant="success" >{row?.verificationStatus}</Label>,
         },
     ];
+
+    console.log(data, data2)
+
+    // if (isLoading || isLoading2) return <PageLoader />
+    // if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
+
     return (
         <div className='px-3  md:px-6'>
-            {/* <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button> */}
             <div className='flex justify-between flex-wrap items-center'>
                 <div>
                     <h3 className='text-base md:text-xl font-semibold'>Manage and Verify all your member guarantor in one place</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                    Easily view and verify all member guarantors from a single dashboard.
+                        Easily view and verify all member guarantors from a single dashboard.
                     </p>
                 </div>
-              
-
-
-
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard header="Total Gurantor" iconName='profile-2user' value="50" />
-                <InfoCard header="Verified Gurantor" iconName='profile-tick' value="40" />
-                <InfoCard header="Unapproved Gurantor" iconName='profile-2user' value="10" />
-               
-                
-                {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
-
+                <InfoCard isLoading={isLoading} header="Total Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.total}`} />
+                <InfoCard isLoading={isLoading} header="Verified Guarantor" iconName='profile-tick' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.approved}`} />
+                <InfoCard isLoading={isLoading} header="Unapproved Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.declined}`} />
             </div>
-
             <div>
                 <div className='my-8 flex justify-between items-center '>
                     <h3 className='text-xl font-semibold'>All Member</h3>
@@ -72,24 +94,24 @@ const GuarantorVerification = () => {
                         <SearchInput placeholder='Search...' />
                         <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
                     </div>
-
-
                 </div>
+                {
+                    isLoading2 ? <PageLoader /> :
 
-                
-            {
-                [].length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
-
-                />
-            }
-
-
+                    data2.guarantors && data2.guarantors.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                        data={data2.guarantors.data}
+                        columns={columns}
+                        loading={false}
+                        pagination={
+                            {
+                                page: currentPage,
+                                pageSize: 10,
+                                setPage: setCurrentPage,
+                                totalRows: data2.guarantors.total
+                            }
+                        }
+                    />
+                }
             </div>
         </div>
     )

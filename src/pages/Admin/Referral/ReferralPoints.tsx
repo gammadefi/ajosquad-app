@@ -12,6 +12,7 @@ import { ReferralServices } from '../../../services/referral';
 import { useQuery } from 'react-query';
 import { useAuth } from '../../../zustand/auth.store';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import { userServices } from '../../../services/user';
 import PageLoader from '../../../components/spinner/PageLoader';
 
 const ReferralPoints = () => {
@@ -19,14 +20,16 @@ const ReferralPoints = () => {
     const profile = useAuth(state => state.profile)
     const [currentPage, setCurrentPage] = useState(1)
 
-    const { data: referralStats, isLoading } = useFetchWithParams([`referralStats-${profile.id}`, {
+    const {data: referralStats, isLoading} = useQuery(["referralStats", profile.id ], () => ReferralServices.getReferralStats(profile.id))
 
-    }], ReferralServices.getReferralStats, {
-        onSuccess: (data: any) => {
-
+    const {data: users, isLoading: isLoadingUsers} = useFetchWithParams([`get-all-users+${profile.id}`, {
+        page: currentPage
+    } ], userServices.user.getAllUsers, {
+        onSuccess: (data:any) => {
+            
         },
+        
     })
-
 
     const columns = [
         {
@@ -34,43 +37,48 @@ const ReferralPoints = () => {
             view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
         },
         {
-            header: "Description",
-            view: (row: any) => <div>{row.description}</div>,
+            header: "Member Name",
+            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
         },
         {
-            header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Member Id",
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            header: "Total Referral",
+            view: (row: any) => <div>{row.referralsCount}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            header: "Earned Point",
+            view: (row: any) => <div>{row.rewardsEarned}</div>,
         },
         {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            header: "Redeemed Point",
+            view: (row: any) => <div>{row.totalRedeemedPoints}</div>,
+        },
+        {
+            header: "Rewards Earned",
+            view: (row: any) => <Label variant="success" >CAD$ {row?.rewardsEarned.toLocaleString()}</Label>,
         },
     ];
 
+    console.log(referralStats,users )
     return (
         <div>
             <div className='flex justify-between items-center'>
                 <h3 className='text-base md:text-xl font-semibold'>Share the Savings, Earn Rewards!</h3>
 
-                <button>Redeem Point <span></span></button>
+                
 
 
 
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0} />
-                <InfoCard isLoading={isLoading} header="Approved Referrals" iconName='profile-tick' value={referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0} />
-                <InfoCard isLoading={isLoading} header="Points" iconName='ticket-discount' value={referralStats ? referralStats.stats.rewardsEarned.toLocaleString() : 0} />
-                <InfoCard isLoading={isLoading} header="Redeemed Points" iconName='ticket-discount-1' value={referralStats ? referralStats.stats.totalRedeemedPoints.toLocaleString() : 0} />
-                <InfoCard isLoading={isLoading} header="Cash Rewards" iconName='moneys-credit' value={`CAD$ ${referralStats ? referralStats.stats.rewardsEarned.toLocaleString() : 0}`} />
+                <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.data.stats.totalReferralsCount.toLocaleString() : 0}/>
+                <InfoCard isLoading={isLoading} header="Approved Referrals" iconName='profile-tick' value={referralStats ? referralStats.data.stats.totalReferralsCount.toLocaleString() : 0} />
+                <InfoCard isLoading={isLoading} header="Points" iconName='ticket-discount' value={referralStats ? referralStats.data.stats.totalReferralsCount.toLocaleString() : 0} />
+                <InfoCard isLoading={isLoading} header="Redeemed Points" iconName='ticket-discount-1' value={referralStats ? referralStats.data.stats.totalRedeemedPoints.toLocaleString() : 0} />
+                <InfoCard isLoading={isLoading} header="Cash Rewards" iconName='moneys-credit' value={`CAD$ ${referralStats ? referralStats.data.stats.totalRewardsEarned.toLocaleString() : 0}`} />
 
             </div>
 
@@ -79,7 +87,7 @@ const ReferralPoints = () => {
                 <div >
                     <h4 className='mb-1 font-semibold'>Invite Link</h4>
                     <div className='flex items-center gap-2'>
-                        <input readOnly disabled name='inviteLink' className='border rounded-md h-[44px] px-3 w-[343px] text-sm' value={`${window.location.origin}/sign-up?ref=${profile.referralCode}`} />
+                        <input readOnly disabled name='inviteLink' className='border rounded-md h-[44px] px-3 w-[343px] text-sm' value={"ajosquad.com/favidesign62g"} />
                         <Button label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
                     </div>
                     <small>Minimum point to redeem is CAD$50</small>
@@ -88,28 +96,28 @@ const ReferralPoints = () => {
                 <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                     <div className='flex justify-between'>
                         <h3 className='text-xl font-semibold'>Referral</h3>
-                        <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Redeem Points</button>
+                        {/* <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Redeem Points</button> */}
                     </div>
                     <div className='flex items-center gap-2'>
                         <SearchInput placeholder='Search...' />
-                        <Filter />
-                        <button className='hidden lg:block text-primary px-4 py-2 border text-nowrap border-primary rounded-lg font-semibold'>Redeem Points</button>
+                        {/* <Filter />
+                        <button className='hidden lg:block text-primary px-4 py-2 border text-nowrap border-primary rounded-lg font-semibold'>Redeem Points</button> */}
                     </div>
 
 
                 </div>
 
                 {
-                    isLoading ? <PageLoader /> :
-                        referralStats && referralStats?.referrals.length === 0 ? <TableEmpty title='No user  yet' image='/empty-states/people.png' subtitle="you are yet to refer a user" /> : <Table
-                            data={referralStats.referrals}
+                    isLoadingUsers ? <PageLoader /> :
+                        users && users?.users.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                            data={users.users}
                             columns={columns}
                             loading={false}
                             pagination={
                                {
                                 page:currentPage,
                                 setPage:(page) => setCurrentPage(page),
-                                totalRows: referralStats?.totalReferrals,
+                                totalRows: users?.totalUsers,
                                }
                             }
 

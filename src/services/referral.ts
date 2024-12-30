@@ -4,8 +4,8 @@ import { paramsObjectToQueryString } from "../utils/helpers";
 
 
 export const ReferralServices = {
-    getReferralStats : async(userId: string) => {
-        const response = await createApiClient().get(`/ajosquad/referral/stats/${userId}`)
+    getReferralStats : async(payload: string) => {
+        const response = await createApiClient().get(`/ajosquad/referral/stats${paramsObjectToQueryString(payload)}`)
         return response.data
     },
     getReferredUsers : async(payload:any) => {

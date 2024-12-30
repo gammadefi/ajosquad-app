@@ -30,7 +30,8 @@ export const userApiRoutes = {
     getAllUsers: "/user",
     updateUserPersonal: (userId: string) => `/user/${userId}/personal-info`,
     updateUserEmployer: (userId: string) => `/user/${userId}/employer-info`,
-    changePassword: (userId: string) => `/user/${userId}/update-password`
+    changePassword: (userId: string) => `/user/${userId}/update-password`,
+    countAll: "/user/countAll"
 
   },
   kyc: {
@@ -56,6 +57,7 @@ export const userApiRoutes = {
 
 export const guarantorApiRoutes = {
   getAllGuarantors: "/guarantor/query",
+  getGuarantorStats: "/guarantor/stats",
   getGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`,
   addGuarantor: "/guarantor",
   updateGuarantor: (guarantorId: string) => `/guarantor/${guarantorId}`
