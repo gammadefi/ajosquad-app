@@ -1,6 +1,6 @@
 import { Table, TableEmpty } from '../../components/Table/Table';
 import SearchInput from '../../components/FormInputs/SearchInput';
-import { InfoCard } from '../../components/InfoCard/InfoCard';
+import { InfoCard } from '../../components/InfoCard/InfoCard2';
 import { Label } from '../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { guarantorServices } from '../../services/guarantor';
@@ -68,8 +68,8 @@ const GuarantorVerification = () => {
 
     console.log(data, data2)
 
-    if (isLoading || isLoading2) return <PageLoader />
-    if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
+    // if (isLoading || isLoading2) return <PageLoader />
+    // if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
 
     return (
         <div className='px-3  md:px-6'>
@@ -82,9 +82,9 @@ const GuarantorVerification = () => {
                 </div>
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard header="Total Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.total}`} />
-                <InfoCard header="Verified Guarantor" iconName='profile-tick' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.approved}`} />
-                <InfoCard header="Unapproved Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.declined}`} />
+                <InfoCard isLoading={isLoading} header="Total Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.total}`} />
+                <InfoCard isLoading={isLoading} header="Verified Guarantor" iconName='profile-tick' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.approved}`} />
+                <InfoCard isLoading={isLoading} header="Unapproved Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.declined}`} />
             </div>
             <div>
                 <div className='my-8 flex justify-between items-center '>
@@ -96,6 +96,8 @@ const GuarantorVerification = () => {
                     </div>
                 </div>
                 {
+                    isLoading2 ? <PageLoader /> :
+
                     data2.guarantors && data2.guarantors.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
                         data={data2.guarantors.data}
                         columns={columns}
