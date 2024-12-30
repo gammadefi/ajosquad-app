@@ -2,27 +2,29 @@ import { Table, TableEmpty } from '../../components/Table/Table';
 import SearchInput from '../../components/FormInputs/SearchInput';
 import { InfoCard } from '../../components/InfoCard/InfoCard2';
 import { Label } from '../../components/Label/Label';
-import { useNavigate } from 'react-router-dom';
 import { guarantorServices } from '../../services/guarantor';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
-import { useAuth } from '../../zustand/auth.store';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import PageLoader from '../../components/spinner/PageLoader';
 import { formatDate2 } from '../../utils/formatTime';
+import Modal from '../../components/Modal/Modal';
+import GuarantorVerificationModal from '../../components/Guarantor/admin/GuarantorVerification';
 
 const GuarantorVerification = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const profile = useAuth((s) => s.profile);
+    const [id, setId] = useState("");
+    const [openModal, setOpenModal] = useState(false);
 
     const { data, isLoading, error } = useQuery('guarantor-stats', async () => {
         const response = await guarantorServices.getGuarantorStats();
         return response;
     })
 
-    const { data: data2, isLoading: isLoading2, refetch } = useFetchWithParams(
-        [`guarantor-${profile.id}`, {
-            page: currentPage
+    const { data: data2, isLoading: isLoading2 } = useFetchWithParams(
+        ["adminGuarantor", {
+            page: currentPage,
+            orderBy: "createdAt,desc",
         }],
         guarantorServices.getAllGuarantors,
         {
@@ -66,11 +68,6 @@ const GuarantorVerification = () => {
         },
     ];
 
-    console.log(data, data2)
-
-    // if (isLoading || isLoading2) return <PageLoader />
-    // if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
-
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between flex-wrap items-center'>
@@ -82,14 +79,13 @@ const GuarantorVerification = () => {
                 </div>
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard isLoading={isLoading} header="Total Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.total}`} />
-                <InfoCard isLoading={isLoading} header="Verified Guarantor" iconName='profile-tick' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.approved}`} />
-                <InfoCard isLoading={isLoading} header="Unapproved Guarantor" iconName='profile-2user' value={isLoading ? "Please wait" : error ? "N/A" : `${data?.data?.declined}`} />
+                <InfoCard isLoading={isLoading} header="Total Guarantor" iconName='profile-2user' value={error ? "N/A" : `${data?.data?.total}`} />
+                <InfoCard isLoading={isLoading} header="Verified Guarantor" iconName='profile-tick' value={error ? "N/A" : `${data?.data?.approved}`} />
+                <InfoCard isLoading={isLoading} header="Unapproved Guarantor" iconName='profile-2user' value={error ? "N/A" : `${data?.data?.declined}`} />
             </div>
             <div>
                 <div className='my-8 flex justify-between items-center '>
                     <h3 className='text-xl font-semibold'>All Member</h3>
-
                     <div className='flex items-center gap-2'>
                         <SearchInput placeholder='Search...' />
                         <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
@@ -97,22 +93,30 @@ const GuarantorVerification = () => {
                 </div>
                 {
                     isLoading2 ? <PageLoader /> :
-
-                    data2.guarantors && data2.guarantors.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                        data={data2.guarantors.data}
-                        columns={columns}
-                        loading={false}
-                        pagination={
-                            {
-                                page: currentPage,
-                                pageSize: 10,
-                                setPage: setCurrentPage,
-                                totalRows: data2.guarantors.total
+                        data2.guarantors && data2.guarantors.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                            data={data2.guarantors.data}
+                            columns={columns}
+                            loading={false}
+                            clickRowAction={(row) => {
+                                setId(row.id);
+                                if (!row.deletedAt){
+                                    setOpenModal(true);
+                                }
+                            }}
+                            pagination={
+                                {
+                                    page: currentPage,
+                                    pageSize: 10,
+                                    setPage: setCurrentPage,
+                                    totalRows: data2.guarantors.total
+                                }
                             }
-                        }
-                    />
+                        />
                 }
             </div>
+            <Modal open={openModal} onClick={() => setOpenModal(!openModal)}>
+                <GuarantorVerificationModal id={id} closeModal={() => setOpenModal(!openModal)} />
+            </Modal>
         </div>
     )
 }
