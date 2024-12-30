@@ -25,6 +25,7 @@ import Filter from '../../components/Filter/Filter';
 import { useQuery } from 'react-query';
 import { statisticsServices } from '../../services/statistics';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
+import PageLoader from '../../components/spinner/PageLoader';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -415,12 +416,19 @@ const Dashboard = () => {
                 <Filter filterBy={["amount", "date", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
               </div>
               {
-                mockData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
-                  data={mockData.data}
+                isTransactionLoading ? <PageLoader /> : 
+                transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
+                  data={transactionData.data}
                   columns={columns}
                   loading={false}
                   pagination={
-                    mockData.pagination
+                    {
+                     
+                      page: currentPage,
+                      setPage: setCurrentPage,
+                      totalRows: transactionData.totalItems
+                     
+                    }
                   }
 
                 />

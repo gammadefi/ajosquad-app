@@ -17,6 +17,8 @@ import { PaymentService } from '../../services/payment';
 import { PayoutService } from '../../services/payout';
 import { useAuth } from '../../zustand/auth.store';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
+import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
+import PageLoader from '../../components/spinner/PageLoader';
 
 export const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -28,6 +30,10 @@ const Dashboard = () => {
   const [activeSquad, setActiveSquad] = useState(true)
   const [showFilter, setShowFilter] = useState(false)
   const [lastMonths, setLastMonths] = useState("All Time");
+  const [search, setSearch] = useState("");
+  const searchParamsObject = useSearchParamsToObject();
+  const [currentPage, setCurrentPage] = useState(1)
+  
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
 
   const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
@@ -55,6 +61,26 @@ const Dashboard = () => {
       months: lastMonthsPayment === "All Time" ? "" : lastMonthsPayment === "Last Month" ? "1" : "2"
     }],
     PaymentService.getTotalPayment,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+  const {data:transactionData, isLoading:isTransactionLoading} = useFetchWithParams(
+    [`query-all-transactions-admin-${profile.id}`, {
+      fromAmount: searchParamsObject.minAMount,
+      toAmount: searchParamsObject.maxAmount,
+      endDate: searchParamsObject.endDate,
+      startDate: searchParamsObject.startDate,
+      search,
+      page: currentPage,
+
+    } ], statisticsServices.getTransactions,
     {
       onSuccess: (data: any) => {
         // console.log(data.data);
@@ -353,16 +379,23 @@ const Dashboard = () => {
           </div>
 
           {
-            mockData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
-              data={mockData.data}
-              columns={columns}
-              loading={false}
-              pagination={
-                mockData.pagination
-              }
+                isTransactionLoading ? <PageLoader /> : 
+                transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
+                  data={transactionData.data}
+                  columns={columns}
+                  loading={false}
+                  pagination={
+                    {
+                     
+                      page: currentPage,
+                      setPage: setCurrentPage,
+                      totalRows: transactionData.totalItems
+                     
+                    }
+                  }
 
-            />
-          }
+                />
+              }
 
 
         </div>
