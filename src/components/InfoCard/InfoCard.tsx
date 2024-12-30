@@ -103,13 +103,6 @@ export const InfoCard = ({
         </div>
         )
       }
-
-     
-
-
-
-
-
     </div>
   );
 };
