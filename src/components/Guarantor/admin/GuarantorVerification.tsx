@@ -46,7 +46,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     }
     try {
       setIsApproving(true);
-      const res = await approveGuarantormutation.mutateAsync({ id, payload });
+      const res = await mutation.mutateAsync({ id, payload });
       if (res) {
         setIsApproving(false);
         setFinalModalContent({
@@ -73,7 +73,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
 
     try {
       setIsDeclining(true);
-      const res = await declineGuarantormutation.mutateAsync({ id, payload });
+      const res = await mutation.mutateAsync({ id, payload });
       if (res) {
         setIsDeclining(false);
         setFinalModalContent({
@@ -87,15 +87,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     }
   };
 
-  const approveGuarantormutation = useMutation(updateGuarantor, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["adminGuarantor"]);
-      queryClient.invalidateQueries([`guarantor-${id}`]);
-      queryClient.invalidateQueries(["guarantor-stats"]);
-    },
-  });
-
-  const declineGuarantormutation = useMutation(updateGuarantor, {
+  const mutation = useMutation(updateGuarantor, {
     onSuccess: () => {
       queryClient.invalidateQueries(["adminGuarantor"]);
       queryClient.invalidateQueries([`guarantor-${id}`]);
