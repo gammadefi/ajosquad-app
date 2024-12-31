@@ -56,7 +56,7 @@ const Payment = () => {
     ];
 
     const [search, setSearch] = useState("")
-    const [currentPage, setCurrentPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { data: payments, isLoading, refetch, error } = useFetchWithParams(
         [`query-all-payments-${profile.id}`, {
@@ -88,8 +88,6 @@ const Payment = () => {
             refetchOnMount: true,
         }
     )
-
-    // console.log(payments)
 
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>

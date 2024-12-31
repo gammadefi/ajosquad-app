@@ -8,10 +8,14 @@ import Filter from '../../components/Filter/Filter'
 import { useAuth } from '../../zustand/auth.store'
 import useFetchWithParams from '../../hooks/useFetchWithParams'
 import { PaymentService } from '../../services/payment'
+import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
+import PageLoader from '../../components/spinner/PageLoader'
 
 const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [lastMonths, setLastMonths] = useState("All Time");
+    const [currentPage, setCurrentPage] = useState(1);
+    const searchParamsObject = useSearchParamsToObject();
     const profile = useAuth((s) => s.profile);
 
     const columns = [
@@ -41,6 +45,22 @@ const Payment = () => {
         },
     ];
 
+    const { data: payments, isLoading, refetch, error } = useFetchWithParams(
+        [`query-all-payments-${profile.id}`, {
+            ...searchParamsObject,
+            page: currentPage
+        }],
+        PaymentService.getPayments,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
     const { data: paymentsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
         [`query-all-total-payments-${profile.id}`, {
             months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
@@ -55,9 +75,7 @@ const Payment = () => {
             refetchOnMount: true,
         }
     )
-
-
-
+    
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
@@ -103,15 +121,20 @@ const Payment = () => {
             </div>
 
             {
-                [].length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
-
-                />
+                isLoading ? <PageLoader /> :
+                    payments.data && payments.data.length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
+                        data={payments.data}
+                        columns={columns}
+                        loading={false}
+                        pagination={
+                            {
+                                page: currentPage,
+                                pageSize: 10,
+                                setPage: setCurrentPage,
+                                totalRows: payments.pagination.total
+                            }
+                        }
+                    />
             }
 
 
