@@ -2,16 +2,14 @@ import { useState } from 'react'
 import { InfoCard } from '../../components/InfoCard/InfoCard2'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { Table, TableEmpty } from '../../components/Table/Table'
-import { Label } from '../../components/Label/Label'
 import Filter from '../../components/Filter/Filter'
-import { useAuth } from '../../zustand/auth.store'
 import { PayoutService } from '../../services/payout'
 import useFetchWithParams from '../../hooks/useFetchWithParams'
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
 import PageLoader from '../../components/spinner/PageLoader'
 import { formatDate2 } from '../../utils/formatTime'
 import Modal from '../../components/Modal/Modal'
-import PayoutAction from '../../components/Payout/admin/PayoutAction'
+import PayoutModal from '../../components/Payout/admin/PayoutModal'
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -20,7 +18,6 @@ const Payout = () => {
     const [openModal, setOpenModal] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
     const [lastMonths, setLastMonths] = useState("All Time");
-    const profile = useAuth((s) => s.profile)
 
     const columns = [
         {
@@ -53,12 +50,13 @@ const Payout = () => {
         },
         {
             header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.status === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : row.status === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}>{row.status === 'completed' ? "Successful" : row.status === 'upcoming' ? "Upcoming" : "Pending"}</span>
+            ,
         },
     ];
 
     const { data: payouts, isLoading, error } = useFetchWithParams(
-        [`query-all-payouts-${profile.id}`, {
+        ["query-all-payouts-admin", {
             ...searchParamsObject,
             page: currentPage
         }],
@@ -74,7 +72,7 @@ const Payout = () => {
     )
 
     const { data: payoutsTotal, isLoading: isLoadingCount } = useFetchWithParams(
-        [`query-all-total-payouts-${profile.id}`, {
+        ["query-all-total-payouts-admin", {
             months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
         }],
         PayoutService.getTotalPayout,
@@ -139,9 +137,7 @@ const Payout = () => {
                         loading={false}
                         clickRowAction={(row) => {
                             setId(row.id);
-                            if (!row.deletedAt) {
-                                setOpenModal(true);
-                            }
+                            setOpenModal(true);
                         }}
                         pagination={
                             {
@@ -153,7 +149,7 @@ const Payout = () => {
                     />
             }
             <Modal open={openModal} onClick={() => setOpenModal(!openModal)}>
-                <PayoutAction id={id} closeModal={() => setOpenModal(!openModal)} />
+                <PayoutModal id={id} closeModal={() => setOpenModal(!openModal)} />
             </Modal>
         </div>
     )

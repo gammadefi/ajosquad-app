@@ -1,16 +1,25 @@
 import { useState } from 'react'
 import { PayoutService } from '../../../services/payout';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import PageLoader from '../../spinner/PageLoader';
 import { formatDate2 } from '../../../utils/formatTime';
 import { IoMdCopy } from 'react-icons/io';
 import { FaArrowRight, FaRegCircleCheck } from "react-icons/fa6";
 import useCopyToClipboard from '../../../hooks/useCopyToClipboard';
+import { AxiosResponse } from 'axios';
+import toast from 'react-hot-toast';
+
+const updatePayout = async ({ id, payload }: { id: string, payload: any }) => {
+  const res: AxiosResponse = await PayoutService.updatePayout(id, payload)
+  return res.data
+};
 
 export default function PayoutAction({ id, closeModal }: { id: string, closeModal: () => void }) {
   const [step, setStep] = useState(1);
+  const [isConfirmingPayout, setIsConfirmingPayout] = useState(false);
 
   const { copiedIndex, copyToClipboard } = useCopyToClipboard();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery(`payout-${id}`, async () => {
     const response = await PayoutService.getPayout(id);
@@ -25,13 +34,36 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
     setStep(step - 1);
   };
 
+  const handleConfirmPayout = async () => {
+    const payload = {
+      "status": "completed"
+    }
+    try {
+      setIsConfirmingPayout(true);
+      const res = await mutation.mutateAsync({ id, payload });
+      if (res) {
+        setIsConfirmingPayout(false);
+        handleNextStep();
+      }
+    } catch (error) {
+      setIsConfirmingPayout(false);
+      toast.error("An error occurred. Please try again")
+    }
+  }
+
+  const mutation = useMutation(updatePayout, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["query-all-payouts-admin"]);
+      queryClient.invalidateQueries(["query-all-total-payouts-admin"]);
+    },
+  });
+
   const handleCopy = (text: string, index: number) => {
     copyToClipboard(text, index);
   };
 
   if (isLoading) return <PageLoader />
   if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
-  console.log(data);
 
   return (
     <>
@@ -39,13 +71,13 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
         {
           step === 1 &&
           <>
-            <h2 className='text-3xl font-semibold'>Payout {data.data.status !== "success" && "Transaction"} Details</h2>
+            <h2 className='text-3xl font-semibold'>Payout Transaction Details</h2>
             <p>Here's your Member payout details:</p>
             <div className='space-y-2 mt-2'>
               <div className='bg-[#F8F8F8] flex flex-col gap-2 p-2.5 rounded-lg mt-4'>
                 <div className="flex justify-between">
                   <span>Payout Status</span>
-                  <span className='text-[#464749]'>{data.data.status}</span>
+                  <span className={`px-3 py-0.5 rounded-xl font-medium ${data.data.status === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : data.data.status === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}>{data.data.status === 'completed' ? "Successful" : data.data.status === 'upcoming' ? "Upcoming" : "Pending"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Member Name</span>
@@ -72,7 +104,7 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
                   <span className='text-[#464749]'>{data.data.position || "0"}/10</span>
                 </div>
                 {
-                  data.data.status === "successful" &&
+                  data.data.status === "completed" &&
                   <>
                     <div className="flex justify-between">
                       <span>Amount</span>
@@ -90,7 +122,7 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
                 </div>
               </div>
               {
-                data.data.status === "pending" &&
+                (data.data.status === "pending" || data.data.status === "upcoming") &&
                 <>
                   <hr />
                   <div className='bg-[#F8F8F8] flex flex-col gap-2 p-2.5 rounded-lg mt-4'>
@@ -123,14 +155,12 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
                   <div className="mt-5 flex justify-between">
                     <button
                       type="button"
+                      onClick={closeModal}
                       className="border border-primary font-medium px-10 rounded-lg"
                     >
-                      Decline
+                      Cancel
                     </button>
                     <button
-                      // type='submit'
-                      // onClick={handleApproveGuarantor}
-                      // disabled={isApproving}
                       onClick={handleNextStep}
                       className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
                     >
@@ -157,10 +187,12 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
                 Cancel
               </button>
               <button
-                onClick={handleNextStep}
+                onClick={handleConfirmPayout}
+                disabled={isConfirmingPayout}
                 className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
               >
-                Yes, Proceed
+                {isConfirmingPayout ? "Proceeding" : "Yes, Proceed"}
+
                 <FaArrowRight />
               </button>
             </div>
@@ -176,7 +208,7 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
               </h3>
             </div>
             <p className='text-sm text-center'>
-            Success! {data.data.squadMemberId} payout successful.
+              Success! {data.data.squadMemberId} payout successful.
             </p>
             <button
               onClick={closeModal}

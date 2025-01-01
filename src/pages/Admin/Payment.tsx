@@ -1,52 +1,62 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { InfoCard } from '../../components/InfoCard/InfoCard2'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { Table, TableEmpty } from '../../components/Table/Table'
-import { Label } from '../../components/Label/Label'
-import { mockData } from '../../samples/mockdata'
 import Filter from '../../components/Filter/Filter'
-import { useAuth } from '../../zustand/auth.store'
 import useFetchWithParams from '../../hooks/useFetchWithParams'
 import { PaymentService } from '../../services/payment'
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
 import PageLoader from '../../components/spinner/PageLoader'
+import { formatDate2 } from '../../utils/formatTime'
+import Modal from '../../components/Modal/Modal'
+import PaymentModal from '../../components/Payment/admin/PaymentModal'
 
 const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [lastMonths, setLastMonths] = useState("All Time");
     const [currentPage, setCurrentPage] = useState(1);
+    const [id, setId] = useState("");
+    const [openModal, setOpenModal] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
-    const profile = useAuth((s) => s.profile);
 
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any) => <div className="pc-text-blue">{row.index}</div>
         },
         {
-            header: "Description",
+            header: "Member ID",
+            view: (row: any) => <div>{row.squadMemberId}</div>,
+        },
+        {
+            header: "Member Email",
+            view: (row: any) => <div>{row.email || "N/A"}</div>,
+        },
+        {
+            header: "Payment Description",
             view: (row: any) => <div>{row.description}</div>,
         },
         {
-            header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Type",
+            view: (row: any) => <div>{row.type || "N/A"}</div>,
         },
         {
             header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            view: (row: any) => <div>CAD$ {row.amount}</div>,
         },
         {
             header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
             header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.status === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : row.status === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}>{row.status === 'completed' ? "Successful" : row.status === 'upcoming' ? "Upcoming" : "Pending"}</span>
+            ,
         },
     ];
 
-    const { data: payments, isLoading, refetch, error } = useFetchWithParams(
-        [`query-all-payments-${profile.id}`, {
+    const { data: payments, isLoading, error } = useFetchWithParams(
+        ["query-all-payments-admin", {
             ...searchParamsObject,
             page: currentPage
         }],
@@ -61,8 +71,8 @@ const Payment = () => {
         }
     )
 
-    const { data: paymentsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
-        [`query-all-total-payments-${profile.id}`, {
+    const { data: paymentsTotal, isLoading: isLoadingCount } = useFetchWithParams(
+        ["query-all-total-payments-admin", {
             months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
         }],
         PaymentService.getTotalPayment,
@@ -75,7 +85,7 @@ const Payment = () => {
             refetchOnMount: true,
         }
     )
-    
+
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
@@ -122,10 +132,14 @@ const Payment = () => {
 
             {
                 isLoading ? <PageLoader /> :
-                    payments.data && payments.data.length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
+                    payments.data && payments.data.length !== 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
                         data={payments.data}
                         columns={columns}
                         loading={false}
+                        clickRowAction={(row) => {
+                            setId(row.id);
+                            setOpenModal(true);
+                        }}
                         pagination={
                             {
                                 page: currentPage,
@@ -136,8 +150,9 @@ const Payment = () => {
                         }
                     />
             }
-
-
+            <Modal open={openModal} onClick={() => setOpenModal(!openModal)}>
+                <PaymentModal id={id} />
+            </Modal>
         </div>
     )
 }
