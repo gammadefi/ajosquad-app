@@ -10,10 +10,14 @@ import useFetchWithParams from '../../hooks/useFetchWithParams'
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
 import PageLoader from '../../components/spinner/PageLoader'
 import { formatDate2 } from '../../utils/formatTime'
+import Modal from '../../components/Modal/Modal'
+import PayoutAction from '../../components/Payout/admin/PayoutAction'
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [id, setId] = useState("");
+    const [openModal, setOpenModal] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
     const [lastMonths, setLastMonths] = useState("All Time");
     const profile = useAuth((s) => s.profile)
@@ -83,8 +87,6 @@ const Payout = () => {
             refetchOnMount: true,
         }
     )
-
-    console.log(payouts)
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
@@ -135,6 +137,12 @@ const Payout = () => {
                         data={payouts.data}
                         columns={columns}
                         loading={false}
+                        clickRowAction={(row) => {
+                            setId(row.id);
+                            if (!row.deletedAt) {
+                                setOpenModal(true);
+                            }
+                        }}
                         pagination={
                             {
                                 page: currentPage,
@@ -144,10 +152,9 @@ const Payout = () => {
                         }
                     />
             }
-
-
-
-
+            <Modal open={openModal} onClick={() => setOpenModal(!openModal)}>
+                <PayoutAction id={id} closeModal={() => setOpenModal(!openModal)} />
+            </Modal>
         </div>
     )
 }

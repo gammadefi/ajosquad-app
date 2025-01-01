@@ -102,7 +102,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     <>
       {
         showFinalModal ? <SuccessModal content={finalModalContent} closeModal={closeModal} /> :
-          <div className='w-[500px]'>
+          <div className='md:w-[500px]'>
             {
               step === 1 &&
               <>
