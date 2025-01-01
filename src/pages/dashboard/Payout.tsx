@@ -1,11 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { InfoCard } from '../../components/InfoCard/InfoCard'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { Table, TableEmpty } from '../../components/Table/Table'
-import { Label } from '../../components/Label/Label'
-import { mockData } from '../../samples/mockdata'
 import Filter from '../../components/Filter/Filter'
-import { Button } from '../../components/Button/Button'
 import { useAuth } from '../../zustand/auth.store'
 import useFetchWithParams from '../../hooks/useFetchWithParams'
 import { PayoutService } from '../../services/payout'
@@ -150,7 +147,6 @@ const Payout = () => {
                                             totalRows: payouts.pagination.pages,
                                         }
                                     }
-
                                 />
                         }
 

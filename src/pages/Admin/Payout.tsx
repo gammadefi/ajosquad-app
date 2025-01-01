@@ -1,48 +1,78 @@
-import React, { useState } from 'react'
-import { InfoCard } from '../../components/InfoCard/InfoCard'
+import { useState } from 'react'
+import { InfoCard } from '../../components/InfoCard/InfoCard2'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { Table, TableEmpty } from '../../components/Table/Table'
-import { Label } from '../../components/Label/Label'
-import { mockData } from '../../samples/mockdata'
 import Filter from '../../components/Filter/Filter'
-import { useAuth } from '../../zustand/auth.store'
 import { PayoutService } from '../../services/payout'
 import useFetchWithParams from '../../hooks/useFetchWithParams'
+import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
+import PageLoader from '../../components/spinner/PageLoader'
+import { formatDate2 } from '../../utils/formatTime'
+import Modal from '../../components/Modal/Modal'
+import PayoutModal from '../../components/Payout/admin/PayoutModal'
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [id, setId] = useState("");
+    const [openModal, setOpenModal] = useState(false);
+    const searchParamsObject = useSearchParamsToObject();
     const [lastMonths, setLastMonths] = useState("All Time");
-    const profile = useAuth((s) => s.profile)
 
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any) => <div className="pc-text-blue">{row.index}</div>
         },
         {
-            header: "Description",
+            header: "Member ID",
+            view: (row: any) => <div>{row.squadMemberId}</div>,
+        },
+        {
+            header: "Member Email",
+            view: (row: any) => <div>{row.email || "N/A"}</div>,
+        },
+        {
+            header: "Payment Description",
             view: (row: any) => <div>{row.description}</div>,
         },
         {
-            header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Type",
+            view: (row: any) => <div>{row.type || "N/A"}</div>,
         },
         {
             header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            view: (row: any) => <div>CAD$ {row.amount}</div>,
         },
         {
             header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
             header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.status === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : row.status === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}>{row.status === 'completed' ? "Successful" : row.status === 'upcoming' ? "Upcoming" : "Pending"}</span>
+            ,
         },
     ];
 
-    const { data: payoutsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
-        [`query-all-total-payouts-${profile.id}`, {
+    const { data: payouts, isLoading, error } = useFetchWithParams(
+        ["query-all-payouts-admin", {
+            ...searchParamsObject,
+            page: currentPage
+        }],
+        PayoutService.getPayouts,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
+    const { data: payoutsTotal, isLoading: isLoadingCount } = useFetchWithParams(
+        ["query-all-total-payouts-admin", {
             months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
         }],
         PayoutService.getTotalPayout,
@@ -55,9 +85,6 @@ const Payout = () => {
             refetchOnMount: true,
         }
     )
-
-
-
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
@@ -70,10 +97,10 @@ const Payout = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
-                <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='AjoSquad Withdrawal' />
-                <InfoCard iconName='moneys-debit' value='CA$ 0.00' header='AjoHome Withdrawal' />
-                <InfoCard iconName='moneys-debit' value='CA$ 0.00' header='AjoBusiness Withdrawal' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='AjoSquad Withdrawal' />
+                <InfoCard iconName='moneys-debit' isLoading={false} value='CA$ 0.00' header='AjoHome Withdrawal' />
+                <InfoCard iconName='moneys-debit' isLoading={false} value='CA$ 0.00' header='AjoBusiness Withdrawal' />
             </div>
 
 
@@ -103,20 +130,27 @@ const Payout = () => {
             </div>
 
             {
-                [].length === 0 ? <TableEmpty title='Payout History Details' image='/empty-states/payout.png' subtitle="On this page, you'll find a record of your previous payouts, including dates, and amount." /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
-
-                />
+                isLoading ? <PageLoader /> :
+                    payouts && payouts.data.length === 0 ? <TableEmpty title='Payout History Details' image='/empty-states/payout.png' subtitle="On this page, you'll find a record of your previous payouts, including dates, and amount." /> : <Table
+                        data={payouts.data}
+                        columns={columns}
+                        loading={false}
+                        clickRowAction={(row) => {
+                            setId(row.id);
+                            setOpenModal(true);
+                        }}
+                        pagination={
+                            {
+                                page: currentPage,
+                                setPage: setCurrentPage,
+                                totalRows: payouts.pagination.pages,
+                            }
+                        }
+                    />
             }
-
-
-
-
+            <Modal open={openModal} onClick={() => setOpenModal(!openModal)}>
+                <PayoutModal id={id} closeModal={() => setOpenModal(!openModal)} />
+            </Modal>
         </div>
     )
 }
