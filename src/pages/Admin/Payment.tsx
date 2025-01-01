@@ -132,7 +132,7 @@ const Payment = () => {
 
             {
                 isLoading ? <PageLoader /> :
-                    payments.data && payments.data.length !== 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
+                    payments.data && payments.data.length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
                         data={payments.data}
                         columns={columns}
                         loading={false}
