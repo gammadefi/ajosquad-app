@@ -51,10 +51,12 @@ export function timeAgo(date: Date) {
   return `${months} month${months === 1 ? '' : 's'} ago`;
 }
 
-export function formatDate2(dateString: string) {
+export function formatDate2(dateString: string, withTime: boolean = false): string {
   const date = new Date(dateString);
 
-  const formattedDate = format(date, "do MMM, yyyy", {
+  const stringFormat = withTime ? "do MMM, yyyy | p" : "do MMM, yyyy";
+
+  const formattedDate = format(date, stringFormat, {
     locale: enUS,
   });
 
