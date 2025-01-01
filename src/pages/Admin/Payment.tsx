@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { InfoCard } from '../../components/InfoCard/InfoCard'
+import { InfoCard } from '../../components/InfoCard/InfoCard2'
 import SearchInput from '../../components/FormInputs/SearchInput'
 import { Table, TableEmpty } from '../../components/Table/Table'
 import { Label } from '../../components/Label/Label'
@@ -88,10 +88,10 @@ const Payment = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
-                <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='AjoSquad deposit' />
-                <InfoCard iconName='moneys-credit' value='CA$ 0.00' header='AjoHome deposit' />
-                <InfoCard iconName='moneys-credit' value='CA$ 0.00' header='AjoBusiness deposit' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='AjoSquad deposit' />
+                <InfoCard iconName='moneys-credit' isLoading={false} value='CA$ 0.00' header='AjoHome deposit' />
+                <InfoCard iconName='moneys-credit' isLoading={false} value='CA$ 0.00' header='AjoBusiness deposit' />
             </div>
 
 

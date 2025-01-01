@@ -147,7 +147,6 @@ const Payout = () => {
                                             totalRows: payouts.pagination.pages,
                                         }
                                     }
-
                                 />
                         }
 
