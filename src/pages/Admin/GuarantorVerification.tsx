@@ -68,6 +68,8 @@ const GuarantorVerification = () => {
         },
     ];
 
+    console.log(data2);
+
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between flex-wrap items-center'>
@@ -93,8 +95,8 @@ const GuarantorVerification = () => {
                 </div>
                 {
                     isLoading2 ? <PageLoader /> :
-                        data2.guarantors && data2.guarantors.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                            data={data2.guarantors.data}
+                        data2.data && data2.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                            data={data2.data}
                             columns={columns}
                             loading={false}
                             clickRowAction={(row) => {
@@ -108,7 +110,7 @@ const GuarantorVerification = () => {
                                     page: currentPage,
                                     pageSize: 10,
                                     setPage: setCurrentPage,
-                                    totalRows: data2.guarantors.total
+                                    totalRows: data2.totalItems
                                 }
                             }
                         />
