@@ -77,6 +77,80 @@ export const AjosquadDashRouter: IModuleRouter = {
   ],
 };
 
+export const AjohomeDashRouter: IModuleRouter = {
+  key: "dashboard",
+  guard: (loggedIn) => loggedIn,
+  layout: DashboardLayout,
+  routes: [
+    {
+      index: true,
+      element: <Navigate to="/dashboard" />,
+    },
+    {
+      path: "/",
+      element: <Navigate to="/dashboard" />,
+    },
+    LazyRoute(
+      {
+        path: "/dashboard",
+      },
+      () => import("../pages/ajohomeDashboard/Dashboard")
+    ),
+    LazyRoute(
+      {
+        path: "/pod",
+      },
+      () => import("../pages/ajohomeDashboard/Squad")
+    ),
+    LazyRoute(
+      {
+        path: "/pods/connect-gocardless"
+      },
+      () => import("../pages/ajohomeDashboard/ConnectGoCardless")
+    ),
+    LazyRoute(
+      {
+        path: "/payment",
+      },
+      () => import("../pages/ajohomeDashboard/Payment")
+    ),
+    LazyRoute(
+      {
+        path: "/payout",
+      },
+      () => import("../pages/ajohomeDashboard/Payout")
+    ),
+    LazyRoute(
+      {
+        path: "/help",
+      },
+      () => import("../pages/ajohomeDashboard/HelpDesk")
+    ),
+    LazyRoute(
+      {
+        path: "/referral",
+      },
+      () => import("../pages/ajohomeDashboard/Referral/Referral")
+    ),
+    LazyRoute(
+      {
+        path: "/account",
+      },
+      () => import("../pages/ajohomeDashboard/Account/Account")
+    ),
+    LazyRoute(
+      {
+        path: "/notification",
+      },
+      () => import("../pages/ajohomeDashboard/Notifications")
+    ),
+    {
+      path: "*",
+      element: <Navigate to="/dashboard" />,
+    },
+  ],
+};
+
 export const AjosquadAdminDashRouter: IModuleRouter = {
   key: "admindashboard",
   guard: (loggedIn) => loggedIn,

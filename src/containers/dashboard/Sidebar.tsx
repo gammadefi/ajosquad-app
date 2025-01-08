@@ -4,7 +4,7 @@ import { ChevronRightIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import { useRef, useState, useContext } from "react";
 import { useSingleState } from "../../hooks/useSingleState";
 import { LogoutContext } from "../../context/LogoutContext";
-import { sidebar, sidebarEnd, sidebarMid } from "../../pages/dashboard/layout/DashboardLayout";
+import { sidebar, sidebarEnd, sidebarHome, sidebarMid } from "../../pages/dashboard/layout/DashboardLayout";
 import { ProductContext } from "../../context/ProductContext";
 import { useAuth } from "../../zustand/auth.store";
 
@@ -89,9 +89,11 @@ export const SidebarItem = ({
 }) => {
   const { pathname } = useLocation()
   const role: any = useAuth((s) => s.role)
+  const product = useAuth((s) => s.product)
+  const sideBarToRender = product === "AjoHome" ? sidebarHome[role] : sidebar[role]
   return (
     <div className="mb-6">
-      {sidebar[role].map((items: any, index: number) =>
+      { sideBarToRender.map((items: any, index: number) =>
         <div className="py-2 w-full px-3">
 
           <NavLink to={items.path ?? "/"} className={({ isActive }) =>

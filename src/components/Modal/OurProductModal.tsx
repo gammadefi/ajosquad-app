@@ -20,7 +20,6 @@ const OurProductModal = ({ open, onClick = () => { } }: { open: boolean, onClick
             image: "ajo-home.png",
             title: "AjoHome",
             description: "Join AjoHome, Ajosquad's community-driven platform, where you collaborate with like-minded investors to achieve financial success through real estate investing.",
-            comingSoon: true
         },
         {
             image: "ajo-business.png",

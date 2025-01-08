@@ -7,7 +7,8 @@ import BarGraph from '../../components/Graph/Graphs/BarGraph';
 import { SemiDoughnutChart } from '../../components/Graph/Graphs/SemiDoughnutChart';
 import HorizontalBarChart from '../../components/Graph/Graphs/HorizontalBarChart';
 import SearchInput from '../../components/FormInputs/SearchInput';
-import { Table, TableEmpty } from '../../components/Table/TableTwo';
+import { Table } from '../../components/Table/TableTwo';
+import { TableEmpty } from '../../components/Table/Table';
 import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
 import Filter from '../../components/Filter/Filter';
@@ -33,7 +34,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const searchParamsObject = useSearchParamsToObject();
   const [currentPage, setCurrentPage] = useState(1)
-  
+
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
 
   const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
@@ -71,7 +72,7 @@ const Dashboard = () => {
     }
   )
 
-  const {data:transactionData, isLoading:isTransactionLoading} = useFetchWithParams(
+  const { data: transactionData, isLoading: isTransactionLoading } = useFetchWithParams(
     [`query-all-transactions-admin-${profile.id}`, {
       fromAmount: searchParamsObject.minAMount,
       toAmount: searchParamsObject.maxAmount,
@@ -80,7 +81,7 @@ const Dashboard = () => {
       search,
       page: currentPage,
 
-    } ], statisticsServices.getTransactions,
+    }], statisticsServices.getTransactions,
     {
       onSuccess: (data: any) => {
         // console.log(data.data);
@@ -345,7 +346,7 @@ const Dashboard = () => {
 
         </div>
 
-        <div className='my-5'>
+        <div className='my-5 w-full'>
           <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
             <div className='flex justify-between'>
               <h3 className='text-xl font-semibold'>Transaction History</h3>
@@ -372,23 +373,23 @@ const Dashboard = () => {
           </div>
 
           {
-                isTransactionLoading ? <PageLoader /> : 
-                transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
-                  data={transactionData.data}
-                  columns={columns}
-                  loading={false}
-                  pagination={
-                    {
-                     
-                      page: currentPage,
-                      setPage: setCurrentPage,
-                      totalRows: transactionData.totalItems
-                     
-                    }
-                  }
+            isTransactionLoading ? <PageLoader /> :
+              transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
+                data={transactionData.data}
+                columns={columns}
+                loading={false}
+                pagination={
+                  {
 
-                />
-              }
+                    page: currentPage,
+                    setPage: setCurrentPage,
+                    totalRows: transactionData.totalItems
+
+                  }
+                }
+
+              />
+          }
 
 
         </div>

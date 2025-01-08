@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { InfoCard } from '../../../components/InfoCard/InfoCard2'
 import TextInput from '../../../components/FormInputs/TextInput2'
 import { Button } from '../../../components/Button/Button'
@@ -8,37 +8,59 @@ import { mockData } from '../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { userServices } from '../../../services/user';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import PageLoader from '../../../components/spinner/PageLoader';
+import { formatDate2 } from '../../../utils/formatTime';
 
 const Index = () => {
+    const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate()
+
+    const { data, isLoading } = useFetchWithParams(
+        ["admin-all-users", {
+            page: currentPage
+        }],
+        userServices.user.getAllUsers,
+        {
+            onSuccess: (data: any) => {
+                // console.log(data.data);
+            },
+            keepPreviousData: false,
+            refetchOnWindowFocus: false,
+            refetchOnMount: true,
+        }
+    )
+
     const columns = [
         {
             header: "S/N",
             view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
         },
         {
+            header: "Member Name",
+            view: (row: any) => <div>{`${row.firstName} ${row.lastName}`}</div>,
+        },
+        {
             header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
             header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.email_address}</div>,
         },
         {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Date Joined",
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            header: "KYC Status",
+            view: (row: any) => <div>{row.kycVerificationStatus}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
-        },
-        {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            header: "Operation Status",
+            view: (row: any) => <Label variant="success" >{row?.operationStatus || "N/A"}</Label>,
         },
     ];
     return (
@@ -97,18 +119,24 @@ const Index = () => {
 
                 </div>
 
-                
-            {
-                [].length === 0 ? <TableEmpty title='No members yet' image='/empty-states/people.png' subtitle="You're just getting started! No members has registered yet on the platform." /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
 
-                />
-            }
+                {
+                    isLoading ? <PageLoader /> :
+                        data.users && data.users.length === 0 ? <TableEmpty title='No members yet' image='/empty-states/people.png' subtitle="You're just getting started! No members has registered yet on the platform." /> : <Table
+                            data={data.users}
+                            columns={columns}
+                            loading={false}
+                            pagination={
+                                {
+                                    page: currentPage,
+                                    pageSize: 10,
+                                    setPage: setCurrentPage,
+                                    totalRows:  data.totalUsers
+                                }
+                            }
+
+                        />
+                }
 
 
             </div>

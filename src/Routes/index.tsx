@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
 import { AuthRouter } from "./AuthRoutes";
-import { AjosquadAdminDashRouter, AjosquadDashRouter } from "./DashboardRoutes";
+import { AjohomeDashRouter, AjosquadAdminDashRouter, AjosquadDashRouter } from "./DashboardRoutes";
 import { AppFallback } from "./Layout";
 import { useAuth } from "../zustand/auth.store";
 import { ProductRouter, VerificationRouter } from "./VerificationRoutes";
@@ -13,7 +13,7 @@ export interface IModuleRouter {
   key: string;
 }
 
-const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter, AjosquadAdminDashRouter];
+const ModuleRouters: Array<IModuleRouter> = [AuthRouter, AjosquadDashRouter, ProductRouter, VerificationRouter, AjosquadAdminDashRouter, AjohomeDashRouter];
 
 export const AppRouter = () => {
   const [router, setRouter] = useState<IModuleRouter | null>(null);
@@ -29,6 +29,8 @@ export const AppRouter = () => {
     } else if (isLoggedIn && isVerified && product) {
       if (product === "AjoSquad") {
         setRouter(ModuleRouters[1]);
+      }else if(product === "AjoHome") {
+        setRouter(ModuleRouters[5]);
       }
     }
     else if (isLoggedIn && (!isVerified || !product)) {
