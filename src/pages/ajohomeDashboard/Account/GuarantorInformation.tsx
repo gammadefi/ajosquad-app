@@ -51,17 +51,17 @@ const GuarantorInformation = () => {
       {
         isLoading ?
           <div className='my-5 flex justify-center'>
-            <img src="./logo.png" alt="" className='h-20 animate-pulse w-20' />
+            <img src="./logo.png" alt="" className='h-20 w-20' />
           </div>
           :
           error ?
             <p className='text-center my-5 font-medium'>Error fetching guarantors</p>
             :
             (
-              guarantors.data.length > 0 ?
+              guarantors.guarantors.length > 0 ?
                 <div className='my-5 place-content-center grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8'>
                   {
-                    guarantors.data.map((guarantor: any) => (
+                    guarantors.guarantors.map((guarantor: any) => (
                       <GuarantorCard
                         key={guarantor.id}
                         id={guarantor.id}

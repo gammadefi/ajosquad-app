@@ -22,6 +22,22 @@ export const sidebar: Record<string, Route[]> = {
   ],
 };
 
+export const sidebarHome: Record<string, Route[]> = {
+  ADMIN: [
+    { name: "Dashboard", path: "/dashboard", iconName: "element-4" },
+    { name: "Squad", path: "/squad", iconName: "people" },
+    { name: "Pods", path: "/pod", iconName: "buildings" },
+    { name: "Payment", path: "/payment", iconName: "money-receive" },
+    { name: "Payout", path: "/payout", iconName: "money-send" },
+  ],
+  USER: [
+    { name: "Dashboard", path: "/dashboard", iconName: "element-4" },
+    { name: "Pods", path: "/pod", iconName: "buildings" },
+    { name: "Payment", path: "/payment", iconName: "money-receive" },
+    { name: "Payout", path: "/payout", iconName: "money-send" },
+  ],
+};
+
 export const sidebarMid: Record<string, Route[]> = {
   ADMIN: [
     { name: "Member Mangament", path: "/member-management", iconName: "people" },
@@ -51,12 +67,13 @@ export const sidebarEnd: Record<string, Route[]> = {
 
 export const DashboardLayout = () => {
   const role = useAuth((s) => s.role) as keyof typeof sidebar;
+  const product = useAuth((s) => s.product)
   const { pathname } = useLocation()
 
 
   console.log(role)
 
-  const routes = sidebar[role]?.concat(sidebarMid[role], sidebarEnd[role]) || [];
+  const routes = product === "AjoHome" ? sidebarHome[role]?.concat(sidebarMid[role], sidebarEnd[role]) : sidebar[role]?.concat(sidebarMid[role], sidebarEnd[role]) || [];
 
   const specialROutes = [
     "/squad/connect-gocardless"

@@ -21,7 +21,7 @@ const GuarantorVerification = () => {
         return response;
     })
 
-    const { data: data2, isLoading: isLoading2 } = useFetchWithParams(
+    const { data: guarantors, isLoading: isLoading2 } = useFetchWithParams(
         ["adminGuarantor", {
             page: currentPage,
             orderBy: "createdAt,desc",
@@ -29,13 +29,15 @@ const GuarantorVerification = () => {
         guarantorServices.getAllGuarantors,
         {
             onSuccess: (data: any) => {
-                // console.log(data.data);
+                console.log(data);
             },
             keepPreviousData: false,
             refetchOnWindowFocus: false,
             refetchOnMount: true,
         }
     )
+
+    console.log(guarantors);
 
     const columns = [
         {
@@ -68,7 +70,7 @@ const GuarantorVerification = () => {
         },
     ];
 
-    console.log(data2);
+
 
     return (
         <div className='px-3  md:px-6'>
@@ -95,8 +97,8 @@ const GuarantorVerification = () => {
                 </div>
                 {
                     isLoading2 ? <PageLoader /> :
-                        data2.data && data2.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                            data={data2.data}
+                        guarantors && guarantors.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                            data={guarantors.data}
                             columns={columns}
                             loading={false}
                             clickRowAction={(row) => {
@@ -110,7 +112,7 @@ const GuarantorVerification = () => {
                                     page: currentPage,
                                     pageSize: 10,
                                     setPage: setCurrentPage,
-                                    totalRows: data2.totalItems
+                                    totalRows: guarantors.totalItems
                                 }
                             }
                         />
