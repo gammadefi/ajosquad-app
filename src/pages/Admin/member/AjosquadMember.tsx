@@ -1,42 +1,59 @@
-import React from 'react'
-import { mockData } from '../../../samples/mockdata';
+import { useState } from 'react'
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import SearchInput from '../../../components/FormInputs/SearchInput';
 import { InfoCard } from '../../../components/InfoCard/InfoCard2';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { useQuery } from 'react-query';
+import useFetchWithParams from '../../../hooks/useFetchWithParams';
+import { squadServices } from '../../../services/squad';
+import PageLoader from '../../../components/spinner/PageLoader';
+import { formatDate2 } from '../../../utils/formatTime';
 
 const AjosquadMember = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [search, setSearch] = useState('')
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats);
+    const { data: members, isLoading: isMembersLoading } = useFetchWithParams([`query-all-members`, {
+        searchName: search,
+        page: currentPage
+    }], squadServices.getSquadMembers, {
+        onSuccess: (data: any) => {
+            console.log(data)
+        }
+    })
+
     const columns = [
         {
             header: "S/N",
             view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
         },
         {
+            header: "Member Name",
+            view: (row: any) => <div>{`${row.firstName} ${row.lastName}`}</div>,
+        },
+        {
             header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.id}</div>,
         },
         {
             header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.email_address}</div>,
         },
         {
-            header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Date Joined",
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            header: "KYC Status",
+            view: (row: any) => <div>{row.kycVerificationStatus}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
-        },
-        {
-            header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            header: "Operation Status",
+            view: (row: any) => <Label variant="success" >{row?.operationStatus || "N/A"}</Label>,
         },
     ];
     return (
@@ -46,22 +63,13 @@ const AjosquadMember = () => {
                 <div>
                     <h3 className='text-base md:text-xl font-semibold'>Ajosquad Member</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                    You can view all Ajosquad Member here.
+                        You can view all Ajosquad Member here.
                     </p>
                 </div>
-              
-
-
-
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard header="Ajosquad Member" iconName='people' value="50" />
-               
-                
-                {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
-
+                <InfoCard header="Ajosquad Member" isLoading={isLoading} iconName='people' value={stats && stats.data.totalSquadMembers} />
             </div>
-
             <div>
                 <div className='my-8 flex justify-between items-center '>
                     <h3 className='text-xl font-semibold'>Ajosquad Member</h3>
@@ -70,24 +78,28 @@ const AjosquadMember = () => {
                         <SearchInput placeholder='Search...' />
                         <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
                     </div>
-
-
                 </div>
+                {
+                    isMembersLoading ? <PageLoader /> :
+                        members && members.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
+                            data={members.data}
+                            columns={columns}
+                            loading={false}
+                            clickRowAction={(row) => {
+                                console.log(row.id)
+                                navigate(`/member-management/member-information/${row.id}`)
+                            }}
+                            pagination={
+                                {
+                                    page: currentPage,
+                                    setPage: (page) => setCurrentPage(page),
+                                    pageSize: 10,
+                                    totalRows: members?.total,
 
-                
-            {
-                [].length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
-                    data={mockData.data}
-                    columns={columns}
-                    loading={false}
-                    pagination={
-                        mockData.pagination
-                    }
-
-                />
-            }
-
-
+                                }
+                            }
+                        />
+                }
             </div>
         </div>
     )

@@ -5,25 +5,14 @@ import AddGuarantorForm from '../../../components/Guarantor/AddGuarantorForm';
 import { useQuery } from 'react-query';
 import GuarantorCard from '../../../components/Guarantor/GuarantorCard';
 import { guarantorServices } from '../../../services/guarantor';
-import useFetchWithParams from '../../../hooks/useFetchWithParams';
-
-const fetchGuarantors = async () => {
-  const res = await guarantorServices.getAllGuarantors();
-  return res.data.guarantors;
-};
 
 const GuarantorInformation = () => {
-  const { data: guarantors, isLoading, error, refetch } = useFetchWithParams(['guarantors',
-    {
-
-    }
-  ], guarantorServices.getAllGuarantors, {
-    onSuccess: (data: any) => {
-      console.log(data)
-    }
-  });
-
   const [showAddGuarantorForm, setShowAddGuarantorForm] = useState(false);
+
+  const {data: guarantors, error, isLoading, refetch} = useQuery('guarantors', async () => {
+    const data = await guarantorServices.getAllGuarantors({});
+    return data.data;
+  })
 
   return (
     <div>
@@ -58,10 +47,10 @@ const GuarantorInformation = () => {
             <p className='text-center my-5 font-medium'>Error fetching guarantors</p>
             :
             (
-              guarantors.guarantors.length > 0 ?
+              guarantors.data.length > 0 ?
                 <div className='my-5 place-content-center grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8'>
                   {
-                    guarantors.guarantors.map((guarantor: any) => (
+                    guarantors.data.map((guarantor: any) => (
                       <GuarantorCard
                         key={guarantor.id}
                         id={guarantor.id}

@@ -1,32 +1,25 @@
 import GuarantorCard from '../../../../components/Guarantor/GuarantorCard';
 import { guarantorServices } from '../../../../services/guarantor';
-import useFetchWithParams from '../../../../hooks/useFetchWithParams';
 import { useParams } from 'react-router-dom';
 import PageLoader from '../../../../components/spinner/PageLoader';
+import { useQuery } from 'react-query';
 
-
-
-const GuarantorInformation = () => {
-  const {id} = useParams();
-  const { data: guarantors, isLoading, error } = useFetchWithParams(['guarantors-admin', {
-    page: 1,
-    limit: 100,
-    user_id: id
-  }], 
-    guarantorServices.getAllGuarantors, 
-    {
-      onSuccess: (data: any) => {
-        console.log(data)
-      }
-    }
-  );
-
+const Guarantor = () => {
+  const { id } = useParams();
+  const { data: guarantors, isLoading, error } = useQuery([`members-management-${id}-guarantors`], async () => {
+    const data = await guarantorServices.getAllGuarantors({
+      page: 1,
+      limit: 100,
+      user_id: id
+    });
+    return data.data;
+  });
 
   return (
     <div>
       {
         isLoading ?
-         <PageLoader />
+          <PageLoader />
           :
           error ?
             <p className='text-center my-5 font-medium'>Error fetching guarantors</p>
@@ -51,9 +44,9 @@ const GuarantorInformation = () => {
                 <p className='my-5'>No guarantors yet. User is yet to add a guarantor</p>
             )
       }
-    
+
     </div>
   )
 }
 
-export default GuarantorInformation
+export default Guarantor
