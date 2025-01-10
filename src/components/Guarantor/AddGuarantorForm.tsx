@@ -33,12 +33,15 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     city: Yup.string()
       .trim()
       .required("*City is required"),
-    state: Yup.string()
+    province: Yup.string()
       .trim()
-      .required("*State is required"),
+      .required("*Province is required"),
     zipCode: Yup.string()
-      .matches(/^\d{6}$/, 'ZIP code must be exactly 6 digits')
-      .required('ZIP code is required'),
+      .matches(
+        /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/,
+        "Invalid Canadian zip code format"
+      )
+      .required("ZIP code is required"),
     guarantorDocument: Yup.string()
       .required("*Guarantor Document is required"),
   });
@@ -48,7 +51,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     email: "",
     phone: "",
     city: "",
-    state: "",
+    province: "",
     zipCode: "",
     guarantorDocument: ""
   };
@@ -79,7 +82,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       "email": values.email,
                       "phoneNumber": values.phone,
                       "city": values.city,
-                      "state": values.state,
+                      "province": values.province,
                       "zipCode": values.zipCode,
                       "document_url": values.guarantorDocument,
                       "user_id": useAuth.getState().profile.id
@@ -121,9 +124,9 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                           placeholder='City'
                         />
                         <TextInput
-                          name='state'
-                          label="State"
-                          placeholder='State'
+                          name='province'
+                          label="Province"
+                          placeholder='Province'
                         />
                         <TextInput
                           name='zipCode'
@@ -138,6 +141,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       <div className='mt-5 flex justify-between'>
                         <button
                           onClick={closeModal}
+                          type="button"
                           className="border border-red-500 text-red-500 font-medium px-10 rounded-lg"
                         >
                           Cancel
