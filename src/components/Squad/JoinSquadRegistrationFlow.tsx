@@ -14,8 +14,9 @@ import FileUpload from '../FormInputs/FIleUpload2';
 import toast from 'react-hot-toast';
 import { guarantorServices } from '../../services/guarantor';
 import { squadServices } from '../../services/squad';
+import Tooltip from '../Tooltip/ToolTip';
 
-const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition }: { squadId: string, selecetedPosition:string[] }) => {
+const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition }: { squadId: string, selecetedPosition: string[] }) => {
   const [formData, setFormData] = useState({
     desiredPosition: [],
     bankInfoId: ""
@@ -100,15 +101,15 @@ const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step:
                   return (
                     <div key={index} className="py-2 h-[48px] px-4 flex items-center border gap-2">
                       {
-                        isDisabled ? <input type="checkbox" checked disabled className="w-5 h-5" /> :  <Field
+                        isDisabled ? <input type="checkbox" checked disabled className="w-5 h-5" /> : <Field
                           type="checkbox"
                           name="selectedOptions"
                           value={position}
-  
+
                           className="w-5 h-5"
                         />
                       }
-                     
+
                       <div className='flex flex-col'>
                         <label className='text-sm font-medium'>Position {position}</label>
                         {index < 5 && (
@@ -410,14 +411,16 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
                 label="Account Name*"
                 placeholder='Account Name'
               />
-              <TextInput
-                name='institutionNumber'
-                type='text'
-                readonly
-                disabled
-                label="Institution Number*"
-                placeholder='Institution Number'
-              />
+              <Tooltip text="Institution number is filled automatically based on the bank selected.">
+                <TextInput
+                  name='institutionNumber'
+                  type='text'
+                  readonly
+                  disabled
+                  label="Institution Number*"
+                  placeholder='Institution Number'
+                />
+              </Tooltip>
               <TextInput
                 name='transitNumber'
                 type='text'

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { AxiosResponse } from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { banks } from "../../utils/banks";
+import Tooltip from "../Tooltip/ToolTip";
 
 const updateBankInformation = async ({ payload }: { payload: any }) => {
   const res: AxiosResponse = await userServices.bank.createBank(payload)
@@ -124,14 +125,16 @@ const AddPayoutBankForm = ({ closeModal }: { closeModal: () => void }) => {
                     label="Account Name*"
                     placeholder='Account Name'
                   />
-                  <TextInput
-                    name='institutionNumber'
-                    type='text'
-                    readonly
-                    disabled
-                    label="Institution Number*"
-                    placeholder='Institution Number'
-                  />
+                  <Tooltip text="Institution number is filled automatically based on the bank selected.">
+                    <TextInput
+                      name='institutionNumber'
+                      type='text'
+                      readonly
+                      disabled
+                      label="Institution Number*"
+                      placeholder='Institution Number'
+                    />
+                  </Tooltip>
                   <TextInput
                     name='transitNumber'
                     type='text'

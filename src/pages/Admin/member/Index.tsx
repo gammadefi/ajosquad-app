@@ -1,14 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { InfoCard } from '../../../components/InfoCard/InfoCard2'
-import TextInput from '../../../components/FormInputs/TextInput2'
-import { Button } from '../../../components/Button/Button'
-import { IoCopyOutline } from "react-icons/io5";
 import SearchInput from '../../../components/FormInputs/SearchInput';
-import { mockData } from '../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import { userServices } from '../../../services/user';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';

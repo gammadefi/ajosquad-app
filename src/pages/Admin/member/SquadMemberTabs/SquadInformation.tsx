@@ -61,8 +61,6 @@ const SquadInformation = () => {
 
                     />
                 }
-
-
             </div>
         </div>
     )
