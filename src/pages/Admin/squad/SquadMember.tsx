@@ -16,43 +16,43 @@ import { useQuery } from 'react-query';
 const SquadMember = () => {
     const navigate = useNavigate()
     const [search, setSearch] = React.useState('')
-    const [currentPage, setCurrentPage] = React.useState(1)
-          const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats );
-    
+    const [currentPage, setCurrentPage] = React.useState(1);
 
-    const { data: members, isLoading:isMembersLoading } = useFetchWithParams([`query-all-members`, {
+    const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats);
+    const { data: members, isLoading: isMembersLoading } = useFetchWithParams([`query-all-members`, {
         searchName: search,
-        page:currentPage
+        page: currentPage
     }], squadServices.getSquadMembers, {
         onSuccess: (data: any) => {
             console.log(data)
         }
     })
-     const columns = [
-            {
-                header: "S/N",
-                view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
-                    pageSize: 10,
-                    currentPage
-                })}</div>
-            },
-            {
-                header: "Member Name",
-                view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
-            },
-            {
-                header: "Member ID",
-                view: (row: any) => <div>{row.id}</div>,
-            },
-            {
-                header: "Member Email",
-                view: (row: any) => <div>{row.email_address}</div>,
-            },
-            {
-                header: "Date Joined",
-                view: (row: any) => <div>{fDate(row.createdAt)}</div>,
-            }
-        ];
+
+    const columns = [
+        {
+            header: "S/N",
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
+        },
+        {
+            header: "Member Name",
+            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
+        },
+        {
+            header: "Member ID",
+            view: (row: any) => <div>{row.id}</div>,
+        },
+        {
+            header: "Member Email",
+            view: (row: any) => <div>{row.email_address}</div>,
+        },
+        {
+            header: "Date Joined",
+            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
+        }
+    ];
     return (
         <div className='px-3  md:px-6'>
             <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button>
@@ -69,8 +69,8 @@ const SquadMember = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-3'>
-                <InfoCard isLoading={isLoading} header="Squad Member" iconName='people' value={stats && stats.data.inactiveMembers + stats.data.activeMembers } />
-                <InfoCard isLoading={isLoading} header="Active Member" iconName='profile-2user-active' value={stats && stats.data.activeMembers } />
+                <InfoCard isLoading={isLoading} header="Squad Member" iconName='people' value={stats && stats.data.inactiveMembers + stats.data.activeMembers} />
+                <InfoCard isLoading={isLoading} header="Active Member" iconName='profile-2user-active' value={stats && stats.data.activeMembers} />
                 <InfoCard isLoading={isLoading} header="Inactive Member" iconName='profile-2user-inactive' value={stats && stats.data.inactiveMembers} />
 
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
@@ -91,24 +91,24 @@ const SquadMember = () => {
 
 
                 {
-                     isMembersLoading ? <PageLoader /> :
-                     members && members.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
-                     <Table
-                        data={members.data}
-                       clickRowAction={(row:any) => navigate(`/squad/squad-member/${row.id}`)}
-                        columns={columns}
-                        loading={false}
-                        pagination={
-                            {
-                                page: currentPage,
-                                setPage: (page) => setCurrentPage(page),
-                                pageSize: 10,
-                                totalRows: members?.total,
+                    isMembersLoading ? <PageLoader /> :
+                        members && members.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
+                            <Table
+                                data={members.data}
+                                clickRowAction={(row: any) => navigate(`/squad/squad-member/${row.id}`)}
+                                columns={columns}
+                                loading={false}
+                                pagination={
+                                    {
+                                        page: currentPage,
+                                        setPage: (page) => setCurrentPage(page),
+                                        pageSize: 10,
+                                        totalRows: members?.total,
 
-                            }
-                        }
+                                    }
+                                }
 
-                    />
+                            />
                 }
 
 
