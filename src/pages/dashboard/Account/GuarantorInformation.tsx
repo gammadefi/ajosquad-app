@@ -4,25 +4,15 @@ import Modal from '../../../components/Modal/Modal';
 import AddGuarantorForm from '../../../components/Guarantor/AddGuarantorForm';
 import GuarantorCard from '../../../components/Guarantor/GuarantorCard';
 import { guarantorServices } from '../../../services/guarantor';
-import useFetchWithParams from '../../../hooks/useFetchWithParams';
-
-const fetchGuarantors = async () => {
-  const res = await guarantorServices.getAllGuarantors();
-  return res.data.guarantors;
-};
+import { useQuery } from 'react-query';
 
 const GuarantorInformation = () => {
-  const { data: guarantors, isLoading, error, refetch } = useFetchWithParams(['guarantors',
-    {
-
-    }
-  ], guarantorServices.getAllGuarantors, {
-    onSuccess: (data: any) => {
-      console.log(data)
-    }
-  });
-
   const [showAddGuarantorForm, setShowAddGuarantorForm] = useState(false);
+
+  const { data: guarantors, isLoading, error, refetch } = useQuery('guarantors', async () => {
+    const res = await guarantorServices.getAllGuarantors({});
+    return res.data;
+  })
 
   return (
     <div>
