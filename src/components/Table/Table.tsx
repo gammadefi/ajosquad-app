@@ -193,7 +193,7 @@ export function Table<TRow extends {}>({
                         : "border-b last:border-b-0 pc-border-gray",
                       "bg-white ",
                       props.clickRowAction &&
-                      "hover:bg-[#0066FF] rounded/10 cursor-pointer"
+                      "hover:bg-[#0066ff3b] rounded/10 cursor-pointer"
                     )}
                   >
                     {/* <td className="px-4">

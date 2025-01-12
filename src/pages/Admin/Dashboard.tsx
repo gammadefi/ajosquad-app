@@ -20,6 +20,8 @@ import { useAuth } from '../../zustand/auth.store';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
+import { userServices } from '../../services/user';
+import Spinner from '../../components/spinner/Spinner';
 
 export const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -71,6 +73,11 @@ const Dashboard = () => {
       refetchOnMount: true,
     }
   )
+
+  const { data: data2, isLoading: isLoading2, error: error2 } = useQuery("admin-all-users", async () => {
+    const response = await userServices.user.countAll()
+    return response.data
+  })
 
   const { data: transactionData, isLoading: isTransactionLoading } = useFetchWithParams(
     [`query-all-transactions-admin-${profile.id}`, {
@@ -161,6 +168,8 @@ const Dashboard = () => {
     },
   ];
 
+  console.log(data2)
+
   return (
     <div>
       <div className='px-3 md:px-6'>
@@ -204,28 +213,34 @@ const Dashboard = () => {
                 </GraphWrapper> */}
                 <GraphWrapper graphTitle="Revenue Chart">
                   <h3 className='text-lg font-semibold'>Customer Data</h3>
-                  <BarGraph
-                    data={{
-                      colors: ["#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
-                      xAxisLabel: ["All", "", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
-                      seriesData: [500, 400, 200, 20, 15], // Bar values
-                    }}
-                  />
-                  <div className='justify-around flex'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-[30px] md:w-[36px] h-[20px] bg-[#005CE6]' />
-                      <h3 className='font-semibold text-xs'>Registered User</h3>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-[30px] md:w-[36px] h-[20px] bg-[#0C7931]' />
-                      <h3 className='font-semibold text-xs'>Verified User</h3>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-[30px] md:w-[36px] h-[20px] bg-[#FCAD14]' />
-                      <h3 className='font-semibold text-xs'>Active User</h3>
-                    </div>
+                  {
+                    isLoading2 ? <Spinner /> :
+                      <>
+                        <BarGraph
+                          data={{
+                            colors: ["#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
+                            xAxisLabel: ["All", "", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
+                            seriesData: [data2.totalUsers, data2.verifiedUsers, data2.verifiedUsers, 0, 0], // Bar values
+                          }}
+                        />
+                        <div className='justify-around flex'>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-[30px] md:w-[36px] h-[20px] bg-[#005CE6]' />
+                            <h3 className='font-semibold text-xs'>Registered User</h3>
+                          </div>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-[30px] md:w-[36px] h-[20px] bg-[#0C7931]' />
+                            <h3 className='font-semibold text-xs'>Verified User</h3>
+                          </div>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-[30px] md:w-[36px] h-[20px] bg-[#FCAD14]' />
+                            <h3 className='font-semibold text-xs'>Active User</h3>
+                          </div>
 
-                  </div>
+                        </div>
+                      </>
+                  }
+
                 </GraphWrapper>
 
               </div>
@@ -291,19 +306,19 @@ const Dashboard = () => {
                   </select>
                 </div>
                 <SemiDoughnutChart datasets={[
-                  { label: "", data: [100, 20], backgroundColor: ["#07441B", "#FCAD14"] }
+                  { label: "", data: [0, 8], backgroundColor: ["#07441B", "#FCAD14"] }
                 ]
 
                 } />
                 <div className='flex justify-between items-center'>
                   <div className='flex flex-col whitespace-nowrap items-center'>
                     <span>Completed</span>
-                    <h3 className='font-semibold'>46</h3>
+                    <h3 className='font-semibold'>0</h3>
                     <h5>Squad</h5>
                   </div>
                   <div className='flex flex-col whitespace-nowrap items-center'>
                     <span>In Progress</span>
-                    <h3 className='font-semibold'>9</h3>
+                    <h3 className='font-semibold'>8</h3>
                     <h5>Squad</h5>
                   </div>
                 </div>

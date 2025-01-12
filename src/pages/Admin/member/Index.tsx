@@ -103,13 +103,13 @@ const Index = () => {
                     buttonAction: () => {
                         navigate("/member-management/ajohome-member")
                     }
-                }} value={error2 ? "N/A" : `${data2?.totalUsers}`} />
+                }} value={error2 ? "N/A" : `0`} />
                 <InfoCard isLoading={isLoading} header="AjoBusiness Member" iconName='people' action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/member-management/ajobusiness-member")
                     }
-                }} value={error2 ? "N/A" : `${data2?.totalUsers}`} />
+                }} value={error2 ? "N/A" : `0`} />
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
