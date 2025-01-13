@@ -19,6 +19,7 @@ const Index = () => {
     const navigate = useNavigate()
       const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats );
       
+      
    const [search, setSearch] = useState("");
      const searchParamsObject = useSearchParamsToObject();
      const [currentPage, setCurrentPage] = useState(1)

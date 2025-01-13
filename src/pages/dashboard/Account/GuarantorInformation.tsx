@@ -2,28 +2,17 @@ import { useState } from 'react';
 import { MdOutlineUploadFile, MdOutlineDownload } from "react-icons/md";
 import Modal from '../../../components/Modal/Modal';
 import AddGuarantorForm from '../../../components/Guarantor/AddGuarantorForm';
-import { useQuery } from 'react-query';
 import GuarantorCard from '../../../components/Guarantor/GuarantorCard';
 import { guarantorServices } from '../../../services/guarantor';
-import useFetchWithParams from '../../../hooks/useFetchWithParams';
-
-const fetchGuarantors = async () => {
-  const res = await guarantorServices.getAllGuarantors();
-  return res.data.guarantors;
-};
+import { useQuery } from 'react-query';
 
 const GuarantorInformation = () => {
-  const { data: guarantors, isLoading, error, refetch } = useFetchWithParams(['guarantors',
-    {
-
-    }
-  ], guarantorServices.getAllGuarantors, {
-    onSuccess: (data: any) => {
-      console.log(data)
-    }
-  });
-
   const [showAddGuarantorForm, setShowAddGuarantorForm] = useState(false);
+
+  const { data: guarantors, isLoading, error, refetch } = useQuery('guarantors', async () => {
+    const res = await guarantorServices.getAllGuarantors({});
+    return res.data;
+  })
 
   return (
     <div>
@@ -36,7 +25,7 @@ const GuarantorInformation = () => {
         <div className="flex items-center gap-3">
           <a className="flex text-primary font-medium text-sm md:text-base items-center gap-2" href="https://res.cloudinary.com/dwk4rqxhu/image/upload/v1733312652/xjkcqusmbzon4tyjh1fg.pdf " target="_blank" rel="noreferrer" >
             <MdOutlineDownload className='h-5 w-5' />
-            Download Guarontor form 
+            Download Guarontor form
           </a>
           <button
             onClick={() => setShowAddGuarantorForm(true)}
@@ -46,7 +35,7 @@ const GuarantorInformation = () => {
             Upload Guarantor
           </button>
         </div>
-       
+
       </div>
       {
         isLoading ?
@@ -77,10 +66,9 @@ const GuarantorInformation = () => {
                 <p className='my-5'>No guarantors yet. Please add a guarantor</p>
             )
       }
-      <Modal open={showAddGuarantorForm} onClick={async() => {
-       await refetch()
+      <Modal open={showAddGuarantorForm} onClick={async () => {
+        await refetch()
         setShowAddGuarantorForm(false)
-        
       }}>
         <AddGuarantorForm closeModal={async () => {
           await refetch()

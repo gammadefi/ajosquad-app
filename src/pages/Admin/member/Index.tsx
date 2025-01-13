@@ -1,18 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { InfoCard } from '../../../components/InfoCard/InfoCard2'
-import TextInput from '../../../components/FormInputs/TextInput2'
-import { Button } from '../../../components/Button/Button'
-import { IoCopyOutline } from "react-icons/io5";
 import SearchInput from '../../../components/FormInputs/SearchInput';
-import { mockData } from '../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import { userServices } from '../../../services/user';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';
 import { formatDate2 } from '../../../utils/formatTime';
+import { useQuery } from 'react-query';
 
 const Index = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +28,17 @@ const Index = () => {
             refetchOnMount: true,
         }
     )
+
+    const { data: data2, isLoading: isLoading2, error: error2 } = useQuery("admin-all-users", async () => {
+        const response = await userServices.user.countAll()
+        return response.data
+    })
+
+    console.log(data2);
+    // const { data, isLoading } = useQuery("admin-all-users", async () => {
+    //     const response = await userServices.user.getAllUsers({ page: currentPage })
+    //     return response.data
+    // })
 
     const columns = [
         {
@@ -77,32 +84,32 @@ const Index = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard header="Total Member" iconName='people' value="50" />
-                <InfoCard header="Inactive Member" iconName='people' action={{
+                <InfoCard isLoading={isLoading} header="Total Member" iconName='people' value={error2 ? "N/A" : `${data2?.totalUsers}`} />
+                <InfoCard isLoading={isLoading} header="Inactive Member" iconName='people' action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/member-management/inactive-member")
 
                     }
-                }} value="50" />
-                <InfoCard header="AjoSquad Member" iconName='people' action={{
+                }} value={error2 ? "N/A" : `${data2?.unverifiedUsers}`} />
+                <InfoCard isLoading={isLoading} header="AjoSquad Member" iconName='people' action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/member-management/ajosquad-member")
                     }
-                }} value="50" />
-                <InfoCard header="AjoHome Member" iconName='people' action={{
+                }} value={error2 ? "N/A" : `${data2?.verifiedUsers}`} />
+                <InfoCard isLoading={isLoading} header="AjoHome Member" iconName='people' action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/member-management/ajohome-member")
                     }
-                }} value="50" />
-                <InfoCard header="AjoBusiness Member" iconName='people' action={{
+                }} value={error2 ? "N/A" : `0`} />
+                <InfoCard isLoading={isLoading} header="AjoBusiness Member" iconName='people' action={{
                     label: "View More",
                     buttonAction: () => {
                         navigate("/member-management/ajobusiness-member")
                     }
-                }} value="50" />
+                }} value={error2 ? "N/A" : `0`} />
                 {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
 
             </div>
@@ -131,7 +138,7 @@ const Index = () => {
                                     page: currentPage,
                                     pageSize: 10,
                                     setPage: setCurrentPage,
-                                    totalRows:  data.totalUsers
+                                    totalRows: data.totalUsers
                                 }
                             }
 

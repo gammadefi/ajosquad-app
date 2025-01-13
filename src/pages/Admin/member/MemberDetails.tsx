@@ -1,20 +1,23 @@
-import React from 'react'
-import { FaCamera, FaSolarPanel } from 'react-icons/fa6'
 import { useAuth } from '../../../zustand/auth.store'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IoIosArrowRoundBack } from 'react-icons/io'
 import TabBar2 from '../../../components/Tab/TabBar2'
 import Profile from './SquadMemberTabs/Profile'
 import SquadInformation from './SquadMemberTabs/SquadInformation'
 import Transaction from './SquadMemberTabs/Transaction'
+import { useQuery } from 'react-query'
+import { userServices } from '../../../services/user'
+import PageLoader from '../../../components/spinner/PageLoader'
+import Guarantor from './SquadMemberTabs/Guarantor'
 
 const MemberDetails = () => {
+    const params = useParams();
+    const navigate = useNavigate()
+    const location = useLocation();
     const profile = useAuth((s) => s.profile)
     const tabs = ["Member Information", "Active Products", "Transaction", "guarantor"]
-    const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const activeTab = searchParams.get("activeTab") || "Member Information";
-
 
     const displayAccountContent = (currentTab: string) => {
         switch (currentTab) {
@@ -25,13 +28,19 @@ const MemberDetails = () => {
             case tabs[2]:
                 return <Transaction />
             case tabs[3]:
-                return ""
+                return <Guarantor />
             default:
                 return <Profile />
-            // return <BioProfile />
         }
     }
-    const navigate = useNavigate()
+
+    const { data, isLoading, error } = useQuery([`user-${params.id}-profile`], async () => {
+        const data = await userServices.user.getUserById(params.id || "")
+        return data
+    });
+
+    if (isLoading) return <PageLoader />
+
     return (
         <div className='px-3  md:px-6' >
             <button onClick={() => navigate(-1)} className='text-sm font-medium text-black flex items-center gap-1'><IoIosArrowRoundBack size={24} /> Back</button>
@@ -41,9 +50,9 @@ const MemberDetails = () => {
                     <span className='absolute h-3 w-3 bg-[#0F973D] rounded-full bottom-2 right-1' />
                 </div>
                 <div>
-                    <h2 className='text-lg font-semibold'>{profile?.firstName + " " + profile.lastName}</h2>
-                    <p><span className='text-[#787A7D]'>ID: </span>{profile.id}</p>
-                    <p className='text-[#787A7D]'>{profile.email_address}</p>
+                    <h2 className='text-lg font-semibold'>{data.data?.firstName + " " + data.data.lastName}</h2>
+                    <p><span className='text-[#787A7D]'>ID: </span>{data.data.id}</p>
+                    <p className='text-[#787A7D]'>{data.data.email_address}</p>
                 </div>
             </div>
 
@@ -54,9 +63,7 @@ const MemberDetails = () => {
             />
             <div className='mt-6'>
                 {displayAccountContent(activeTab)}
-
             </div>
-
         </div>
     )
 }

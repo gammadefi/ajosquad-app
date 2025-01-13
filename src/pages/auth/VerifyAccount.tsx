@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { authServices } from '../../services/auth';
 
-export default function VerifyAccount({ email, handleSendOTPCode }: { email: string, handleSendOTPCode: (email: string) => any }) {
+export default function VerifyAccount({ email, handleSendOTPCode, closeModal }: { email: string, handleSendOTPCode: (email: string) => any, closeModal: () => void }) {
   const [code, setCode] = useState<string>("");
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -72,7 +72,10 @@ export default function VerifyAccount({ email, handleSendOTPCode }: { email: str
             <p className='text-sm'>Your account email has been verified, proceed to login into your Account.</p>
             <button
               type='submit'
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                closeModal()
+                navigate("/login")
+              }}
               className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
             >
               Proceed to Login

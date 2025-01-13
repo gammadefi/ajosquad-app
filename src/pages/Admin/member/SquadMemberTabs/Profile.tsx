@@ -1,6 +1,15 @@
-import React from 'react'
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import { userServices } from "../../../../services/user";
 
 const Profile = () => {
+  const params = useParams();
+
+  const { data, isLoading, error } = useQuery([`user-${params.id}-profile`], async () => {
+    const data = await userServices.user.getUserById(params.id || "")
+    return data
+  });
+
   return (
     <div>
       <div className='flex flex-col lg:flex-row gap-3'>
@@ -13,27 +22,27 @@ const Profile = () => {
             <div className='flex justify-between'>
               <div className='w-3/5'>
                 <p className='text-[#96999C]'>First Name</p>
-                <p className='font-normal'>{"profile?.firstName"}</p>
+                <p className='font-normal'>{data.data.firstName}</p>
               </div>
               <div className='w-2/5'>
                 <p className='text-[#96999C]'>Last Name</p>
-                <p className='font-normal'>{"profile?.lastName"}</p>
+                <p className='font-normal'>{data.data.lastName}</p>
               </div>
             </div>
             <div className='flex justify-between'>
               <div className='w-3/5'>
                 <p className='text-[#96999C]'>Email Address</p>
-                <p className='font-normal'>{"rofile?.email_address"}</p>
+                <p className='font-normal'>{data.data.email_address}</p>
               </div>
               <div className='w-2/5'>
                 <p className='text-[#96999C]'>Phone Number</p>
-                <p className='font-normal'>+234 900 0000 000</p>
+                <p className='font-normal'>{data.data.phoneNumber || "N/A"}</p>
               </div>
             </div>
             <div className='flex justify-between'>
               <div>
                 <p className='text-[#96999C]'>Address</p>
-                <p className='font-normal'>Toronto, Canada</p>
+                <p className='font-normal'>{`${data.data.homeAddress}, ${data.data.city}, ${data.data.state}` || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -46,17 +55,17 @@ const Profile = () => {
             <div className='flex justify-between'>
               <div>
                 <p className='text-[#96999C]'>Job Title</p>
-                <p className='font-normal'>UI/UX Designer</p>
+                <p className='font-normal'>{data.data.jobTitle || "N/A"}</p>
               </div>
             </div>
             <div className='flex justify-between'>
               <div className='w-1/2'>
                 <p className='text-[#96999C]'>Employer name</p>
-                <p className='font-normal'>faviayomide@gmail.com</p>
+                <p className='font-normal'>{data.data.employerName || "N/A"}</p>
               </div>
               <div className='w-1/2'>
                 <p className='text-[#96999C]'>Employer Phone Number</p>
-                <p className='font-normal'>+234 900 0000 000</p>
+                <p className='font-normal'>{data.data.employerPhoneNumber || "N/A"}</p>
               </div>
             </div>
           </div>
