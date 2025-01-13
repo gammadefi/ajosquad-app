@@ -16,7 +16,6 @@ const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
     const [lastMonths, setLastMonths] = useState("All Time");
-    const [filterParams, setFilterParams] = useState({});
     const profile = useAuth((s) => s.profile)
 
     const columns = [

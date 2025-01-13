@@ -77,7 +77,7 @@ export default function Login() {
                 "password": values.password
               })
               if (res) {
-                if (res.data.isVerified === false) {
+                if (res.data.isVerified === false && res.data.role !== "superadmin") {
                   toast.error("Please verify your account to continue");
                   const res = await sendOTPRequest(values.email);
                   if (res) {

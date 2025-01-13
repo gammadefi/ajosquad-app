@@ -66,3 +66,9 @@ export const guarantorApiRoutes = {
 export const statisticsApiRoutes = {
   getUserStatDashboard: "/statistics/dashboard/transaction"
 }
+
+export const contractAgreementApiRoutes = {
+  getAllContractAgreements: "/admin/contract-agreement",
+  getContractAgreement: (contractId: string) => `/admin/contract-agreement/${contractId}`,
+  createAgreement: "/admin/contract-agreement"
+}
