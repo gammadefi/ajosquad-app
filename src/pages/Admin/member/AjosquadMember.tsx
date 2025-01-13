@@ -25,7 +25,7 @@ const AjosquadMember = () => {
             console.log(data)
         }
     })
-
+    console.log(members)
     const columns = [
         {
             header: "S/N",

@@ -186,7 +186,7 @@ export default function Login() {
       </Link>
       </p>
       <Modal onClick={() => setOpenModal(!openModal)} open={openModal}>
-        <VerifyAccount email={email} handleSendOTPCode={sendOTPRequest} />
+        <VerifyAccount email={email} closeModal={() => setOpenModal(!openModal)} handleSendOTPCode={sendOTPRequest} />
       </Modal>
     </main>
   );

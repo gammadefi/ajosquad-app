@@ -13,7 +13,6 @@ import Modal from "../../components/Modal/Modal";
 import { useAuth } from "../../zustand/auth.store";
 import VerifyAccount from "./VerifyAccount";
 import { authServices } from "../../services/auth";
-import { useMutation } from "react-query";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -78,22 +77,29 @@ export default function Login() {
                 "password": values.password
               })
               if (res) {
-                setUserProfile(res.data);
-                setToken(res.accessToken);
-                setLoggedIn(true);
-                setSubmitting(false);
-                if (res.data.role === "user") {
-                  setUserRoleType("USER")
-                  if (res.data.kycVerificationStatus == "pending") {
-                    setVerified(false)
-                  } else if (res.data.kycVerificationStatus == "verified") setVerified(true)
+                if (res.data.isVerified === false && res.data.role !== "superadmin") {
+                  toast.error("Please verify your account to continue");
+                  const res = await sendOTPRequest(values.email);
+                  if (res) {
+                    setOpenModal(true);
+                    setSubmitting(false);
+                  }
                 } else {
-                  setUserRoleType("ADMIN")
+                  setUserProfile(res.data);
+                  setToken(res.accessToken);
+                  setLoggedIn(true);
+                  setSubmitting(false);
+                  if (res.data.role === "user") {
+                    setUserRoleType("USER")
+                    if (res.data.kycVerificationStatus == "pending") {
+                      setVerified(false)
+                    } else if (res.data.kycVerificationStatus == "verified") setVerified(true)
+                  } else {
+                    setUserRoleType("ADMIN")
+                  }
+                  toast.success("Login successful");
+                  navigate('/dashboard');
                 }
-
-
-                toast.success("Login successful");
-                navigate('/dashboard');
               }
             } catch (error: any) {
               console.log(error)
@@ -102,14 +108,6 @@ export default function Login() {
                 if (data.message === 'Incorrect email or password!') {
                   toast.error(error.response.data.message);
                   setSubmitting(false);
-                }
-                if (data.message === 'Please verify your email address!') {
-                  toast.error(error.response.data.message);
-                  const res = await sendOTPRequest(values.email);
-                  if (res) {
-                    setOpenModal(true);
-                    setSubmitting(false);
-                  }
                 }
               } else {
                 toast.error(error.response.data.message);
@@ -182,7 +180,7 @@ export default function Login() {
       </Link>
       </p>
       <Modal onClick={() => setOpenModal(!openModal)} open={openModal}>
-        <VerifyAccount email={email} handleSendOTPCode={sendOTPRequest} />
+        <VerifyAccount email={email} closeModal={() => setOpenModal(!openModal)} handleSendOTPCode={sendOTPRequest} />
       </Modal>
     </main>
   );

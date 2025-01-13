@@ -37,8 +37,6 @@ const GuarantorVerification = () => {
         }
     )
 
-    console.log(guarantors);
-
     const columns = [
         {
             header: "S/N",
