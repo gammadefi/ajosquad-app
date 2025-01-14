@@ -7,11 +7,10 @@ import toast from 'react-hot-toast';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import { contractAgreementServices } from '../../services/contract-agreement';
-import { getFileSize, truncateString } from '../../utils/helpers';
 
 const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) => {
   const [hasAddedContract, setHasAddedContract] = useState(false);
-  const [showFileUploadInput, setShowFileUploadInput] = useState(false);
+  const [showConfirmUpload, setShowConfirmUpload] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -19,7 +18,7 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
     productType: Yup.string()
       .trim()
       .required("*Field is required")
-      .oneOf(["ajosquad", "ajohome"], "Invalid selection"),
+      .oneOf(["Ajosquad", "Ajohome"], "Invalid selection"),
     contractDocumentURL: Yup.string()
       .required("*Document is required"),
   });
@@ -47,7 +46,6 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
           <SuccessModal closeModal={closeModal} />
           :
           <div className='w-[90vw] md:w-[600px]'>
-            <h2 className='mb-5 text-3xl font-semibold'>Upload Contract Agreement</h2>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
@@ -65,31 +63,29 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
                     }
                   } catch (error) {
                     toast.error("Failed to add contract agreement");
-                    // closeModal();
                   }
                 }
               }}
             >
-              {({ isSubmitting, values }) => {
+              {({ isSubmitting }) => {
                 return (
-                  <Form className='max-h-[500px] overflow-scroll flex flex-col gap-4 my-3'>
-                    <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
-                      <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Permission Type*</label>
-                      <Field as="select" name='productType' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
-                        <option value="">Select Product*</option>
-                        <option value="ajohome">Ajohome</option>
-                        <option value="ajosquad">Ajosquad</option>
-                      </Field>
-                      <ErrorMessage name="productType" component="div" className='text-red-500' />
-                    </div>
-                    <div className='space-y-1'>
-                      <label htmlFor="contractDocumentURL">Uploaded Contract Agreement</label>
-                      <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
-                        {/* <p>{truncateString(values.contractDocumentURL, 30)} {getFileSize(values.contractDocumentURL)}Kb</p> */}
-                        <span onClick={() => setShowFileUploadInput(!showFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                  <Form className='max-h-[500px] overflow-scroll flex flex-col gap-4 mb-3'>
+                    <>
+                      <h2 className='text-3xl font-semibold'>Upload Contract Agreement</h2>
+                      <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
+                        <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Permission Type*</label>
+                        <Field as="select" name='productType' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                          <option value="">Select Product*</option>
+                          <option value="Ajohome">Ajohome</option>
+                          <option value="Ajosquad">Ajosquad</option>
+                        </Field>
+                        <ErrorMessage name="productType" component="div" className='text-red-500' />
                       </div>
-                      <FileUpload name='contractDocumentURL' fileType='document' />
-                    </div>
+                      <div className='space-y-1'>
+                        <label htmlFor="contractDocumentURL">Uploaded Contract Agreement</label>
+                        <FileUpload name='contractDocumentURL' fileType='document' />
+                      </div>
+                    </>
                     <div className='mt-5 flex justify-between'>
                       <button
                         onClick={closeModal}
@@ -104,7 +100,7 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
                         className='bg-primary font-semibold rounded-lg text-white inline-flex items-center gap-3 justify-center text-center py-3 px-10 disabled:bg-opacity-50'
                       >
                         {
-                          isSubmitting ? "Adding Contract" : "Add Contract"
+                          isSubmitting ? "Uploading and Publishing" : "Upload and Publish"
                         }
                       </button>
                     </div>
@@ -118,7 +114,7 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
   )
 }
 
-export default AddContractAgreementForm
+export default AddContractAgreementForm;
 
 
 const SuccessModal = ({ closeModal }: { closeModal: () => void }) => {

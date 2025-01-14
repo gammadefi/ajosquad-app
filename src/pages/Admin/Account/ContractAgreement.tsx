@@ -43,7 +43,7 @@ const ContractAgreement = () => {
                   <ContractAgreementCard
                     key={contract.id}
                     id={contract.id}
-                    name={contract.name || contract.id}
+                    name={contract.productType + " Contract Agreement"}
                     imgUrl={contract.agreement_url}
                     uploadDate={contract.createdAt}
                   />
