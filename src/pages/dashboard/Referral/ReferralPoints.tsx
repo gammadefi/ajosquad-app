@@ -58,11 +58,7 @@ const ReferralPoints = () => {
         <div>
             <div className='flex justify-between items-center'>
                 <h3 className='text-base md:text-xl font-semibold'>Share the Savings, Earn Rewards!</h3>
-
                 <button>Redeem Point <span></span></button>
-
-
-
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
                 <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0} />
