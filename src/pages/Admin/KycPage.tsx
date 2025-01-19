@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
+import { generateSerialNumber } from '../../utils/helpers';
 
 const KycPage = () => {
     const navigate = useNavigate();
@@ -37,7 +38,10 @@ const KycPage = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member ID",
