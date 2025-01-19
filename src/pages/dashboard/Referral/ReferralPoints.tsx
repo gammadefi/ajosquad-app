@@ -9,6 +9,9 @@ import { ReferralServices } from '../../../services/referral';
 import { useAuth } from '../../../zustand/auth.store';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { formatDate2 } from '../../../utils/formatTime';
+import { generateSerialNumber } from '../../../utils/helpers';
 
 const ReferralPoints = () => {
     const navigate = useNavigate();
@@ -23,8 +26,6 @@ const ReferralPoints = () => {
 
         },
     })
-
-    console.log(referralStats)
 
     const columns = [
         {
