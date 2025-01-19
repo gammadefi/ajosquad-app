@@ -6,6 +6,7 @@ import DashboardHeader from '../../../containers/dashboard/Header';
 const KycLayout = () => {
     return (
         <div className='bg-[#F2F2F2] min-h-screen'>
+            <DashboardHeader title={"Welcome to Ajosquad"} />
             <LayoutOutlet />
         </div>
     )
