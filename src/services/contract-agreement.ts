@@ -13,5 +13,13 @@ export const contractAgreementServices = {
   createContractAgreement: async(payload: any) => {
     const response = await createApiClient().post(contractAgreementApiRoutes.createAgreement, payload);
     return response.data;
+  },
+  deleteContractAgreement: async(id: string) => {
+    const response = await createApiClient().delete(contractAgreementApiRoutes.getContractAgreement(id));
+    return response.data;
+  },
+  updateContractAgreement: async(id: string, payload: any) => {
+    const response = await createApiClient().patch(contractAgreementApiRoutes.getContractAgreement(id), payload);
+    return response.data;
   }
 }

@@ -2,10 +2,10 @@ import { BsThreeDotsVertical } from "react-icons/bs"
 import { timeAgo } from "../../utils/formatTime"
 import useOnClickOutside from "../../hooks/useClickOutside"
 import { useRef, useState } from "react"
-// import Modal from "../Modal/Modal"
-// import UpdateGuarantorForm from "./UpdateGuarantorForm"
 import { convertToThumbnailUrl } from "../../utils/helpers"
-// import DeleteGuarantor from "./DeleteGuarantor"
+import Modal from "../Modal/Modal"
+import DeleteContractAgreement from "./DeleteContractAgreement"
+import UpdateContractAgreement from "./UpdateContractAgreement"
 
 export type ContractAgreementCardProps = {
   id: string,
@@ -17,8 +17,7 @@ export type ContractAgreementCardProps = {
 const ContractAgreementCard = ({ id, imgUrl, name, uploadDate }: ContractAgreementCardProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showUpdateContractAgreementModal, setShowUpdateContractAgreementModal] = useState(false);
-  const [showDeleteContractAgreementModal, setShowDeleteContractAgreementModal] = useState(false);
-  const previewImageUrl = convertToThumbnailUrl(imgUrl);
+  const [showDeleteContractAgreementModal, setShowDeleteContractAgreementModal] = useState(false)
 
   const optionsRef = useRef(null);
 
@@ -30,11 +29,7 @@ const ContractAgreementCard = ({ id, imgUrl, name, uploadDate }: ContractAgreeme
   return (
     <>
       <div className="rounded-xl border-[0.5px] border-[#B4B8BB]  w-full md:max-w-[319px]">
-        <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl">
-          <a href={imgUrl} target="_blank" rel="noopener noreferrer" download="Guarantor form">
-            <img src={previewImageUrl || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
-          </a>
-        </div>
+        <FullscreenIframe url={imgUrl} />
         <div className="px-4 py-3 flex justify-between">
           <div>
             <h2 className="font-bold text-sm">{name}</h2>
@@ -51,14 +46,75 @@ const ContractAgreementCard = ({ id, imgUrl, name, uploadDate }: ContractAgreeme
           </div>
         </div>
       </div>
-      {/* <Modal open={showUpdateGuarantorInformationModal} onClick={() => setShowUpdateGuarantorInformationModal(false)}>
-        <UpdateGuarantorForm closeModal={() => setShowUpdateGuarantorInformationModal(false)} guarantorId={id} />
+      <Modal open={showUpdateContractAgreementModal} onClick={() => setShowUpdateContractAgreementModal(false)}>
+        <UpdateContractAgreement closeModal={() => setShowUpdateContractAgreementModal(false)} contractorAgreementId={id} />
       </Modal>
-      <Modal open={showDeleteGuarantorModal} onClick={() => setShowDeleteGuarantorModal(false)}>
-        <DeleteGuarantor guarantorId={id} />
-      </Modal> */}
+      <Modal open={showDeleteContractAgreementModal} onClick={() => setShowDeleteContractAgreementModal(false)}>
+        <DeleteContractAgreement contractorAgreementId={id} closeModal={() => setShowDeleteContractAgreementModal(false)} />
+      </Modal>
     </>
   )
 }
 
 export default ContractAgreementCard
+
+const FullscreenIframe = ({ url }: { url: string }) => {
+  const [isIframeVisible, setIframeVisible] = useState(false);
+  const previewImageUrl = convertToThumbnailUrl(url);
+
+  const handleOpenIframe = () => setIframeVisible(true);
+  const handleCloseIframe = () => setIframeVisible(false);
+
+  return (
+    <div>
+      <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl">
+        <img onClick={handleOpenIframe} src={previewImageUrl || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full cursor-pointer" />
+      </div>
+      {isIframeVisible && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <button
+            onClick={handleCloseIframe}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              padding: '10px 15px',
+              backgroundColor: '#fff',
+              border: 'none',
+              borderRadius: '5px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              zIndex: 1001,
+            }}
+          >
+            Close
+          </button>
+          <iframe
+            src={url}
+            title="Fullscreen Iframe"
+            style={{
+              width: '90%',
+              height: '90%',
+              border: 'none',
+              borderRadius: '10px',
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
