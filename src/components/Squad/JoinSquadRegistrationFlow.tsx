@@ -397,7 +397,7 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
               <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
                 <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
                 <select onChange={(e) => setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode })} name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
-                  <option disabled>Select Bank</option>
+                  <option value=''>Select Bank</option>
                   {
                     banks.docs.map((bank: any) => (
                       <option key={bank._id} value={bank.bankName}>{bank.bankName}</option>

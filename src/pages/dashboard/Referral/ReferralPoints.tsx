@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { useAuth } from '../../../zustand/auth.store';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';
+import toast from 'react-hot-toast';
 
 const ReferralPoints = () => {
     const [filterBy, setFilterBy] = useState("");
@@ -59,11 +60,7 @@ const ReferralPoints = () => {
         <div>
             <div className='flex justify-between items-center'>
                 <h3 className='text-base md:text-xl font-semibold'>Share the Savings, Earn Rewards!</h3>
-
-                <button>Redeem Point <span></span></button>
-
-
-
+                <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Redeem Points</button>
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
                 <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0} />
@@ -80,7 +77,13 @@ const ReferralPoints = () => {
                     <h4 className='mb-1 font-semibold'>Invite Link</h4>
                     <div className='flex items-center gap-2'>
                         <input readOnly disabled name='inviteLink' className='border rounded-md h-[44px] px-3 w-[343px] text-sm' value={`${window.location.origin}/sign-up?ref=${profile.referralCode}`} />
-                        <Button label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
+                        <Button onClick={() => {
+                            navigator.clipboard.writeText(`${window.location.origin}/sign-up?ref=${profile.referralCode}`)
+                            toast.success('Copied to clipboard')
+                        }
+
+                        } label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
+
                     </div>
                     <small>Minimum point to redeem is CAD$50</small>
                 </div>
@@ -106,11 +109,11 @@ const ReferralPoints = () => {
                             columns={columns}
                             loading={false}
                             pagination={
-                               {
-                                page:currentPage,
-                                setPage:(page) => setCurrentPage(page),
-                                totalRows: referralStats?.totalReferrals,
-                               }
+                                {
+                                    page: currentPage,
+                                    setPage: (page) => setCurrentPage(page),
+                                    totalRows: referralStats?.totalReferrals,
+                                }
                             }
 
                         />
