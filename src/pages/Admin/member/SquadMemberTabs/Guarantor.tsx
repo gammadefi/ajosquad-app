@@ -6,8 +6,8 @@ import { useQuery } from 'react-query';
 
 const Guarantor = () => {
   const { id } = useParams();
-  console.log(id);
-  const { data: guarantors, isLoading, error } = useQuery([`members-management-${id}-guarantors`], async () => {
+
+  const { data: guarantors, isLoading, error, refetch } = useQuery([`members-management-${id}-guarantors`], async () => {
     const data = await guarantorServices.getAllGuarantors({
       page: 1,
       limit: 100,
@@ -15,8 +15,6 @@ const Guarantor = () => {
     });
     return data.data;
   });
-
-  console.log(guarantors)
 
   return (
     <div>
@@ -39,6 +37,7 @@ const Guarantor = () => {
                         uploadDate={guarantor.createdAt}
                         imgUrl={guarantor.document_url}
                         verificationStatus={guarantor.verificationStatus}
+                        refetch={refetch}
                       />
                     ))
                   }

@@ -14,25 +14,18 @@ const Referral = () => {
         switch (tabIndex) {
             case "Referral Points":
                 return <ReferralPoints />
-            // return <BioProfile />
             case "Referral Rules":
                 return <ReferralRules />
             default:
                 return <ReferralPoints />
-            // return <BioProfile />
         }
     }
-    // useEffect(() => {
-
-    // }, [tab])
     return (
         <div className='px-3  md:px-6'>
             <TabBar onChange={(val: any) => setTab(val)} tabs={["Referral Points", "Referral Rules"]} />
             <div className='mt-6'>
                 {displayAccountContent(tab)}
-
             </div>
-
         </div>
     )
 }

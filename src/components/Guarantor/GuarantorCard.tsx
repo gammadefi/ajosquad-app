@@ -12,10 +12,11 @@ export type GuarantorCardProps = {
   name: string,
   imgUrl: string,
   verificationStatus: string,
-  uploadDate: string
+  uploadDate: string,
+  refetch?: () => void
 }
 
-const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: GuarantorCardProps) => {
+const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate, refetch }: GuarantorCardProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showUpdateGuarantorInformationModal, setShowUpdateGuarantorInformationModal] = useState(false);
   const [showDeleteGuarantorModal, setShowDeleteGuarantorModal] = useState(false);
@@ -56,7 +57,15 @@ const GuarantorCard = ({ id, imgUrl, name, verificationStatus, uploadDate }: Gua
         </div>
       </div>
       <Modal open={showUpdateGuarantorInformationModal} onClick={() => setShowUpdateGuarantorInformationModal(false)}>
-        <UpdateGuarantorForm closeModal={() => setShowUpdateGuarantorInformationModal(false)} guarantorId={id} />
+        <UpdateGuarantorForm
+          closeModal={() => {
+            setShowUpdateGuarantorInformationModal(false);
+            if (refetch) {
+              refetch();
+            }
+          }}
+          guarantorId={id}
+        />
       </Modal>
       <Modal open={showDeleteGuarantorModal} onClick={() => setShowDeleteGuarantorModal(false)}>
         <DeleteGuarantor guarantorId={id} />

@@ -30,11 +30,8 @@ const StaffManagement = () => {
         page: currentPage
     }], StaffService.getAllStaff, {
         onSuccess: (data: any) => {
-            console.log(data)
         }
     })
-
-    console.log(staffs)
 
     const columns = [
         {

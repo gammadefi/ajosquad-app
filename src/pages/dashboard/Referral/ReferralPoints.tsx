@@ -1,22 +1,18 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { InfoCard } from '../../../components/InfoCard/InfoCard2'
-import TextInput from '../../../components/FormInputs/TextInput2'
 import { Button } from '../../../components/Button/Button'
 import { IoCopyOutline } from "react-icons/io5";
 import SearchInput from '../../../components/FormInputs/SearchInput';
-import { mockData } from '../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import { Label } from '../../../components/Label/Label';
-import Filter from '../../../components/Filter/Filter2';
 import { ReferralServices } from '../../../services/referral';
-import { useQuery } from 'react-query';
 import { useAuth } from '../../../zustand/auth.store';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';
-import toast from 'react-hot-toast';
 
 const ReferralPoints = () => {
-    const [filterBy, setFilterBy] = useState("");
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const profile = useAuth(state => state.profile)
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -28,31 +24,32 @@ const ReferralPoints = () => {
         },
     })
 
+    console.log(referralStats)
 
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, { pageSize: 10, currentPage })}</div>
         },
         {
-            header: "Description",
-            view: (row: any) => <div>{row.description}</div>,
+            header: "Name",
+            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
         },
         {
-            header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            header: "Email",
+            view: (row: any) => <div>{row.email_address}</div>,
         },
         {
-            header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            header: "Point",
+            view: (row: any) => <div>{row.point || "N/A"}</div>,
         },
         {
             header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
             header: "Status",
-            view: (row: any) => <Label variant="success" >{row?.status}</Label>,
+            view: (row: any) => <Label variant="success" >{row?.verificationStatus}</Label>,
         },
     ];
 
@@ -60,7 +57,11 @@ const ReferralPoints = () => {
         <div>
             <div className='flex justify-between items-center'>
                 <h3 className='text-base md:text-xl font-semibold'>Share the Savings, Earn Rewards!</h3>
-                <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Redeem Points</button>
+
+                <button>Redeem Point <span></span></button>
+
+
+
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
                 <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0} />
@@ -68,7 +69,6 @@ const ReferralPoints = () => {
                 <InfoCard isLoading={isLoading} header="Points" iconName='ticket-discount' value={referralStats ? referralStats.stats.rewardsEarned.toLocaleString() : 0} />
                 <InfoCard isLoading={isLoading} header="Redeemed Points" iconName='ticket-discount-1' value={referralStats ? referralStats.stats.totalRedeemedPoints.toLocaleString() : 0} />
                 <InfoCard isLoading={isLoading} header="Cash Rewards" iconName='moneys-credit' value={`CAD$ ${referralStats ? referralStats.stats.rewardsEarned.toLocaleString() : 0}`} />
-
             </div>
 
             <div>
@@ -77,29 +77,47 @@ const ReferralPoints = () => {
                     <h4 className='mb-1 font-semibold'>Invite Link</h4>
                     <div className='flex items-center gap-2'>
                         <input readOnly disabled name='inviteLink' className='border rounded-md h-[44px] px-3 w-[343px] text-sm' value={`${window.location.origin}/sign-up?ref=${profile.referralCode}`} />
-                        <Button onClick={() => {
-                            navigator.clipboard.writeText(`${window.location.origin}/sign-up?ref=${profile.referralCode}`)
-                            toast.success('Copied to clipboard')
-                        }
-
-                        } label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
-
+                        <Button label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
                     </div>
                     <small>Minimum point to redeem is CAD$50</small>
                 </div>
 
-                <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
-                    <div className='flex justify-between'>
-                        <h3 className='text-xl font-semibold'>Referral</h3>
-                        <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Redeem Points</button>
-                    </div>
+                <div className='my-8 flex flex-col md:flex-row gap-3 justify-between lg:items-center'>
+                    <h3 className='text-xl font-semibold'>Referral</h3>
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
-                        <Filter />
-                        <button className='hidden lg:block text-primary px-4 py-2 border text-nowrap border-primary rounded-lg font-semibold'>Redeem Points</button>
+                        <SearchInput
+                            placeholder='Search...'
+                            value={searchParams.get('search') || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                if (value) {
+                                    params.set('search', value);
+                                } else {
+                                    params.delete('search');
+                                }
+                                navigate(`?${params.toString()}`);
+                            }}
+                        />
+                        <select
+                            defaultValue={searchParams.get('status') || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                if (value) {
+                                    params.set('status', value);
+                                } else {
+                                    params.delete('status');
+                                }
+                                navigate(`?${params.toString()}`);
+                            }}
+                            className='bg-[#F5F5F9] lg:w-full disabled:text-[#666666] h-full pl-4 py-1.5 border-[0.4px] border-[#C8CCD0] rounded md:text-lg'
+                        >
+                            <option value="">Filter by</option>
+                            <option value="verified">Verified</option>
+                            <option value="active">Active</option>
+                        </select>
                     </div>
-
-
                 </div>
 
                 {
@@ -118,8 +136,6 @@ const ReferralPoints = () => {
 
                         />
                 }
-
-
             </div>
         </div>
     )

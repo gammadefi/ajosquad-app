@@ -100,7 +100,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                 <div className='w-full flex flex-col md:flex-row justify-between my-5 gap-3'>
                                     {
                                         filterBy.includes("status") && (
-                                            <div>
+                                            <div className='w-full'>
                                                 <select name="status" value={status} onChange={(e) => setStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <option disabled value="">Status</option>
                                                     <option value="pending">Pending</option>
@@ -112,7 +112,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     }
                                     {
                                         filterBy.includes("squad") && (
-                                            <div>
+                                            <div className='w-full'>
                                                 <select name="squad" value={squad} onChange={(e) => setSquad(e.target.value)} id="squad" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <option disabled value="">Squad</option>
                                                     <option value="brass1.0">Brass 1.0</option>
@@ -125,7 +125,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     }
                                     {
                                         filterBy.includes("position") && (
-                                            <div>
+                                            <div className='w-full'>
                                                 <select name="position" value={position} onChange={(e) => setPosition(e.target.value)} id="position" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <option disabled value="">Position</option>
                                                     <option value="position-1">Position 1</option>
@@ -145,7 +145,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     {
                                         filterBy.includes("amount") && (
                                             <>
-                                                <div onClick={() => setShowAmountFilter(!showAmountFilter)} id="status" className='bg-[#F5F5F9] cursor-pointer py-2.5 px-2 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                <div onClick={() => setShowAmountFilter(!showAmountFilter)} id="status" className='bg-[#F5F5F9] w-full cursor-pointer px-2 py-2 md:py-0 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <span>Amount</span>
                                                     <FaChevronDown size={10} />
                                                 </div>
@@ -177,7 +177,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                     {
                                         filterBy.includes("date") && (
                                             <>
-                                                <div onClick={() => setShowDateFilter(!showDateFilter)} id="status" className='bg-[#F5F5F9] cursor-pointer py-2.5 px-2 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                <div onClick={() => setShowDateFilter(!showDateFilter)} id="status" className='bg-[#F5F5F9] w-full cursor-pointer px-2 py-2 md:py-0 flex items-center justify-between md:justify-center gap-3 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <span>Date</span>
                                                     <FaChevronDown size={10} />
                                                 </div>
