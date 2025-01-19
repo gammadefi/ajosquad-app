@@ -114,13 +114,10 @@ const KycPage = () => {
                             <option value="pending">Not Verified</option>
                         </select>
                         <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
-
                     </div>
 
 
                 </div>
-
-
                 {
                     isLoadingUsers ? <PageLoader /> :
                         users && users?.users.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table

@@ -10,7 +10,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../zustand/auth.store';
 
-
 const fetchUser = async () => {
   const res: AxiosResponse = await userServices.user.getMe();
   return res.data;
@@ -35,13 +34,18 @@ const validationSchema = Yup.object({
     .required('Phone number is required'),
   city: Yup.string()
     .trim()
-    .required("*City is required"),
+    .required("*City is required")
+    .min(3, "State must be at least 3 characters"),
   state: Yup.string()
     .trim()
-    .required("*State is required"),
+    .required("*State is required")
+    .min(3, "State must be at least 3 characters"),
   zipCode: Yup.string()
-    .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
-    .required('ZIP code is required'),
+    .matches(
+      /^[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d$/,
+      "Invalid Canadian zip code format"
+    )
+    .required("ZIP code is required"),
 });
 
 const EditPersonalInformationForm = ({ onClose }: { onClose: () => void }) => {

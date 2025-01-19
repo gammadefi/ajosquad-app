@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { formatDate2 } from '../../../utils/formatTime';
 import Modal from '../../../components/Modal/Modal';
+import { useQuery } from 'react-query';
+import { contractAgreementServices } from '../../../services/contract-agreement';
 
 const contractContent = {
   title: 'Ajosquad Contract Agreement',
@@ -26,6 +28,13 @@ const contractContent = {
 
 const ContractAgreement = () => {
   const [showContractModal, setShowContractModal] = useState(false);
+
+  const { data: contractAgreements, error, isLoading } = useQuery('contractAgreements', async () => {
+    const response = await contractAgreementServices.getAllContractAgreements();
+    return response.data;
+  })
+  
+  console.log(contractAgreements)
   return (
     <div>
       <div className='flex gap-3 items-center lg:w-fit lg:gap-8'>

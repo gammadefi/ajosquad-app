@@ -1,5 +1,4 @@
 import { MdOutlineUploadFile } from 'react-icons/md';
-import { formatDate2 } from '../../../utils/formatTime';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import PageLoader from '../../../components/spinner/PageLoader';
@@ -18,7 +17,6 @@ const ContractAgreement = () => {
 
   if (isLoading) return <PageLoader />
   if (error) return <div>An error occurred while fecthing available contracts</div>
-  console.log(contractAgreements);
   return (
     <>
       {
