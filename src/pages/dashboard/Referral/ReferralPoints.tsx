@@ -13,18 +13,20 @@ import toast from 'react-hot-toast';
 import { formatDate2 } from '../../../utils/formatTime';
 import { generateSerialNumber } from '../../../utils/helpers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParamsToObject } from '../../../hooks/useSearchParamsToObject';
 
 const ReferralPoints = () => {
+    const [currentPage, setCurrentPage] = useState(1);
+
     const navigate = useNavigate();
+    const searchParamsObject = useSearchParamsToObject();
     const [searchParams] = useSearchParams();
     const profile = useAuth(state => state.profile)
-    const [currentPage, setCurrentPage] = useState(1)
 
     const { data: referralStats, isLoading } = useFetchWithParams([`referralStats-${profile.id}`, {
-
+        ...searchParamsObject
     }], ReferralServices.getReferralStats, {
         onSuccess: (data: any) => {
-
         },
     })
 
