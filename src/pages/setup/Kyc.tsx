@@ -209,7 +209,7 @@ const Kyc = () => {
     };
 
     return (
-        <div className='w-full h-full flex items-center py-12 justify-center'>
+        <div className='w-full h-full flex items-center py-16 justify-center'>
             <Modal showCloseButton={false} open={isModalOpen} >
                 {
                     verificationStatus ? (verificationStatus === "successful" ? <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
@@ -235,12 +235,12 @@ const Kyc = () => {
                         {
                             verificationUrl ? (
                                 // Render the iframe if the verification URL is available
-                                <div className='relative w-full h-[100vh]'>
+                                <div className='relative pt-2 md:pt-20 w-full h-[100vh]'>
                                     <button
                                         onClick={closeIframe}
-                                        className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded z-10"
+                                        className="absolute top-6 right-4 md:right-20 bg-red-500 text-white px-4 py-2 rounded z-10"
                                     >
-                                        Close
+                                        close & continue
                                     </button>
                                     <iframe
                                         src={verificationUrl}

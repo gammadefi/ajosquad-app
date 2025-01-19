@@ -59,7 +59,8 @@ const Payout = () => {
     const { data: payouts, isLoading, refetch, error } = useFetchWithParams(
         [`query-all-payouts-${profile.id}`, {
             ...searchParamsObject,
-            page: currentPage
+            page: currentPage,
+            payoutType: "AjosquadPayout"
         }],
         PayoutService.getPayouts,
         {

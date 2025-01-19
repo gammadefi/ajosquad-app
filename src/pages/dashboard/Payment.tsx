@@ -61,7 +61,8 @@ const Payment = () => {
     const { data: payments, isLoading, refetch, error } = useFetchWithParams(
         [`query-all-payments-${profile.id}`, {
             ...searchParamsObject,
-            page: currentPage
+            page: currentPage,
+            paymentType: "AjosquadPayment"
         }],
         PaymentService.getPayments,
         {

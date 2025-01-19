@@ -2,10 +2,11 @@ import React, { useContext, useState } from "react";
 import NotificationIcon from "../../components/common/NotificationIcon";
 import NotificationSidebar from "../../components/common/NotificationSidebar";
 import SearchInput from "../../components/FormInputs/SearchInput";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigation } from "react-router-dom";
 import { useAuth } from "../../zustand/auth.store";
 import { SideBarContext } from "../../context/SideBarContext";
 import { RxHamburgerMenu } from "react-icons/rx";
+import clsx from "clsx";
 
 
 const _extractInitials = (val: string) => {
@@ -19,14 +20,32 @@ const DashboardHeader = ({ title = "" }: { title?: any }) => {
   const profile: any = useAuth((s) => s.profile);
   const role = useAuth((s) => s.role)
   const sideBar = useContext(SideBarContext)
+  const { pathname } = useLocation()
+
+
 
   const _openNav = () => {
     setIsNotificationOpen(true);
   };
   return (
-    <header className="h-20 w-full sticky top-0 z-50 overflow-hidden">
+    <header className={clsx(pathname === "/personal-information" ? "h-20 w-full bg-white  fixed top-0 z-50 overflow-hidden" : "h-20 w-full sticky top-0 z-50 overflow-hidden")}>
       <div className="md:px-6 pl-3 h-full flex justify-between items-center">
-        <h3 className="text-[#464749] text-xl md:text-2xl font-semibold">{title}</h3>
+        <div className="flex items-center gap-2">
+
+          {
+            pathname === "/personal-information" &&  <img
+            src={"/logo.svg"}
+            className={clsx(
+              "w-[50px]",
+              "transition-[width]  "
+            )}
+
+          />
+          }
+         
+          <h3 className="text-[#464749] text-xl md:text-2xl font-semibold">{title}</h3>
+
+        </div>
         <div className="flex items-center">
 
 
