@@ -9,9 +9,10 @@ import { ReferralServices } from '../../../services/referral';
 import { useAuth } from '../../../zustand/auth.store';
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { formatDate2 } from '../../../utils/formatTime';
 import { generateSerialNumber } from '../../../utils/helpers';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ReferralPoints = () => {
     const navigate = useNavigate();
@@ -26,6 +27,8 @@ const ReferralPoints = () => {
 
         },
     })
+
+    console.log(referralStats)
 
     const columns = [
         {
@@ -58,7 +61,7 @@ const ReferralPoints = () => {
         <div>
             <div className='flex justify-between items-center'>
                 <h3 className='text-base md:text-xl font-semibold'>Share the Savings, Earn Rewards!</h3>
-                <button>Redeem Point <span></span></button>
+                <button disabled={isLoading || (referralStats.stats.rewardsEarned < 50)} className='disabled:opacity-40 disabled:cursor-not-allowed px-5 py-2 border text-nowrap border-primary rounded-lg font-semibold'>Redeem Points <span className='ml-1 bg-primary text-white rounded-xl px-2 py-1'>{referralStats ? referralStats.stats.rewardsEarned.toLocaleString() : 0}</span></button>
             </div>
             <div className='lg:gri flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
                 <InfoCard isLoading={isLoading} header="Total Referrals" iconName='profile-2user' value={referralStats ? referralStats.stats.referralsCount.toLocaleString() : 0} />
@@ -74,7 +77,16 @@ const ReferralPoints = () => {
                     <h4 className='mb-1 font-semibold'>Invite Link</h4>
                     <div className='flex items-center gap-2'>
                         <input readOnly disabled name='inviteLink' className='border rounded-md h-[44px] px-3 w-[343px] text-sm' value={`${window.location.origin}/sign-up?ref=${profile.referralCode}`} />
-                        <Button label='Copy Link' className='whitespace-nowrap' iconPosition='beforeText' icon={<IoCopyOutline color='white' />} />
+                        <Button
+                            onClick={() => {
+                                navigator.clipboard.writeText(`${window.location.origin}/sign-up?ref=${profile.referralCode}`)
+                                toast.success("Link copied");
+                            }}
+                            label='Copy Link'
+                            className='whitespace-nowrap'
+                            iconPosition='beforeText'
+                            icon={<IoCopyOutline color='white' />}
+                        />
                     </div>
                     <small>Minimum point to redeem is CAD$50</small>
                 </div>
