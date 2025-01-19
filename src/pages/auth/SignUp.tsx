@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { FaArrowRight } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import usePasswordToggle from "../../hooks/usePasswordToggle";
 import TextInput from "../../components/FormInputs/TextInput2";
 import Modal from "../../components/Modal/Modal";
@@ -46,12 +46,16 @@ const validationSchema = Yup.object({
 });
 
 export default function SignUp() {
-  const [activeTab, setActiveTab] = useState<string>('ajosquad');
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("")
+  const [email, setEmail] = useState<string>("");
 
+  const [searchParams] = useSearchParams();
   const { showPassword, handleClickShowPassword } = usePasswordToggle();
   const navigate = useNavigate();
+
+  if (searchParams.get('ref') && !localStorage.getItem('referralCode')) {
+    localStorage.setItem('referralCode', searchParams.get('ref') as string);
+  }
 
   const initialUserSignUpInfo = {
     firstName: "",
@@ -89,11 +93,15 @@ export default function SignUp() {
           if (values) {
             setSubmitting(true);
 
-            const payload = {
+            const payload: { firstName: string; lastName: string; email_address: string; password: string; referralCode?: string } = {
               "firstName": values.firstName,
               "lastName": values.lastName,
               "email_address": values.email,
               "password": values.password
+            }
+
+            if (localStorage.getItem('referralCode')) {
+              payload.referralCode = localStorage.getItem('referralCode') as string;
             }
 
             try {

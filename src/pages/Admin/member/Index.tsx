@@ -9,6 +9,7 @@ import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import PageLoader from '../../../components/spinner/PageLoader';
 import { formatDate2 } from '../../../utils/formatTime';
 import { useQuery } from 'react-query';
+import { generateSerialNumber } from '../../../utils/helpers';
 
 const Index = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +44,10 @@ const Index = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member Name",

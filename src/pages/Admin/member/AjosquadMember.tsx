@@ -10,6 +10,7 @@ import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import { squadServices } from '../../../services/squad';
 import PageLoader from '../../../components/spinner/PageLoader';
 import { formatDate2 } from '../../../utils/formatTime';
+import { generateSerialNumber } from '../../../utils/helpers';
 
 const AjosquadMember = () => {
     const navigate = useNavigate();
@@ -29,7 +30,10 @@ const AjosquadMember = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member Name",

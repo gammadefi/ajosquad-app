@@ -10,11 +10,17 @@ import PageLoader from '../../components/spinner/PageLoader';
 import { formatDate2 } from '../../utils/formatTime';
 import Modal from '../../components/Modal/Modal';
 import GuarantorVerificationModal from '../../components/Guarantor/admin/GuarantorVerification';
+import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { generateSerialNumber } from '../../utils/helpers';
 
 const GuarantorVerification = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [id, setId] = useState("");
     const [openModal, setOpenModal] = useState(false);
+    const searchParamsObject = useSearchParamsToObject();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const { data, isLoading, error } = useQuery('guarantor-stats', async () => {
         const response = await guarantorServices.getGuarantorStats();
@@ -24,7 +30,8 @@ const GuarantorVerification = () => {
     const { data: guarantors, isLoading: isLoading2 } = useFetchWithParams(
         ["adminGuarantor", {
             page: currentPage,
-            orderBy: "createdAt,desc",
+            // orderBy: "createdAt,desc",
+            ...searchParamsObject
         }],
         guarantorServices.getAllGuarantors,
         {
@@ -40,7 +47,10 @@ const GuarantorVerification = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member Name",
@@ -89,8 +99,40 @@ const GuarantorVerification = () => {
                 <div className='my-8 flex justify-between items-center '>
                     <h3 className='text-xl font-semibold'>All Member</h3>
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
-                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                        <SearchInput placeholder='Search...'
+                            value={searchParams.get('name') || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                if (value) {
+                                    params.set('name', value);
+                                    setCurrentPage(1);
+                                } else {
+                                    params.delete('name');
+                                }
+                                navigate(`?${params.toString()}`);
+                            }}
+                        />
+                        <select
+                            defaultValue={searchParams.get('verificationStatus') || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                if (value) {
+                                    params.set('verificationStatus', value);
+                                    setCurrentPage(1);
+                                } else {
+                                    params.delete('verificationStatus');
+                                }
+                                navigate(`?${params.toString()}`);
+                            }}
+                            className='bg-[#F5F5F9] lg:w-full disabled:text-[#666666] h-full pl-4 py-1.5 border-[0.4px] border-[#C8CCD0] rounded md:text-lg'
+                        >
+                            <option value="">Filter by Status</option>
+                            <option value="verified">Verified</option>
+                            <option value="pending">Pending</option>
+                            <option value="declined">Declined</option>
+                        </select>
                     </div>
                 </div>
                 {
@@ -101,9 +143,7 @@ const GuarantorVerification = () => {
                             loading={false}
                             clickRowAction={(row) => {
                                 setId(row.id);
-                                if (!row.deletedAt){
-                                    setOpenModal(true);
-                                }
+                                setOpenModal(true);
                             }}
                             pagination={
                                 {

@@ -8,7 +8,7 @@ import { formatDate2 } from "../../utils/formatTime";
 import { IoMdCopy } from "react-icons/io";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import toast from "react-hot-toast";
-import { Form, Formik } from 'formik';
+import { ErrorMessage, Form, Formik } from 'formik';
 import TextInput from '../FormInputs/TextInput2';
 
 export default function StaffProfile({ id, closeModal }: { id: string, closeModal: () => void }) {
@@ -122,7 +122,7 @@ export default function StaffProfile({ id, closeModal }: { id: string, closeModa
         }} />
       }
       {
-        showEditStaffRole && <UpdateStaffForm email={data.email_address} id={data.id} closeModal={closeModal} handleReturnToStaffProfile={() => {
+        showEditStaffRole && <UpdateStaffForm email={data.email_address} role={data.role} id={data.id} closeModal={closeModal} handleReturnToStaffProfile={() => {
           setShowEditStaffRole(false);
           setShowStaffProfile(true);
         }} />
@@ -217,7 +217,7 @@ function RevokeStaff({ id, closeModal, handleReturnToStaffProfile }: { id: strin
 }
 
 
-const UpdateStaffForm = ({ id, email, closeModal, handleReturnToStaffProfile }: { id: string, email: string, closeModal: () => void, handleReturnToStaffProfile: () => void }) => {
+const UpdateStaffForm = ({ id, email, role, closeModal, handleReturnToStaffProfile }: { id: string, email: string, role: string, closeModal: () => void, handleReturnToStaffProfile: () => void }) => {
   const [hasUpdatedStaff, setHasUpdatedStaff] = useState(false);
   const queryClient = useQueryClient()
 
@@ -233,7 +233,7 @@ const UpdateStaffForm = ({ id, email, closeModal, handleReturnToStaffProfile }: 
 
   const initialValues = {
     email,
-    role: ""
+    role
   }
 
   const mutation = useMutation(
@@ -257,7 +257,7 @@ const UpdateStaffForm = ({ id, email, closeModal, handleReturnToStaffProfile }: 
             <img src="./Trophy.svg" alt="Delete bank" className='w-52 h-52' />
             <div>
               <h3 className='font-bold text-2xl text-center'>
-                User Role Updated
+                Staff Role Updated
               </h3>
             </div>
             <p className='text-sm text-center'>
@@ -310,11 +310,12 @@ const UpdateStaffForm = ({ id, email, closeModal, handleReturnToStaffProfile }: 
                   />
                   <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
                     <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Permission Type*</label>
-                    <select name='role' onChange={(e) => setValues((prevValues) => ({ ...prevValues, role: e.target.value }))} className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                    <select name='role' defaultValue={role} onChange={(e) => setValues((prevValues) => ({ ...prevValues, role: e.target.value }))} className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
                       <option value="">Select Permission Type</option>
                       <option value="admin">Admin</option>
                       <option value="staff">Staff</option>
                     </select>
+                    <ErrorMessage name="role" component="div" className="text-red-500" />
                   </div>
                   <div className="my-3 flex justify-between">
                     <button

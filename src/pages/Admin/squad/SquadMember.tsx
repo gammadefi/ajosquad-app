@@ -1,10 +1,8 @@
-import React from 'react'
-import { mockData } from '../../../samples/mockdata';
+import { useState } from 'react'
 import { Table, TableEmpty } from '../../../components/Table/Table';
 import SearchInput from '../../../components/FormInputs/SearchInput';
 import { InfoCard } from '../../../components/InfoCard/InfoCard2';
-import { Label } from '../../../components/Label/Label';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { IoIosArrowRoundBack } from "react-icons/io";
 import useFetchWithParams from '../../../hooks/useFetchWithParams';
 import { squadServices } from '../../../services/squad';
@@ -12,15 +10,17 @@ import { generateSerialNumber } from '../../../utils/helpers';
 import { fDate } from '../../../utils/formatTime';
 import PageLoader from '../../../components/spinner/PageLoader';
 import { useQuery } from 'react-query';
+import { useSearchParamsToObject } from '../../../hooks/useSearchParamsToObject';
 
 const SquadMember = () => {
     const navigate = useNavigate()
-    const [search, setSearch] = React.useState('')
-    const [currentPage, setCurrentPage] = React.useState(1);
+    const searchParamsObject = useSearchParamsToObject();
+    const [searchParams] = useSearchParams();
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { data: stats, isLoading, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats);
     const { data: members, isLoading: isMembersLoading } = useFetchWithParams([`query-all-members`, {
-        searchName: search,
+        ...searchParamsObject,
         page: currentPage
     }], squadServices.getSquadMembers, {
         onSuccess: (data: any) => {
@@ -51,6 +51,10 @@ const SquadMember = () => {
         {
             header: "Date Joined",
             view: (row: any) => <div>{fDate(row.createdAt)}</div>,
+        },
+        {
+            header: "Status",
+            view: (row: any) => <div className={`capitalize rounded-lg p-1 ${row.status === "active" ? "text-green-600 bg-green-100" : "text-red-600 bg-red-100"}`}>{row.status}</div>,
         }
     ];
     return (
@@ -63,33 +67,57 @@ const SquadMember = () => {
                         You can view all the squad member information and record here.
                     </p>
                 </div>
-
-
-
-
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-3'>
                 <InfoCard isLoading={isLoading} header="Squad Member" iconName='people' value={stats && stats.data.inactiveMembers + stats.data.activeMembers} />
                 <InfoCard isLoading={isLoading} header="Active Member" iconName='profile-2user-active' value={stats && stats.data.activeMembers} />
                 <InfoCard isLoading={isLoading} header="Inactive Member" iconName='profile-2user-inactive' value={stats && stats.data.inactiveMembers} />
-
-                {/* <InfoCard header="Cash Rewards" iconName='moneys-credit' value="CAD$ 500,000.00" /> */}
-
             </div>
 
             <div>
-                <div className='my-8 flex justify-between items-center '>
-                    <h3 className='text-xl font-semibold'>All Members</h3>
+                <div className='my-8 flex flex-col lg:flex-row justify-between items-center gap-4'>
+                    <div className='w-full flex justify-between items-center'>
+                        <h3 className='text-xl font-semibold'>All Member</h3>
+                        <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                    </div>
 
-                    <div className='flex items-center gap-2'>
-                        <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
-                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                    <div className='w-full flex justify-between items-center gap-2 h-10'>
+                        <SearchInput placeholder='Search...'
+                            value={searchParams.get('searchName') || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                if (value) {
+                                    params.set('searchName', value);
+                                } else {
+                                    params.delete('searchName');
+                                }
+                                navigate(`?${params.toString()}`);
+                            }}
+                        />
+                        <select
+                            defaultValue={searchParams.get('status') || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const params = new URLSearchParams(window.location.search);
+                                if (value) {
+                                    params.set('status', value);
+                                } else {
+                                    params.delete('status');
+                                }
+                                navigate(`?${params.toString()}`);
+                            }}
+                            className='bg-[#F5F5F9] lg:w-full disabled:text-[#666666] h-full pl-4 py-1.5 border-[0.4px] border-[#C8CCD0] rounded md:text-lg'
+                        >
+                            <option value="">Filter by Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                     </div>
 
 
                 </div>
-
-
                 {
                     isMembersLoading ? <PageLoader /> :
                         members && members.data.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> :
@@ -103,8 +131,7 @@ const SquadMember = () => {
                                         page: currentPage,
                                         setPage: (page) => setCurrentPage(page),
                                         pageSize: 10,
-                                        totalRows: members?.total,
-
+                                        totalRows: members?.total
                                     }
                                 }
 

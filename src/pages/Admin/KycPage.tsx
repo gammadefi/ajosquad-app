@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
+import { generateSerialNumber } from '../../utils/helpers';
 
 const KycPage = () => {
     const navigate = useNavigate();
@@ -37,7 +38,10 @@ const KycPage = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member ID",
@@ -114,13 +118,10 @@ const KycPage = () => {
                             <option value="pending">Not Verified</option>
                         </select>
                         <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
-
                     </div>
 
 
                 </div>
-
-
                 {
                     isLoadingUsers ? <PageLoader /> :
                         users && users?.users.length === 0 ? <TableEmpty title='No Member yet' image='/empty-states/people.png' subtitle="No member yet in any squad" /> : <Table
