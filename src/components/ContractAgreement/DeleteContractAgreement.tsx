@@ -12,7 +12,7 @@ const DeleteContractAgreement = ({ contractorAgreementId, closeModal }: { contra
 
   const mutation = useMutation(
     async ({ contractorAgreementId }: { contractorAgreementId: string }) => {
-      const res: AxiosResponse = await contractAgreementServices.deleteContractAgreement(contractorAgreementId)
+      const res: AxiosResponse = await contractAgreementServices.admin.deleteContractAgreement(contractorAgreementId)
       return res.data
     },
     {

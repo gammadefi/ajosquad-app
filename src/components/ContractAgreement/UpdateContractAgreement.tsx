@@ -30,7 +30,7 @@ const UpdateContractAgreement = ({ closeModal, contractorAgreementId }: { closeM
 
   useEffect(() => {
     const fetchContract = async () => {
-      const res: AxiosResponse = await contractAgreementServices.getContractAgreement(contractorAgreementId);
+      const res: AxiosResponse = await contractAgreementServices.admin.getContractAgreement(contractorAgreementId);
       const contractInformation = res.data;
       setInitialValues({
         productType: contractInformation.productType || "",
@@ -45,7 +45,7 @@ const UpdateContractAgreement = ({ closeModal, contractorAgreementId }: { closeM
 
   const mutation = useMutation(
     async ({ contractorAgreementId, payload }: { contractorAgreementId: string, payload: any }) => {
-      const res: AxiosResponse = await contractAgreementServices.updateContractAgreement(contractorAgreementId, payload)
+      const res: AxiosResponse = await contractAgreementServices.admin.updateContractAgreement(contractorAgreementId, payload)
       return res.data
     },
     {
