@@ -30,7 +30,7 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
 
   const mutation = useMutation(
     async ({ payload }: { payload: any }) => {
-      const res: AxiosResponse = await contractAgreementServices.createContractAgreement(payload)
+      const res: AxiosResponse = await contractAgreementServices.admin.createContractAgreement(payload)
       return res.data
     },
     {
