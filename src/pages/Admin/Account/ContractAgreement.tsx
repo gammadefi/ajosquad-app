@@ -17,6 +17,8 @@ const ContractAgreement = () => {
 
   if (isLoading) return <PageLoader />
   if (error) return <div>An error occurred while fecthing available contracts</div>
+
+  console.log(contractAgreements)
   return (
     <>
       {

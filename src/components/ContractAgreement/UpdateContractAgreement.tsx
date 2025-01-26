@@ -6,7 +6,6 @@ import FileUpload from '../FormInputs/FIleUpload2';
 import toast from 'react-hot-toast';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
-import { guarantorServices } from '../../services/guarantor';
 import { getFileSize, truncateString } from '../../utils/helpers';
 import { contractAgreementServices } from '../../services/contract-agreement';
 import PageLoader from '../spinner/PageLoader';

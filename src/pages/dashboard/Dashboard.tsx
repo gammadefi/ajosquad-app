@@ -9,7 +9,6 @@ import { GraphWrapper } from '../../components/Graph/GraphWrapper';
 import LineChart from '../../components/Graph/Graphs/LineChart';
 import { TableEmpty } from '../../components/Table/Table';
 import { Table } from '../../components/Table/TableTwo';
-import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
 import SearchInput from '../../components/FormInputs/SearchInput';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
@@ -22,10 +21,11 @@ import dayjs from 'dayjs';
 import { PayoutService } from '../../services/payout';
 import { PaymentService } from '../../services/payment';
 import Filter from '../../components/Filter/Filter';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { statisticsServices } from '../../services/statistics';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
+import { contractAgreementServices } from '../../services/contract-agreement';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -99,7 +99,7 @@ const Dashboard = () => {
     }
   )
 
-  const {data:transactionData, isLoading:isTransactionLoading} = useFetchWithParams(
+  const { data: transactionData, isLoading: isTransactionLoading } = useFetchWithParams(
     [`query-all-transactions-${profile.id}`, {
       fromAmount: searchParamsObject.minAMount,
       toAmount: searchParamsObject.maxAmount,
@@ -108,7 +108,7 @@ const Dashboard = () => {
       search,
       page: currentPage,
 
-    } ], statisticsServices.getTransactions,
+    }], statisticsServices.getTransactions,
     {
       onSuccess: (data: any) => {
         // console.log(data.data);
@@ -146,7 +146,7 @@ const Dashboard = () => {
     },
   ];
 
-  const [selectedRange, setSelectedRange] = useState("1Y"); 
+  const [selectedRange, setSelectedRange] = useState("1Y");
 
   function hasUser(squadData: any, userId: string): boolean {
     return squadData.squadMembers.some((member: any) => member.userId === userId);
@@ -417,22 +417,22 @@ const Dashboard = () => {
                 <Filter filterBy={["amount", "date", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
               </div>
               {
-                isTransactionLoading ? <PageLoader /> : 
-                transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
-                  data={transactionData.data}
-                  columns={columns}
-                  loading={false}
-                  pagination={
-                    {
-                     
-                      page: currentPage,
-                      setPage: setCurrentPage,
-                      totalRows: transactionData.totalItems
-                     
-                    }
-                  }
+                isTransactionLoading ? <PageLoader /> :
+                  transactionData.data.length === 0 ? <TableEmpty title="You haven't made any transactions yet" image='/empty-states/transaction.png' subtitle="You're just getting started! Join a Squad and track all transaction on your account here." /> : <Table
+                    data={transactionData.data}
+                    columns={columns}
+                    loading={false}
+                    pagination={
+                      {
 
-                />
+                        page: currentPage,
+                        setPage: setCurrentPage,
+                        totalRows: transactionData.totalItems
+
+                      }
+                    }
+
+                  />
               }
 
 
@@ -446,17 +446,46 @@ const Dashboard = () => {
 
 const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activeSquad: false }) => {
   const profile: any = useAuth((s) => s.profile);
+  const { setUserProfile } = useAuth();
+
+  const [isAgreeing, setIsAgreeing] = useState(false);
+  const [isIframeVisible, setIframeVisible] = useState(false);
+
+  const { data: contractAgreements, error, isLoading } = useQuery('contractAgreements', async () => {
+    const response = await contractAgreementServices.user.getAllContractAgreements();
+    return response.data;
+  });
+
+  
+  const handleOpenIframe = () => setIframeVisible(true);
+  const handleCloseIframe = () => setIframeVisible(false);
+
+  const handleAgreeToContractAgreement = async(contractorAgreementId: string) => {
+    setIsAgreeing(true);
+    try {
+      const res = await contractAgreementServices.user.agreeOrRejectContractAgreement(contractorAgreementId, { option: true });
+      if(res) {
+        const updatedUserProfile = { ...profile, userAgreedAjosquad: true }
+        setUserProfile(updatedUserProfile);
+        setIframeVisible(false);
+        setIsAgreeing(false);
+      }
+    } catch (error) {
+      setIsAgreeing(false);
+    }
+  }
+  
+  if (isLoading) return <PageLoader />
+  if (error) return <div>An error occurred while fetching contracts</div>
+
   return (
     <div className='px-3 py-20 md:px-12'>
-
       <h3 className=' text-3xl md:text-5xl font-semibold '>Hi, <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]'>{profile.firstName} {profile.lastName}</span></h3>
       <h5 className='text-base md:text-xl mt-2 text-[#656565]'>You still have a few more step to complete your profile</h5>
-
-
       <div className='mt-8'>
         <h3 className='text-2xl font-semibold'>Account set up Checklist</h3>
         <div className='flex mt-2 gap-3'>
-          <VerificationCards>
+          <div className='w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] bg-[#08354C] text-white'>
             <div className='flex gap-2'>
               <div className="mt-2">
                 <LiaFileContractSolid size={24} />
@@ -467,47 +496,70 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
 
             <h5 className='text-xs md:text-sm mt-3'>Almost done! Read and sign our User Agreement to unlock all Ajosquad features and start exploring.</h5>
 
-            <button className={clsx('px-5 max-w-[205px] py-2 border border-white rounded-md mt-auto',
+            <button onClick={handleOpenIframe} className={clsx('px-5 max-w-[205px] py-2 border border-white rounded-md mt-auto',
 
 
             )}>Read & Sign Agreement</button>
 
-          </VerificationCards>
-          <VerificationCards disabled={kycVerified === false}>
-            <div className='flex gap-2 items-center'>
-              <div>
-                <People color={kycVerified === false ? "#1e232c44" : "white"} />
+          </div>
+          <div>
+            {isIframeVisible && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 1000,
+                }}
+              >
+                <div className='z-[1000] absolute flex gap-6 top-5 right-10'>
+                  <button
+                    onClick={handleCloseIframe}
+                    className='py-2 px-4 bg-white rounded-md'
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={() => handleAgreeToContractAgreement(contractAgreements.data.find((contract: any) => contract.productType === "Ajosquad").id)}
+                    disabled={isAgreeing}
+                    className='py-2 px-4 rounded-md disabled:cursor-not-allowed disabled:bg-primary/50 bg-primary text-white font-medium'
+                  >
+                    Agree
+                  </button>
+                </div>
+                <iframe
+                  src={contractAgreements.data.find((contract: any) => contract.productType === "Ajosquad").agreement_url}
+                  title="Ajosquad Agreement"
+                  style={{
+                    width: '90%',
+                    height: '90%',
+                    border: 'none',
+                    borderRadius: '10px',
+                  }}
+                />
               </div>
-
-              <h3 className=" text-lg font-bold md:text-2xl">Join a Squad</h3>
-            </div>
-
-            <h5 className='text-xs md:text-sm mt-3'>Check through our various squad groups and option to choose the on that best serves you.</h5>
-
-            <button disabled={kycVerified === false} className={clsx('px-5 max-w-[165px] py-2 border mt-auto border-white rounded-md ',
-
-
-            )}>Join a squad</button>
-
-          </VerificationCards>
-
+            )}
+          </div>
         </div>
       </div>
-
-
-
     </div>
   )
 }
 
-const VerificationCards = ({ disabled = false, children }: { disabled?: boolean, children: React.ReactNode }) => {
-  return (
-    <div className={clsx('w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] ',
-      disabled ? "bg-[#0000002E] text-[#1e232c44] " : "bg-[#08354C] text-white"
-    )}>
-      {children}
-    </div>
-  )
-}
+// const VerificationCards = ({ disabled = false, children }: { disabled?: boolean, children: React.ReactNode }) => {
+//   return (
+//     <div className={clsx('w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] ',
+//       disabled ? "bg-[#0000002E] text-[#1e232c44] " : "bg-[#08354C] text-white"
+//     )}>
+//       {children}
+//     </div>
+//   )
+// }
 
 export default Dashboard
