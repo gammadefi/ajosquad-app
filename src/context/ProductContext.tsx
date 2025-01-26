@@ -25,22 +25,34 @@ const events = [
 
 export const ProductProvider = ({ children } : ProductITF) => {
   const [isProductOpen, setIsProductOpen] = useState(false)
+  const [isKycOpen, setIsKycOpen] = useState(false)
 
   function toggleProduct() {
     setIsProductOpen(!isProductOpen)
+  }
+
+  function toggleKyc() {
+    setIsKycOpen(!isKycOpen)
   }
 
   function closeProduct() {
     setIsProductOpen(false)
   }
 
+  function closeKyc() {
+    setIsKycOpen(false)
+  }
+
   const value = useMemo(
     () => ({
       isProductOpen,
+      isKycOpen,
       toggleProduct,
+      toggleKyc,
       closeProduct,
+      closeKyc
     }),
-    [isProductOpen]
+    [isProductOpen, isKycOpen]
   )
 
 

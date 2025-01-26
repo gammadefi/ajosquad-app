@@ -5,18 +5,20 @@ import PageLoader from '../../../components/spinner/PageLoader';
 import { contractAgreementServices } from '../../../services/contract-agreement';
 import Modal from '../../../components/Modal/Modal';
 import AddContractAgreementForm from '../../../components/ContractAgreement/AddContractAgreementForm';
-import ContractAgreementCard from '../../../components/ContractAgreement/ContractAgreementCard';
+import ContractAgreementCard from '../../../components/ContractAgreement/AdminContractAgreementCard';
 
 const ContractAgreement = () => {
   const [showAddContractAgreementForm, setShowAddContractAgreementForm] = useState(false);
 
   const { data: contractAgreements, error, isLoading } = useQuery('contractAgreements', async () => {
-    const response = await contractAgreementServices.getAllContractAgreements();
+    const response = await contractAgreementServices.admin.getAllContractAgreements();
     return response.data;
   })
 
   if (isLoading) return <PageLoader />
   if (error) return <div>An error occurred while fecthing available contracts</div>
+
+  console.log(contractAgreements)
   return (
     <>
       {

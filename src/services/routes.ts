@@ -68,7 +68,14 @@ export const statisticsApiRoutes = {
 }
 
 export const contractAgreementApiRoutes = {
-  getAllContractAgreements: "/admin/contract-agreement",
-  getContractAgreement: (contractId: string) => `/admin/contract-agreement/${contractId}`,
-  createAgreement: "/admin/contract-agreement"
+  admin: {
+    getAllContractAgreements: "/admin/contract-agreement",
+    getContractAgreement: (contractId: string) => `/admin/contract-agreement/${contractId}`,
+    createAgreement: "/admin/contract-agreement"
+  },
+  user: {
+    getAllContractAgreements: "/user/contract-agreement",
+    getContractAgreement: (contractId: string) => `/user/contract-agreement/${contractId}`,
+    agreeOrRejectContract: (contractId: string) => `/user/contract-agreement/${contractId}`,
+  }
 }

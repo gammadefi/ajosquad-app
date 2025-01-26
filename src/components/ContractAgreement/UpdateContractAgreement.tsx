@@ -6,7 +6,6 @@ import FileUpload from '../FormInputs/FIleUpload2';
 import toast from 'react-hot-toast';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
-import { guarantorServices } from '../../services/guarantor';
 import { getFileSize, truncateString } from '../../utils/helpers';
 import { contractAgreementServices } from '../../services/contract-agreement';
 import PageLoader from '../spinner/PageLoader';
@@ -30,7 +29,7 @@ const UpdateContractAgreement = ({ closeModal, contractorAgreementId }: { closeM
 
   useEffect(() => {
     const fetchContract = async () => {
-      const res: AxiosResponse = await contractAgreementServices.getContractAgreement(contractorAgreementId);
+      const res: AxiosResponse = await contractAgreementServices.admin.getContractAgreement(contractorAgreementId);
       const contractInformation = res.data;
       setInitialValues({
         productType: contractInformation.productType || "",
@@ -45,7 +44,7 @@ const UpdateContractAgreement = ({ closeModal, contractorAgreementId }: { closeM
 
   const mutation = useMutation(
     async ({ contractorAgreementId, payload }: { contractorAgreementId: string, payload: any }) => {
-      const res: AxiosResponse = await contractAgreementServices.updateContractAgreement(contractorAgreementId, payload)
+      const res: AxiosResponse = await contractAgreementServices.admin.updateContractAgreement(contractorAgreementId, payload)
       return res.data
     },
     {

@@ -14,6 +14,7 @@ import OurProductModal from "../../components/Modal/OurProductModal";
 import { ProductContext } from "../../context/ProductContext";
 import Drawer from "./Drawer";
 import { SideBarContext } from "../../context/SideBarContext";
+import Kyc from "../../components/Kyc";
 // import { DashboardTopBar } from "./TopBar";
 
 export const DashboardWrapper = ({
@@ -24,9 +25,11 @@ export const DashboardWrapper = ({
   children: React.ReactNode;
 }) => {
   const logout: any = React.useContext(LogoutContext);
+  const isVerified: boolean = useAuth((s) => s.verified);
   const sidebarC:any = React.useContext(SideBarContext);
   const product: any = React.useContext(ProductContext);
   const { pathname } = useLocation()
+  const profile: any = useAuth((s) => s.profile);
 
 console.log(pathname)
 
@@ -78,6 +81,9 @@ console.log(pathname)
           </div>
         </main>
         <OurProductModal onClick={product.closeProduct} open={product.isProductOpen} />
+        {
+          (!isVerified && profile.role === "user") && <Kyc />
+        }
       </section>
     </section>
   );

@@ -9,7 +9,6 @@ import HorizontalBarChart from '../../components/Graph/Graphs/HorizontalBarChart
 import SearchInput from '../../components/FormInputs/SearchInput';
 import { Table } from '../../components/Table/TableTwo';
 import { TableEmpty } from '../../components/Table/Table';
-import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
 import Filter from '../../components/Filter/Filter';
 import { useQuery } from 'react-query';
@@ -220,7 +219,7 @@ const Dashboard = () => {
                           data={{
                             colors: ["#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
                             xAxisLabel: ["All", "", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
-                            seriesData: [data2.totalUsers, data2.verifiedUsers, data2.verifiedUsers, 0, 0], // Bar values
+                            seriesData: [data2.totalUsers, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers, 0], // Bar values
                           }}
                         />
                         <div className='justify-around flex'>

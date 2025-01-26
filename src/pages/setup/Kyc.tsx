@@ -87,7 +87,7 @@ const Kyc = () => {
             "email_address": profile.email_address ?? "",
             "phoneNumber": profile.phoneNumber ?? "",
             "homeAddress": profile.homeAddress ?? "",
-            "city": profile.city  ?? "",
+            "city": profile.city ?? "",
             "state": profile.state ?? "",
             "zipCode": profile.zipCode ?? "",
             "jobTitle": profile.jobTitle ?? "",
@@ -209,23 +209,23 @@ const Kyc = () => {
     };
 
     return (
-        <div className='w-full h-full flex items-center py-16 justify-center'>
-            <Modal showCloseButton={false} open={isModalOpen} >
-                {
-                    verificationStatus ? (verificationStatus === "successful" ? <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
-                        <img src='/face-id.png' alt='' />
-                        <h3 className='font-semibold text-center text-2xl'>KYC Completed</h3>
-                        <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>Verification complete! You're one step closer to financial freedom.</h5>
-                        <Button label='Proceed' disabled={isKycLoading} onClick={() => AuthActions.setVerified(true)} isLoading={isKycLoading} className='mt-6 w-full text-center flex font-semibold justify-center' />
-                    </div> : null) : <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
-                        <img src='/success.svg' alt='' />
-                        <h3 className='font-semibold text-center text-2xl'>Personal Information Updated</h3>
-                        <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>You have completely provided your personal information, kindly proceed to your KYC.</h5>
-                        <Button label='Proceed to KYC' disabled={isKycLoading} onClick={() => initiateKyc()} isLoading={isKycLoading} className='mt-6 w-full text-center flex font-semibold justify-center' />
-                    </div>
-                }
 
-            </Modal>
+        <Modal showCloseButton={false} open={isModalOpen} >
+            {
+                verificationStatus ? (verificationStatus === "successful" ? <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
+                    <img src='/face-id.png' alt='' />
+                    <h3 className='font-semibold text-center text-2xl'>KYC Completed</h3>
+                    <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>Verification complete! You're one step closer to financial freedom.</h5>
+                    <Button label='Proceed' disabled={isKycLoading} onClick={() => AuthActions.setVerified(true)} isLoading={isKycLoading} className='mt-6 w-full text-center flex font-semibold justify-center' />
+                </div> : null) : <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
+                    <img src='/success.svg' alt='' />
+                    <h3 className='font-semibold text-center text-2xl'>Personal Information Updated</h3>
+                    <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>You have completely provided your personal information, kindly proceed to your KYC.</h5>
+                    <Button label='Proceed to KYC' disabled={isKycLoading} onClick={() => initiateKyc()} isLoading={isKycLoading} className='mt-6 w-full text-center flex font-semibold justify-center' />
+                </div>
+            }
+
+
             {
                 pageLoading ? (
                     <PageLoader />
@@ -337,7 +337,7 @@ const Kyc = () => {
 
 
 
-        </div>
+        </Modal>
     )
 }
 
