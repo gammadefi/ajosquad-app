@@ -9,7 +9,6 @@ import HorizontalBarChart from '../../components/Graph/Graphs/HorizontalBarChart
 import SearchInput from '../../components/FormInputs/SearchInput';
 import { Table } from '../../components/Table/TableTwo';
 import { TableEmpty } from '../../components/Table/Table';
-import { mockData } from '../../samples/mockdata';
 import { Label } from '../../components/Label/Label';
 import Filter from '../../components/Filter/Filter';
 import { useQuery } from 'react-query';

@@ -29,6 +29,7 @@ export const DashboardWrapper = ({
   const sidebarC:any = React.useContext(SideBarContext);
   const product: any = React.useContext(ProductContext);
   const { pathname } = useLocation()
+  const profile: any = useAuth((s) => s.profile);
 
 console.log(pathname)
 
@@ -81,7 +82,7 @@ console.log(pathname)
         </main>
         <OurProductModal onClick={product.closeProduct} open={product.isProductOpen} />
         {
-          !isVerified && <Kyc />
+          (!isVerified && profile.role === "user") && <Kyc />
         }
       </section>
     </section>
