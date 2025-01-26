@@ -47,7 +47,7 @@ const Product = () => {
 
             {
                 selected && <Button onClick={() => {
-                    AuthActions.setVerified(true)
+                    // AuthActions.setVerified(true)
                     AuthActions.setProduct(selected)
                  }} disabled={error} label='Proceed' className='ml-auto mt-6 w-[270px] h-[48px] flex items-center justify-center' iconPosition='afterText'  icon={<FaArrowRight />} />
             }

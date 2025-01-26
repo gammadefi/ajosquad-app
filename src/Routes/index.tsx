@@ -26,24 +26,19 @@ export const AppRouter = () => {
   useEffect(() => {
     if (isLoggedIn && isAdmin) {
       setRouter(ModuleRouters[4]);
-    } else if (isLoggedIn && isVerified && product) {
+    } else if (isLoggedIn && product) {
       if (product === "AjoSquad") {
         setRouter(ModuleRouters[1]);
-      }else if(product === "AjoHome") {
+      } else if (product === "AjoHome") {
         setRouter(ModuleRouters[5]);
       }
     }
-    else if (isLoggedIn && (!isVerified || !product)) {
-      if (isVerified && !product) {
-        setRouter(ModuleRouters[2]);
-      } else {
-        setRouter(ModuleRouters[3]);
-      }
-
+    else if (isLoggedIn && !product) {
+      setRouter(ModuleRouters[2]);
     } else {
       setRouter(ModuleRouters[0]);
     }
-  }, [isLoggedIn, isVerified, product, isAdmin]);
+  }, [isLoggedIn, product, isAdmin]);
 
   // console.log(router)
 

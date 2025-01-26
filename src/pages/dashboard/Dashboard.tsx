@@ -33,7 +33,7 @@ const fetchDashboardGraphData = async () => {
 }
 
 const Dashboard = () => {
-  const [kycVerified, setKycVerified] = useState(true);
+  const kycVerified: boolean = useAuth(s => s.profile.userAgreedAjosquad);
   const [activeSquad, setActiveSquad] = useState(true);
   const [openFilter, setOpenFilter] = useState(false);
   const [showBrassSquad, setShowBrassSquad] = useState(false);
@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
 
+  console.log(kycVerified);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
