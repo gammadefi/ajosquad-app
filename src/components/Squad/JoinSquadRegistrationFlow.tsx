@@ -18,7 +18,7 @@ import Tooltip from '../Tooltip/ToolTip';
 
 const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition }: { squadId: string, selecetedPosition: string[] }) => {
   const [formData, setFormData] = useState({
-    desiredPosition: [],
+    desiredPosition: [] as string[],
     bankInfoId: ""
   });
 
@@ -29,7 +29,7 @@ const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition }: { squadId: st
   };
 
   const handlePreviousStep = () => {
-    setStep(step - 1);
+    formData.desiredPosition.includes("1-5") ? setStep(step - 1) : setStep(1)
   };
 
   const handleFormDataChange = (data: { [key: string]: string | string[] }) => {
@@ -49,22 +49,13 @@ const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition }: { squadId: st
 export default JoinSquadRegistrationFlow;
 
 const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step: number, next: () => void, formData: any, setFormData: any, selecetedPosition: string[] }) => {
-  const positions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  const positions = ["6", "7", "8", "9", "10"];
   const progress = (step / 3) * 100;
 
   const validationSchema = Yup.object().shape({
     selectedOptions: Yup.array()
-      .min(1, "You must select at least one option.")
-      .max(3, "You can select a maximum of three options.")
-      .test(
-        'single-position',
-        'You can select only one checkbox from positions 1 to 5.',
-        (checkboxes: any) => {
-          const guarantorRequiredPositions = ["1", "2", "3", "4", "5"];
-          const selectedPositions = guarantorRequiredPositions.filter(position => checkboxes.includes(position));
-          return selectedPositions.length <= 1;
-        }
-      ),
+      .min(1, "You must select one position")
+      .max(1, "You can only select one position")
   });
 
   const initialValues = {
@@ -80,7 +71,7 @@ const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step:
         <CircularProgressBar progress={progress} currentStep={step} />
       </div>
       <p>
-        You're free to choose up to three positions within the squad! Just remember, positions 1-5 require a guarantor for verification purposes.
+        Thank you for joining a squad! You're now eligible to select one position within the squad! Please note that if you're interested in positions 1-5, you'll need to complete an additional verification step, which involves a conversation with the Administrator and providing a guarantor.
       </p>
       <div>
         <h4 className='font-bold text-lg lg:text-xl mb-2'>Choose Position</h4>
@@ -92,9 +83,27 @@ const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step:
             next();
           }}
         >
-          {({ values }) => (
+          {() => (
             <Form>
               <div className="grid gap-4 grid-cols-2 items-center">
+                <div className="py-2 h-[48px] px-4 flex items-center border gap-2">
+                  <Field
+                    type="checkbox"
+                    name="selectedOptions"
+                    value="1-5"
+                    className="w-5 h-5"
+                  />
+
+                  <div className='w-full text-sm flex flex-col'>
+                    <div className='flex justify-between items-center'>
+                      <div>
+                        <label className='font-medium'>Position 1-5</label>
+                      </div>
+                      <p className='text-red-500 text-xs'>Guarantor Needed</p>
+                    </div>
+                    <p className='text-xs text-primary'>Contact Admin </p>
+                  </div>
+                </div>
                 {positions.map((position, index) => {
                   const isDisabled = selecetedPosition.includes(`POSITION_${position}`);
                   console.log(isDisabled, selecetedPosition)
@@ -105,16 +114,12 @@ const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step:
                           type="checkbox"
                           name="selectedOptions"
                           value={position}
-
                           className="w-5 h-5"
                         />
                       }
 
                       <div className='flex flex-col'>
                         <label className='text-sm font-medium'>Position {position}</label>
-                        {index < 5 && (
-                          <span className='text-[#D42620] text-xs'>Guarantor Needed</span>
-                        )}
                       </div>
                     </div>
                   );
@@ -150,7 +155,7 @@ const Step1 = ({ step, next, formData, setFormData, selecetedPosition }: { step:
 
 
 const Step2 = ({ step, back, next, formData, setFormData }: { step: number, next: () => void, back: () => void, formData: any, setFormData: any }) => {
-  const guarantorRequiredPositions = ["1", "2", "3", "4", "5"]
+  const guarantorRequiredPositions = ["1-5"]
   const hasPosition1To5 = formData.desiredPosition.some((position: string) => guarantorRequiredPositions.includes(position));
   const progress = (step / 3) * 100;
 
@@ -494,7 +499,10 @@ const Step3 = ({ step, back, next, formData, squadId }: { step: number, back: ()
               <div className="flex justify-between">
                 <button
                   type="button"
-                  onClick={back}
+                  onClick={() => {
+                    console.log(formData, step)
+                    back()
+                  }}
                   className="border border-primary font-medium px-10 rounded-lg"
                 >
                   Back
