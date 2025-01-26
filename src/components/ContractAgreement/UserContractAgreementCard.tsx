@@ -20,9 +20,11 @@ const ContractAgreementCard = ({ id, imgUrl, name, uploadDate }: ContractAgreeme
     setIsAgreeing(true);
     try {
       const res = await contractAgreementServices.user.agreeOrRejectContractAgreement(id, { option: true });
-      toast.success(res.message);
-      setIsAgreeing(false);
-      setShowModal(false);
+      if (res) {
+        toast.success(res.message);
+        setIsAgreeing(false);
+        setShowModal(false);
+      }
     } catch (error) {
       toast.error("An error occurred while agreeing to contract agreement");
       setIsAgreeing(false);
@@ -53,7 +55,7 @@ const ContractAgreementCard = ({ id, imgUrl, name, uploadDate }: ContractAgreeme
               onClick={handleAgreeToContractAgreement}
               className='bg-primary font-semibold px-5 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
             >
-              {isAgreeing? "Agreeing..." : "Agree and Confirm"}
+              {isAgreeing ? "Agreeing..." : "Agree and Confirm"}
             </button>
           </div>
         </div>

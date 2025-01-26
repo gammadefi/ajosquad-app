@@ -38,6 +38,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
   const formattedPayoutAmount = useCADFormatter(payoutAmount);
   const formattedDate = dayjs(date).format('Do MMM, YYYY | h:mm A');
+  console.log(selectedPositions)
 
   return (
     <>
@@ -50,7 +51,12 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
           <h3 className='text-lg font-bold'>CA{formattedPayoutAmount} payout</h3>
           <span className='flex items-center gap-1'><User />{numOfMaxMembers} Max. Member</span>
         </div>
+        <div className='flex items-center justify-between '>
         <div className='text-[#5A5C5E]'>This squad would run for {squadDuration} months</div>
+
+        <h3 className='text-xs'>{selectedPositions.length} /10 members</h3>
+
+        </div>
         <div className='flex justify-between'>
           <p className='text-sm'>CA$ 300.00 / Every 2 weeks</p>
           <span className='text-xs flex items-center gap-1'><LuCalendarDays className='w-5 h-5' /> {formattedDate}</span>

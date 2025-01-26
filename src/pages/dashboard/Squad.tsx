@@ -100,7 +100,7 @@ const Squad = () => {
                   key={index}
                   id={squad.id}
                   payoutAmount={squad.amount}
-                  date={new Date(squad.createdAt)}
+                  date={new Date(squad.startDate)}
                   startDate={squad.startDate}
                   title={squad.name}
                   refetch={refetch}
