@@ -35,6 +35,12 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
   const [openJoinSquadForm, setOpenJoinSquadForm] = useState<boolean>(false);
+  const amount:any = {
+    "Silver": 500,
+    "Gold": 1000,
+    "Bronze": 300,
+    "Brass": 200
+  }
 
   const formattedPayoutAmount = useCADFormatter(payoutAmount);
   const formattedDate = dayjs(date).format('Do MMM, YYYY | h:mm A');
@@ -58,7 +64,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
         </div>
         <div className='flex justify-between'>
-          <p className='text-sm'>CA$ 300.00 / Every 2 weeks</p>
+          <p className='text-sm'>CA$ {amount[category]}.00 / Every 2 weeks</p>
           <span className='text-xs flex items-center gap-1'><LuCalendarDays className='w-5 h-5' /> {formattedDate}</span>
         </div>
         {
