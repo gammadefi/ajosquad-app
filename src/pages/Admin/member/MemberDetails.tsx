@@ -1,4 +1,3 @@
-import { useAuth } from '../../../zustand/auth.store'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IoIosArrowRoundBack } from 'react-icons/io'
 import TabBar2 from '../../../components/Tab/TabBar2'
@@ -14,7 +13,6 @@ const MemberDetails = () => {
     const params = useParams();
     const navigate = useNavigate()
     const location = useLocation();
-    const profile = useAuth((s) => s.profile)
     const tabs = ["Member Information", "Active Products", "Transaction", "guarantor"]
     const searchParams = new URLSearchParams(location.search);
     const activeTab = searchParams.get("activeTab") || "Member Information";

@@ -83,7 +83,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
       }}>
         {
-          openJoinSquadForm ? <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} />
+          openJoinSquadForm ? <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} refetch={refetch} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} />
         }
 
 

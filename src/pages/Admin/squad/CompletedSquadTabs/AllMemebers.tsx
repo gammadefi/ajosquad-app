@@ -1,6 +1,4 @@
 import React from 'react'
-import { Label } from '../../../../components/Label/Label';
-import { mockData } from '../../../../samples/mockdata';
 import { Table, TableEmpty } from '../../../../components/Table/Table';
 import SearchInput from '../../../../components/FormInputs/SearchInput';
 import { useParams } from 'react-router-dom';

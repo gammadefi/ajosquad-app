@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { userServices } from "../../../../services/user";
+import PageLoader from "../../../../components/spinner/PageLoader";
 
 const Profile = () => {
   const params = useParams();
@@ -9,6 +10,8 @@ const Profile = () => {
     const data = await userServices.user.getUserById(params.id || "")
     return data
   });
+
+  if (isLoading) return <PageLoader />
 
   return (
     <div>
@@ -40,9 +43,13 @@ const Profile = () => {
               </div>
             </div>
             <div className='flex justify-between'>
-              <div>
+              <div className='w-3/5'>
                 <p className='text-[#96999C]'>Address</p>
-                <p className='font-normal'>{`${data.data.homeAddress}, ${data.data.city}, ${data.data.state}` || "N/A"}</p>
+                <p className='font-normal'>{data.data.homeAddress || ""} {data.data.city} {data.data.state}</p>
+              </div>
+              <div className='w-2/5'>
+                <p className='text-[#96999C]'>Referral Source</p>
+                <p className='font-normal'>{data.data.others || "N/A"}</p>
               </div>
             </div>
           </div>
