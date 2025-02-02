@@ -39,9 +39,10 @@ const Squad = () => {
       <TabBar2
         tabs={[
           "upcoming",
+          "pending",
           "active",
           "completed",
-          "pending"
+          "pending",
         ]}
         isDashboard={false}
         activeTab={activeTab}
