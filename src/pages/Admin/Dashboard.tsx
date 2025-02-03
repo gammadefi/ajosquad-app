@@ -222,9 +222,9 @@ const Dashboard = () => {
                       <>
                         <BarGraph
                           data={{
-                            colors: ["#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
-                            xAxisLabel: ["All", "", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
-                            seriesData: [data2.totalUsers, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers, 0], // Bar values
+                            colors: ["#005CE6", "#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
+                            xAxisLabel: ["All", "Registered Today", "", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
+                            seriesData: [data2.totalUsers, data2.todaySignups, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers, 0], // Bar values
                           }}
                         />
                         <div className='justify-around flex'>

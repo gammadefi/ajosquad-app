@@ -18,7 +18,7 @@ import Tooltip from '../Tooltip/ToolTip';
 import { useQuery } from 'react-query';
 import PageLoader from '../spinner/PageLoader';
 
-const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch }: { squadId: string, selecetedPosition: string[], refetch: () => void }) => {
+const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClick }: { squadId: string, selecetedPosition: string[], refetch: () => void, onClick: () => void }) => {
   const [formData, setFormData] = useState({
     desiredPosition: [] as string[],
     bankInfoId: ""
@@ -34,7 +34,7 @@ const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch }: { sq
       {step === 1 && <Step1 step={step} setStep={setStep} selecetedPosition={selecetedPosition} formData={formData} setFormData={handleFormDataChange} />}
       {step === 2 && <Step2 step={step} setStep={setStep} refetch={refetch} formData={formData} setFormData={handleFormDataChange} squadId={squadId} />}
       {step === 3 && <Step3 step={step} setStep={setStep} refetch={refetch} formData={formData} squadId={squadId} />}
-      {step === 4 && <SuccessModal />}
+      {step === 4 && <SuccessModal onClick={onClick} />}
     </div>
   );
 }
@@ -580,7 +580,7 @@ const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, se
 
 
 
-const SuccessModal = () => {
+const SuccessModal = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
       <img src="./Trophy.svg" alt="Email verified" className='w-52 h-52' />
@@ -593,7 +593,8 @@ const SuccessModal = () => {
         You have successfully join the Bronze squad, track your payment day from the payment page.
       </p>
       <button
-        type='submit'
+        type='button'
+        onClick={onClick}
         className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
       >
         Dismiss
