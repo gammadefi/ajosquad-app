@@ -9,11 +9,14 @@ import { squadServices } from '../../../../services/squad';
 import PageLoader from '../../../../components/spinner/PageLoader';
 import { generateSerialNumber } from '../../../../utils/helpers';
 import { fDate } from '../../../../utils/formatTime';
+import { useQuery } from 'react-query';
 
 const AllMembers = () => {
-    const { id } = useParams()
+    const { id }: any = useParams()
     const [search, setSearch] = React.useState("")
     const [currentPage, setCurrentPage] = React.useState(1)
+    const { data: info, isLoading: isLoadingInfo } = useQuery(['squad-info', id], () => squadServices.getSquad(id))
+
 
     const { data: members, isLoading } = useFetchWithParams([`query-all-members`, {
         squadId: id,
@@ -24,7 +27,7 @@ const AllMembers = () => {
         }
     })
 
-    console.log(id, members)
+    console.log(id, info.data.squadMembers)
     const columns = [
         {
             header: "S/N",

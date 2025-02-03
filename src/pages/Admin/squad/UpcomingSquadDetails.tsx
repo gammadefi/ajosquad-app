@@ -6,6 +6,7 @@ import AllMembers from './CompletedSquadTabs/AllMemebers'
 import SquadInformation from './CompletedSquadTabs/SquadInformation'
 import { useQuery } from 'react-query'
 import { squadServices } from '../../../services/squad'
+import PageLoader from '../../../components/spinner/PageLoader'
 
 const ActiveSquadDetails = () => {
     // const profile = useAuth((s) => s.profile)
@@ -13,7 +14,7 @@ const ActiveSquadDetails = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const activeTab = searchParams.get("activeTab") || "Squad Information";
-const { id }: any = useParams()
+    const { id }: any = useParams()
 
     const { data: info, isLoading } = useQuery(['squad-info', id], () => squadServices.getSquad(id))
 
@@ -40,13 +41,19 @@ const { id }: any = useParams()
                 </div>
             </div>
 
+
             <TabBar2
                 isDashboard={false}
                 tabs={tabs}
                 activeTab={activeTab}
             />
             <div className='mt-6'>
-                {displayAccountContent(activeTab)}
+                {isLoading ? <PageLoader /> :
+                    <>
+                        {displayAccountContent(activeTab)}
+                    </>
+
+                }
 
             </div>
 

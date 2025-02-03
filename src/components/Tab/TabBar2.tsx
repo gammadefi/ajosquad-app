@@ -22,7 +22,7 @@ const TabBar2 = ({ tabs, activeTab, isDashboard }: TabBar2ITF) => {
 
   if (isDashboard) {
     return (
-      <div className='overflow-x-scroll flex items-center gap-3 pb-2 border-[#E4E7EC]'>
+      <div className='overflow-x-auto flex items-center gap-3 pb-2 border-[#E4E7EC]'>
         {
           tabs.map((items: string) => <Tab2 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
         }
@@ -31,7 +31,7 @@ const TabBar2 = ({ tabs, activeTab, isDashboard }: TabBar2ITF) => {
   }
 
   return (
-    <div className='overflow-x-scroll flex items-center gap-3 border-b-2 pb-2 border-[#E4E7EC]'>
+    <div className='overflow-x-auto flex items-center gap-3 border-b-2 pb-2 border-[#E4E7EC]'>
       {
         tabs.map((items: string) => <Tab1 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
       }

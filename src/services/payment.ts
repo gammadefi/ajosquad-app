@@ -15,5 +15,10 @@ export const PaymentService = {
     getTotalPayment: async (payload:any) => {     
         const response = await createApiClient().get(`ajosquad/payments/total${paramsObjectToQueryString(payload)}`);
         return response 
+    },
+
+    getCashFLow: async () => {
+        const response = await createApiClient().get(`ajosquad/payments/cash-flow`);
+        return response 
     }
 }

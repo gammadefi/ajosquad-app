@@ -26,7 +26,7 @@ const UpcomingSquad = () => {
         squadServices.getAllSquads,
         {
             onSuccess: (data: any) => {
-                console.log(data)
+                // console.log(data)
             }
         })
 
