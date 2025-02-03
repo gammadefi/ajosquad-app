@@ -68,7 +68,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
           <span className='text-xs flex items-center gap-1'><LuCalendarDays className='w-5 h-5' /> {formattedDate}</span>
         </div>
         {
-          hasJoinedSquad ? <button disabled={selectedPositions.length === 10} onClick={() => setOpenUpdateModal(!openUpdateModal)} className="w-full rounded-lg p-0.5 bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]">
+          hasJoinedSquad ? <button onClick={() => setOpenUpdateModal(!openUpdateModal)} className="w-full rounded-lg p-0.5 bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]">
             <div className="bg-white flex justify-center font-medium items-center gap-2 py-2 px-10 rounded-[calc(0.5rem-2px)]">
               <span>Update Squad Positions</span>
               <FaArrowRight />
@@ -89,7 +89,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
       }}>
         {
-          openJoinSquadForm ? <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} />
+          openJoinSquadForm ? <JoinSquadRegistrationFlow selecetedPosition={selectedPositions} squadId={id} refetch={refetch} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} />
         }
 
 

@@ -10,6 +10,7 @@ import PageLoader from '../../components/spinner/PageLoader'
 import { formatDate2 } from '../../utils/formatTime'
 import Modal from '../../components/Modal/Modal'
 import PayoutModal from '../../components/Payout/admin/PayoutModal'
+import { generateSerialNumber } from '../../utils/helpers'
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -22,11 +23,14 @@ const Payout = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.index}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
-            header: "Member ID",
-            view: (row: any) => <div>{row.squadMemberId}</div>,
+            header: "Member Name",
+            view: (row: any) => <div>{`${row.user.firstName} ${row.user.lastName}`}</div>
         },
         {
             header: "Member Email",
@@ -70,6 +74,8 @@ const Payout = () => {
             refetchOnMount: true,
         }
     )
+
+    console.log(payouts)
 
     const { data: payoutsTotal, isLoading: isLoadingCount } = useFetchWithParams(
         ["query-all-total-payouts-admin", {
