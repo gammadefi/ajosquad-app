@@ -27,8 +27,11 @@ export const squadServices = {
   addNewSquadPosition: async (id: string, payload: any) => {
     const response = await createApiClient().patch(squadApiRoutes.addNewSquadPosition(id), payload);
     return response.data;
-  } ,
-
+  },
+  updateSquadMemberPosition: async (squadId: string, squadMemberId: string, payload: any) => {
+    const response = await createApiClient().patch(squadApiRoutes.updateSquadMemberPosition(squadId, squadMemberId), payload);
+    return response.data;
+  },
   connectBank: async (payload:any) => {
     const response = await createApiClient().post(squadApiRoutes.connectBank, payload);
     return response.data;
