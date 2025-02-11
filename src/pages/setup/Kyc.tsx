@@ -296,10 +296,9 @@ const Kyc = () => {
                                                         <option value="" disabled selected>
                                                             Select an option
                                                         </option>
-                                                        <option value="socialMedia">Social Media</option>
-                                                        <option value="searchEngine">Search Engine (Google, Bing, etc.)</option>
-                                                        <option value="friendOrFamily">Friend or Family</option>
-                                                        <option value="advertisement">Advertisement</option>
+                                                        <option value="Instagram">Instagram</option>
+                                                        <option value="Referrals">Referrals</option>
+                                                        <option value="LinkedIn">LinkedIn</option>
                                                         <option value="other">Other</option>
 
                                                     </select>
