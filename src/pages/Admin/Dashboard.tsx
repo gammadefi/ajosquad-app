@@ -21,6 +21,8 @@ import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
 import { userServices } from '../../services/user';
 import Spinner from '../../components/spinner/Spinner';
+import { generateSerialNumber } from '../../utils/helpers';
+import { fDate } from '../../utils/formatTime';
 
 export const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -98,6 +100,11 @@ const Dashboard = () => {
     }
   )
 
+  const {data:cashFLow, isLoading:isLoadingCashFlow} = useQuery('cashFlow', async () => {
+    const response = await PaymentService.getCashFLow() 
+    return response.data
+  })
+
   const allData: any = {
     "24h": {
       xAxisLabel: ["12AM", "4AM", "8AM", "12PM", "4PM", "8PM", "12AM"],
@@ -143,15 +150,14 @@ const Dashboard = () => {
   const columns = [
     {
       header: "S/N",
-      view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+      view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+        pageSize: 10,
+        currentPage
+      })}</div>
     },
     {
       header: "Description",
       view: (row: any) => <div>{row.description}</div>,
-    },
-    {
-      header: "Position",
-      view: (row: any) => <div>{row.position}</div>,
     },
     {
       header: "Amount",
@@ -159,7 +165,7 @@ const Dashboard = () => {
     },
     {
       header: "Date",
-      view: (row: any) => <div>{row.date}</div>,
+      view: (row: any) => <div>{fDate(row.createdAt)	}</div>,
     },
     {
       header: "Status",
@@ -167,7 +173,7 @@ const Dashboard = () => {
     },
   ];
 
-  console.log(data2)
+  console.log(cashFLow)
 
   return (
     <div>
@@ -217,9 +223,9 @@ const Dashboard = () => {
                       <>
                         <BarGraph
                           data={{
-                            colors: ["#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
-                            xAxisLabel: ["All", "", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
-                            seriesData: [data2.totalUsers, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers, 0], // Bar values
+                            colors: ["#005CE6", "#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
+                            xAxisLabel: ["All", "Registered Today", "Verified users", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
+                            seriesData: [data2.totalUsers, data2.todaySignups, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers, 0], // Bar values
                           }}
                         />
                         <div className='justify-around flex'>
@@ -252,14 +258,18 @@ const Dashboard = () => {
                 <div>
                   <h3 className='font-medium'>Cash Flow Breakdown</h3>
 
-                  <h2 className='text-2xl my-3 font-bold'>CA$20,000,000.00</h2>
+                  <h2 className='text-2xl my-3 font-bold'>CA$ {(cashFLow?.AjosquadPayment + cashFLow?.AjohomePayment + 0 ).toLocaleString()}</h2>
 
                 </div>
                 <HorizontalBarChart data={{ // Empty labels
                   datasets: [
                     {
                       label: "Dataset",
-                      data: [40, 30, 20], // Values
+                      data: [
+                        (cashFLow?.AjosquadPayment || 0) / ((cashFLow?.AjosquadPayment || 0) + (cashFLow?.AjohomePayment || 0)) * 100,
+                        (cashFLow?.AjohomePayment || 0) / ((cashFLow?.AjosquadPayment || 0) + (cashFLow?.AjohomePayment || 0)) * 100,
+                        0
+                      ],  // Values
                       backgroundColor: ["#003D99", "#137AAD", "#FCAD14"], // Colors for the bars
                     },
                   ],
@@ -270,7 +280,7 @@ const Dashboard = () => {
                       <div className='h-6 w-6 bg-[#003D99]' />
                       <h3>Ajosquad</h3>
                     </div>
-                    <h3>CA$10,000,000.00</h3>
+                    <h3>CA$ {cashFLow?.AjosquadPayment?.toLocaleString()}</h3>
 
                   </div>
                   <div className='flex items-center justify-between'>
@@ -279,7 +289,7 @@ const Dashboard = () => {
                       <h3>AjoHome</h3>
 
                     </div>
-                    <h3>CA$10,000,000.00</h3>
+                    <h3>CA$ {cashFLow?.AjoHomePayment > 0 ? cashFLow?.AjoHomePayment?.toLocaleString() : "0.00"}</h3>
 
                   </div>
                   <div className='flex items-center justify-between'>
@@ -288,7 +298,7 @@ const Dashboard = () => {
                       <h3>AjoBusiness</h3>
 
                     </div>
-                    <h3>CA$10,000,000.00</h3>
+                    <h3>CA$0.00</h3>
 
                   </div>
                 </div>
@@ -396,6 +406,7 @@ const Dashboard = () => {
                   {
 
                     page: currentPage,
+                    pageSize: 10,
                     setPage: setCurrentPage,
                     totalRows: transactionData.totalItems
 

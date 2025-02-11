@@ -1,5 +1,5 @@
 import { FormikProvider, useFormik } from 'formik'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import TextInput from './FormInputs/TextInput2'
 import { Button } from './Button/Button'
 import { useMutation, useQuery } from 'react-query'
@@ -9,6 +9,11 @@ import Modal from './Modal/Modal'
 
 import * as Yup from 'yup';
 import PageLoader from './spinner/PageLoader'
+import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
+import AddressAutocomplete from './FormInputs/AutoComplete'
+
+const libraries: ("places")[] = ["places"];
 
 const validationSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -80,6 +85,7 @@ const Kyc = () => {
     const [verificationMessage, setVerificationMessage] = React.useState<any>(null);
     const profile = useAuth((s) => s.profile)
 
+
     // console.log(profile.email_address)
     const form = useFormik({
         initialValues: {
@@ -126,8 +132,8 @@ const Kyc = () => {
 
             if (kycres.data) {
                 form.setValues(kycres.data)
-               // setIsModalOpen(true)
-               setVerificationMessage(true)
+                // setIsModalOpen(true)
+                setVerificationMessage(true)
             }
             // console.log(kycres)
 
@@ -146,14 +152,14 @@ const Kyc = () => {
         },
         {
             onSuccess: (data) => {
-               // setIsModalOpen(true)
-               setVerificationMessage(true)
+                // setIsModalOpen(true)
+                setVerificationMessage(true)
                 console.log(data)
             }, onError: (err: any) => {
                 console.log(err)
                 if (err.response.status === 400) {
-                   // setIsModalOpen(true)
-                   setVerificationMessage(true)
+                    // setIsModalOpen(true)
+                    setVerificationMessage(true)
                 }
             }
         }
@@ -203,8 +209,8 @@ const Kyc = () => {
             console.log(res)
             if (res.message === "Verification request successful") {
                 setVerificationStatus("successful")
-            //    setVerificationMessage(true)
-               setVerificationMessage(true)
+                //    setVerificationMessage(true)
+                setVerificationMessage(true)
             }
             setVerificationUrl(null);
         } catch (error) {
@@ -272,8 +278,11 @@ const Kyc = () => {
                                                         </div>
                                                         <TextInput name='email_address' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
                                                         <TextInput name='phoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
-                                                        <TextInput name='homeAddress' label='Home Address *' wrapperClass='mt-3' placeholder='Enter your Home address' />
 
+                                                        <div className='mt-3'>
+                                                            <label>Home Address *</label>
+                                                            <AddressAutocomplete form={form} />
+                                                        </div>
                                                         <div className='grid grid-cols-3 gap-2'>
                                                             <TextInput name='city' label='City *' wrapperClass='mt-3' placeholder="city" />
                                                             <TextInput name='state' label='Province *' wrapperClass='mt-3' placeholder="province" />
@@ -303,10 +312,9 @@ const Kyc = () => {
                                                                 <option value="" disabled selected>
                                                                     Select an option
                                                                 </option>
-                                                                <option value="socialMedia">Social Media</option>
-                                                                <option value="searchEngine">Search Engine (Google, Bing, etc.)</option>
-                                                                <option value="friendOrFamily">Friend or Family</option>
-                                                                <option value="advertisement">Advertisement</option>
+                                                                <option value="Instagram">Instagram</option>
+                                                                <option value="Referrals">Referrals</option>
+                                                                <option value="LinkedIn">LinkedIn</option>
                                                                 <option value="other">Other</option>
 
                                                             </select>

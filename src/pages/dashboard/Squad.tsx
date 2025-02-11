@@ -1,30 +1,23 @@
 import { useLocation } from 'react-router-dom';
 import SquadCard from '../../components/Squad/SquadCard';
 import { squadServices } from '../../services/squad';
-import { AxiosResponse } from 'axios';
-import { useQuery } from 'react-query';
 import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
 import dayjs from 'dayjs';
 import TabBar2 from '../../components/Tab/TabBar2';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
 import { useAuth } from '../../zustand/auth.store';
 
-// const fetchSquads = async () => {
-//   const res: AxiosResponse = await squadServices.getAllSquads();
-//   return res.data;
-// };
 
 const Squad = () => {
-  // const { data: squads, isLoading } = useQuery(['squads'], fetchSquads);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("activeTab") || "upcoming";
-  const squadCartegory = searchParams.get("squadType") || "Brass";
+  // const squadCartegory = searchParams.get("squadType") || "Brass";
   const profile = useAuth((s) => s.profile);
 
   const { data: squads, isLoading, refetch } = useFetchWithParams(
     ["query-all-squads", {
-      category: squadCartegory, status: activeTab == "pending" ? "upcoming" : activeTab.toLowerCase()
+      status: activeTab === "pending" ? "upcoming" : activeTab.toLowerCase()
     }],
     squadServices.getAllSquads,
     {
@@ -37,17 +30,9 @@ const Squad = () => {
     }
   )
 
-
-
   function hasUser(squadData: any, userId: string): boolean {
     return squadData.squadMembers.some((member: any) => member.userId === userId);
   }
-
-  console.log("test")
-
-
-
-  // console.log(squads, selectedPositions);
 
   return (
     <div className='px-3 md:px-6'>
@@ -57,12 +42,11 @@ const Squad = () => {
           "pending",
           "active",
           "completed",
-          "pending",
         ]}
         isDashboard={false}
         activeTab={activeTab}
       />
-      <div className='mt-5'>
+      {/* <div className='mt-5'>
         <SquadCategoryTabBar
           tabs={[
             "Brass",
@@ -72,7 +56,7 @@ const Squad = () => {
           ]}
           activeTab={squadCartegory}
         />
-      </div>
+      </div> */}
       {
         isLoading &&
         <div className='mt-10 flex justify-center'>
@@ -83,7 +67,7 @@ const Squad = () => {
         squads &&
         <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
           {
-            activeTab == "pending" ? squads.data.filter((squad: any) =>
+            activeTab === "pending" ? squads.data.filter((squad: any) =>
               squad.status === "upcoming" &&
               squad.squadMembers?.some((member: any) => member.userId === profile.id)
             ).map((squad: any, index: number) => {
@@ -105,8 +89,6 @@ const Squad = () => {
                     : []}
                   hasJoinedSquad={
                     hasUser(squad, profile.id)
-
-
                   }
                   information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
                   myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
