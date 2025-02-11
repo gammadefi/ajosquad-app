@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Table, TableEmpty } from '../../../../components/Table/Table';
 import SearchInput from '../../../../components/FormInputs/SearchInput';
 import { useParams } from 'react-router-dom';
@@ -8,8 +8,12 @@ import PageLoader from '../../../../components/spinner/PageLoader';
 import { generateSerialNumber } from '../../../../utils/helpers';
 import { fDate } from '../../../../utils/formatTime';
 import { useQuery } from 'react-query';
+import Modal from '../../../../components/Modal/Modal';
+import { SquadInformationDetail } from '../SquadMemberTabs/SquadInformation';
 
 const AllMembers = () => {
+    const [userId, setuserId] = useState("");
+    const [openModal, setOpenModal] = useState(false);
     const { id }: any = useParams()
     const [search, setSearch] = React.useState("")
     const [currentPage, setCurrentPage] = React.useState(1)
@@ -25,7 +29,7 @@ const AllMembers = () => {
         }
     })
 
-    console.log(id, info.data.squadMembers)
+    // console.log(id, info.data.squadMembers)
     const columns = [
         {
             header: "S/N",
@@ -36,15 +40,15 @@ const AllMembers = () => {
         },
         {
             header: "Member Name",
-            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
+            view: (row: any) => <div>{row.User.firstName} {row.User.lastName}</div>,
         },
         {
             header: "Member ID",
             view: (row: any) => <div>{row.id}</div>,
         },
         {
-            header: "Member Email",
-            view: (row: any) => <div>{row.email_address}</div>,
+            header: "Position",
+            view: (row: any) => <div>{row.position}</div>,
         },
         {
             header: "Date Joined",
@@ -55,21 +59,27 @@ const AllMembers = () => {
         <div>
             <div>
                 <div className='my-8 flex justify-between items-center '>
-                    <h3 className='text-xl font-semibold'>Squad</h3>
+                    <h3 className='text-xl font-semibold'>Squad Members</h3>
 
-                    <div className='flex items-center gap-2'>
+                    {/* <div className='flex items-center gap-2'>
                         <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
-                        {/* <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button> */}
-                    </div>
+                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                    </div> */}
 
 
                 </div>
 
 
                 {
-                    isLoading ? <PageLoader /> :
-                        members && members.data.length === 0 ? <TableEmpty title='No member yet' image='/empty-states/transaction.png' subtitle="This user has not joined a squad" /> : <Table
-                            data={members.data}
+                    isLoading && isLoadingInfo ? <PageLoader /> :
+                    info.data.squadMembers && info.data.squadMembers.length === 0 ? <TableEmpty title='No member yet' image='/empty-states/transaction.png' subtitle="This user has not joined a squad" /> : <Table
+                            data={info.data.squadMembers}
+                            clickRowAction={(row) => {
+                                if(info.data.status === "upcoming"){
+                                    setuserId(row.userId);
+                                    setOpenModal(true);
+                                }
+                            }}
                             columns={columns}
                             loading={false}
                             pagination={
@@ -87,6 +97,9 @@ const AllMembers = () => {
 
 
             </div>
+            <Modal open={openModal} onClick={() => setOpenModal(false)}>
+                    <SquadInformationDetail userId={userId} squadId={id} closeModal={() => setOpenModal(false)} />
+                </Modal>
         </div>
     )
 }

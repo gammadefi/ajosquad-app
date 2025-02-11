@@ -21,6 +21,8 @@ import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
 import { userServices } from '../../services/user';
 import Spinner from '../../components/spinner/Spinner';
+import { generateSerialNumber } from '../../utils/helpers';
+import { fDate } from '../../utils/formatTime';
 
 export const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -148,15 +150,14 @@ const Dashboard = () => {
   const columns = [
     {
       header: "S/N",
-      view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+      view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+        pageSize: 10,
+        currentPage
+      })}</div>
     },
     {
       header: "Description",
       view: (row: any) => <div>{row.description}</div>,
-    },
-    {
-      header: "Position",
-      view: (row: any) => <div>{row.position}</div>,
     },
     {
       header: "Amount",
@@ -164,7 +165,7 @@ const Dashboard = () => {
     },
     {
       header: "Date",
-      view: (row: any) => <div>{row.date}</div>,
+      view: (row: any) => <div>{fDate(row.createdAt)	}</div>,
     },
     {
       header: "Status",
@@ -405,6 +406,7 @@ const Dashboard = () => {
                   {
 
                     page: currentPage,
+                    pageSize: 10,
                     setPage: setCurrentPage,
                     totalRows: transactionData.totalItems
 

@@ -2,13 +2,14 @@ import { FormikProvider, useFormik } from 'formik'
 import React, { useEffect } from 'react'
 import TextInput from '../../components/FormInputs/TextInput2'
 import { Button } from '../../components/Button/Button'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import { KycServices } from '../../services/kyc'
 import { AuthActions, useAuth } from '../../zustand/auth.store'
 import Modal from '../../components/Modal/Modal'
 
 import * as Yup from 'yup';
 import PageLoader from '../../components/spinner/PageLoader'
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 const validationSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -110,8 +111,6 @@ const Kyc = () => {
 
     const initialStart = async () => {
 
-
-
         try {
 
             if (profile.kycVerificationReference) {
@@ -172,7 +171,7 @@ const Kyc = () => {
                 "reference": initiateRes.data.reference
             }
 
-            const callBackRes = await callbackFunc(callBackBody)
+            await callbackFunc(callBackBody)
 
 
         } catch (err) {
@@ -265,14 +264,36 @@ const Kyc = () => {
                                                 </div>
                                                 <TextInput name='email_address' label='Email *' wrapperClass='mt-3' placeholder='Enter your email' />
                                                 <TextInput name='phoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
-                                                <TextInput name='homeAddress' label='Home Address *' wrapperClass='mt-3' placeholder='Enter your Home address' />
+                                                <GooglePlacesAutocomplete
+                                                    apiKey="YOUR_GOOGLE_MAPS_API_KEY"
+                                                    selectProps={{
+                                                        placeholder: 'Enter your Home address',
+                                                        onChange: (address :any) => {
+                                                            if (!address) return;
+                                                            const addressComponents = address.value.address_components;
+                                                            const city = addressComponents.find((component: { types: string[], long_name: string }) => 
+                                                                component.types.includes('locality'))?.long_name || '';
+                                                            const state = addressComponents.find((component: { types: string[], long_name: string }) => 
+                                                                component.types.includes('administrative_area_level_1'))?.long_name || '';
+                                                            const zipCode = addressComponents.find((component: { types: string[], long_name: string }) => 
+                                                                component.types.includes('postal_code'))?.long_name || '';
+
+                                                            form.setFieldValue('homeAddress', address.label);
+                                                            form.setFieldValue('city', city);
+                                                            form.setFieldValue('state', state);
+                                                            form.setFieldValue('zipCode', zipCode);
+                                                        }
+                                                    }}
+                                                    autocompletionRequest={{
+                                                        types: ['address'],
+                                                        componentRestrictions: { country: 'ca' }
+                                                    }}
+                                                />
 
                                                 <div className='grid grid-cols-3 gap-2'>
                                                     <TextInput name='city' label='City *' wrapperClass='mt-3' placeholder="city" />
                                                     <TextInput name='state' label='Province *' wrapperClass='mt-3' placeholder="province" />
                                                     <TextInput name='zipCode' label='Postal Code *' wrapperClass='mt-3' placeholder="Postal Code" />
-
-
                                                 </div>
                                             </div>
 
