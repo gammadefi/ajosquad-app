@@ -144,11 +144,10 @@ const Step1 = ({ step, setStep, formData, setFormData, selecetedPosition }: { st
   );
 };
 
-const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { step: number, setStep: any, formData: any, setFormData: any, squadId: string, refetch: () => void  }) => {
+const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { step: number, setStep: any, formData: any, setFormData: any, squadId: string, refetch: () => void }) => {
   const [showBanks, setShowBanks] = useState(false);
   const [bankInfoId, setBankInfoId] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const progress = (step / 3) * 100;
 
   const { data: userBanks, isLoading, error } = useQuery("userBanks", async () => {
@@ -174,9 +173,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
       .required("*Account Number is required")
   });
 
-  const handleOnClick = async () => {
-    setIsSubmitting(true)
-    console.log(formData);
+  const handleOnSubmit = async () => {
     if (!formData.desiredPosition.includes("1")) {
       try {
         const payload = {
@@ -194,7 +191,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
         toast.error("Failed to join to squad");
       }
     } else {
-      setStep(3);
+      setShowInfoModal(true)
     }
 
   }
@@ -215,36 +212,22 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
             <div>
               <img src="./AJOSQUARD.svg" alt="Ajosquad" />
             </div>
-            {
-              formData.desiredPosition.includes("1") ?
-                <div>
-                  <p>Thank you for your interest in joining the squad! We've noted your request. However, please note that selecting positions 1-5 requires a conversation with the admin and providing a guarantor. To initiate the process, kindly click the button below to connect with the administrator on WhatsApp. We look forward to chatting with you</p>
-                </div>
-                :
-                <div className='space-y-2'>
-                  <p>By clicking 'Join Squad,' I acknowledge that I am dedicated to upholding the principles of financial responsibility, trust, and cooperation within the Squad. I understand that adherence to these guidelines is crucial for the success and integrity of Ajosquad.</p>
-                  <p>I affirm that I have thoroughly read and comprehended the previously signed agreement with Ajosquad. I hereby pledge my full commitment to abide by the established rules and regulations governing Ajosquad membership.</p>
-                  <p>Furthermore, I am aware that any violation of the agreed-upon terms may result in penalties or/and my information being passed to the credit bureau. I am committed to maintaining the highest standards of integrity and compliance throughout my tenure as an Ajosquad member.</p>
-                </div>
-            }
+            <div>
+              <p>Thank you for your interest in joining the squad! We've noted your request. However, please note that selecting positions 1-5 requires a conversation with the admin and providing a guarantor. To initiate the process, kindly click the button below to connect with the administrator on WhatsApp. We look forward to chatting with you</p>
+            </div>
             <div className="w-full flex justify-between">
               <button
                 type="button"
-                onClick={() => {
-                  setStep(1)
-                }}
-                disabled={isSubmitting}
+                onClick={() => setShowInfoModal(false)}
                 className="border border-primary font-medium px-10 rounded-lg"
               >
                 Back
               </button>
               <button
-                type='submit'
-                disabled={isSubmitting}
-                onClick={handleOnClick}
+                onClick={() => setStep(3)}
                 className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
               >
-                {formData.desiredPosition.includes("1-5") ? `Proceed${isSubmitting ? "ing" : ""}` : `Agree${isSubmitting ? "ing" : ""} and Join${isSubmitting ? "ing" : ""} Squad`}
+                Proceed
               </button>
             </div>
           </div>
@@ -280,14 +263,14 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                           ...formData,
                           bankInfoId: res.data.id
                         })
-                        setShowInfoModal(true)
+                        handleOnSubmit()
                       }
                     } else {
                       setFormData({
                         ...formData,
                         bankInfoId
                       })
-                      setShowInfoModal(true)
+                      handleOnSubmit()
                     }
                   } catch (error) {
                     console.log(error)
@@ -299,7 +282,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                   <Form className='flex flex-col gap-1.5'>
                     <div className='flex flex-col w-full text-xs md:text-sm lg:text-base'>
                       <label className='font-normal text-sm font-satoshiRegular capitalize mb-1.5'>Select Bank*</label>
-                      <select onChange={(e) => setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode })} name='bankName' className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
+                      <select name='bankName' onChange={(e) => setValues({ ...formData, bankName: e.target.value, institutionNumber: banks.docs.find((bank: any) => bank.bankName === e.target.value)?.instituitionCode })} className='w-full h-[44px] py-2.5 focus:outline-none px-3 rounded-lg bg-white border'>
                         <option value=''>Select Bank</option>
                         {
                           banks.docs.map((bank: any) => (
@@ -353,43 +336,47 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                         {showBanks && <>
                           {
                             isLoading ? <PageLoader /> :
-                              userBanks.length > 0 ? <div className='space-y-3'>
-                                {
-                                  userBanks.map((bank: any) => (
-                                    <div onClick={() => {
-                                      setBankInfoId(bank.id);
-                                      setValues({
-                                        bankName: bank.bankName,
-                                        accountName: bank.accountName,
-                                        institutionNumber: bank.institutionNumber,
-                                        transitNumber: bank.transitNumber,
-                                        accountNumber: bank.accountNumber
-                                      })
-                                    }}
-                                      className={`cursor-pointer w-full px-3 py-2 rounded-lg ${bankInfoId === bank.id ? "border-2" : "border"} border-primary bg-[#F8F8F8]`} key={bank.id}>
-                                      <h2 className='text-[#5A5C5E] font-bold'>{bank.bankName}</h2>
-                                      <div className='space-y-0.5 my-2'>
-                                        <div className='text-xs flex justify-between'>
-                                          <h3>Account Name: </h3>
-                                          <p className='font-bold'>{bank.accountName}</p>
-                                        </div>
-                                        <div className='text-xs flex justify-between'>
-                                          <h3>Account Number: </h3>
-                                          <p className='font-bold'>{bank.accountNumber}</p>
-                                        </div>
-                                        <div className='text-xs flex justify-between'>
-                                          <h3>Institution Number: </h3>
-                                          <p className='font-bold'>{bank.institutionNumber}</p>
-                                        </div>
-                                        <div className='text-xs flex justify-between'>
-                                          <h3>Transit Number: </h3>
-                                          <p className='font-bold'>{bank.transitNumber}</p>
+                              userBanks.length > 0 ?
+                                <div className='space-y-3'>
+                                  {
+                                    userBanks.map((bank: any) => (
+                                      <div
+                                        onClick={() => {
+                                          setBankInfoId(bank.id);
+                                          setValues({
+                                            bankName: bank.bankName,
+                                            accountName: bank.accountName,
+                                            institutionNumber: bank.institutionNumber,
+                                            transitNumber: bank.transitNumber,
+                                            accountNumber: bank.accountNumber
+                                          })
+                                        }}
+                                        className={`cursor-pointer w-full px-3 py-2 rounded-lg ${bankInfoId === bank.id ? "border-2" : "border"} border-primary bg-[#F8F8F8]`}
+                                        key={bank.id}
+                                      >
+                                        <h2 className='text-[#5A5C5E] font-bold'>{bank.bankName}</h2>
+                                        <div className='space-y-0.5 my-2'>
+                                          <div className='text-xs flex justify-between'>
+                                            <h3>Account Name: </h3>
+                                            <p className='font-bold'>{bank.accountName}</p>
+                                          </div>
+                                          <div className='text-xs flex justify-between'>
+                                            <h3>Account Number: </h3>
+                                            <p className='font-bold'>{bank.accountNumber}</p>
+                                          </div>
+                                          <div className='text-xs flex justify-between'>
+                                            <h3>Institution Number: </h3>
+                                            <p className='font-bold'>{bank.institutionNumber}</p>
+                                          </div>
+                                          <div className='text-xs flex justify-between'>
+                                            <h3>Transit Number: </h3>
+                                            <p className='font-bold'>{bank.transitNumber}</p>
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))
-                                }
-                              </div>
+                                    ))
+                                  }
+                                </div>
                                 :
                                 <>No Banks founds. Please add a bank</>
                           }
@@ -399,9 +386,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                     <div className="flex justify-between">
                       <button
                         type="button"
-                        onClick={() => {
-                          setStep(1)
-                        }}
+                        onClick={() => setStep(1)}
                         className="border border-primary font-medium px-10 rounded-lg"
                       >
                         Back
@@ -411,7 +396,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                         disabled={isSubmitting}
                         className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
                       >
-                        {isSubmitting ? "Proceeding" : "Proceed"}
+                        {formData.desiredPosition.includes("1") ? `Proceed${isSubmitting ? "ing" : ""}` : `Proceed${isSubmitting ? "ing" : ""} and Join${isSubmitting ? "ing" : ""} Squad`}
                         <FaArrowRight />
                       </button>
                     </div>
@@ -425,7 +410,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
   )
 }
 
-const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, setStep: any, formData: any, squadId: string, refetch: () => void  }) => {
+const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, setStep: any, formData: any, squadId: string, refetch: () => void }) => {
   const progress = (step / 3) * 100;
 
   const validationSchema = Yup.object({
@@ -497,10 +482,10 @@ const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, se
               if (res) {
                 const joinSquadPayload = {
                   ...formData,
-                  desiredPosition: formData.desiredPosition.map((position: string) => Number(position)),
+                  desiredPosition: [],
                   guarantorId: res.data.id
                 }
-                console.log(joinSquadPayload)
+                
                 const response = await squadServices.joinSquad(squadId, joinSquadPayload);
                 if (response) {
                   toast.success("Squad joined successfully")
@@ -509,7 +494,6 @@ const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, se
                 }
               }
             } catch (error) {
-              console.log(formData)
               toast.error("Failed to upload guarantor and join squad")
             }
           }
