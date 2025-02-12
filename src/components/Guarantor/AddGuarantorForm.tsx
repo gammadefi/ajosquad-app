@@ -8,7 +8,9 @@ import { useAuth } from '../../zustand/auth.store';
 import toast from 'react-hot-toast';
 import { guarantorServices } from '../../services/guarantor';
 import { AxiosResponse } from 'axios';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import PageLoader from '../spinner/PageLoader';
+import { squadServices } from '../../services/squad';
 
 const addGuarantor = async ({ payload }: { payload: any }) => {
   const res: AxiosResponse = await guarantorServices.addGuarantor(payload)
@@ -18,6 +20,11 @@ const addGuarantor = async ({ payload }: { payload: any }) => {
 const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
   const [hasAddedGuarantor, setHasAddedGuarantor] = useState(false);
   const queryClient = useQueryClient();
+
+  const { data: squads, isLoading, error } = useQuery(`user-guarantors-${useAuth.getState().profile.id}`, async () => {
+    const res = await squadServices.getUserSquads;
+    return res.data;
+  })
 
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -61,6 +68,11 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
       queryClient.invalidateQueries(["guarantors"]);
     },
   });
+
+  console.log(squads)
+
+  if (isLoading) return <PageLoader />
+  if (error) return <>Error</>
 
   return (
     <>

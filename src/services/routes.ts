@@ -20,8 +20,8 @@ export const squadApiRoutes = {
   getSquadStats: "/ajosquad/squad/stats",
   getSquadStatsByStatus: (status: string) => `/ajosquad/squad/stats/status?status=${status}`,
   getSquadMembers: "/ajosquad/squad/squadmembers",
-  getUserSquads: (id: string) =>  `/ajosquad/squad/user/${id}`,
-
+  getUserSquad: (id: string) =>  `/ajosquad/squad/user/${id}`,
+  getUserSquads: "/ajosquad/squad/me",
 }
 
 export const userApiRoutes = {

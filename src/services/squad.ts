@@ -11,9 +11,12 @@ export const squadServices = {
     const response = await createApiClient().get(squadApiRoutes.getSquad(id));
     return response.data;
   },
-
+  getUserSquads: async () => {
+    const response = await createApiClient().get(squadApiRoutes.getUserSquads);
+    return response.data;
+  },
   getUserSquad: async (id: string) => {
-    const response = await createApiClient().get(squadApiRoutes.getUserSquads(id));
+    const response = await createApiClient().get(squadApiRoutes.getUserSquad(id));
     return response.data;
   },
   createSquad: async (payload: any) => {
