@@ -125,7 +125,7 @@ const SquadInformation = () => {
 
 export default SquadInformation
 
-function SquadInformationDetail({ squadId, userId, closeModal }: { userId: string, squadId: string, closeModal: () => void }) {
+export function SquadInformationDetail({ squadId, userId, closeModal }: { userId: string, squadId: string, closeModal: () => void }) {
     const positions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     const [step, setStep] = useState(1);
     const [newPosition, setNewPosition] = useState(0)
@@ -150,6 +150,7 @@ function SquadInformationDetail({ squadId, userId, closeModal }: { userId: strin
     }, []) || [];
 
     const user = data ? (data.squadMembers.find((squadMember: any) => squadMember.userId === userId)) : {}
+
 
     const mutation = useMutation(async ({ payload }: { payload: any }) => {
         const res = await squadServices.updateSquadMemberPosition(squadId, user.id, payload);
@@ -178,9 +179,10 @@ function SquadInformationDetail({ squadId, userId, closeModal }: { userId: strin
                 setIsUpdating(false)
                 setStep(3);
             }
-        } catch (error) {
+        } catch (error: any) {
+            // console.log(error)
             setIsUpdating(false)
-            toast.error("Failed to update member position. Please try again")
+            toast.error(error.response.data.message || "Failed to update member position. Please try again")
         }
     }
 
