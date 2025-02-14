@@ -59,12 +59,10 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     state: Yup.string()
       .trim()
       .required("*Province is required"),
-    zipCode: Yup.string()
-      .matches(
-        /^[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d$/,
-        "Invalid Canadian zip code format"
-      )
-      .required("ZIP code is required"),
+      zipCode: Yup.string()
+      .required('Posstal code is required')
+      .matches(/^[a-zA-Z0-9\s]+$/, 'Postal code should only contain letters, numbers')
+      .length(6, 'Postal code should be exactly 6 characters'),
     guarantorDocument: Yup.string()
       .required("*Guarantor Document is required"),
     identityDocument: Yup.string()

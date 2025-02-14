@@ -10,6 +10,7 @@ import PageLoader from '../../components/spinner/PageLoader'
 import { formatDate2 } from '../../utils/formatTime'
 import Modal from '../../components/Modal/Modal'
 import PaymentModal from '../../components/Payment/admin/PaymentModal'
+import { generateSerialNumber } from '../../utils/helpers'
 
 const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -22,7 +23,10 @@ const Payment = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.index}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member ID",

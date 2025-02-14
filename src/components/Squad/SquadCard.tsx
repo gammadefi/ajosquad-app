@@ -92,7 +92,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
             setOpenModal(!openModal)
             setOpenJoinSquadForm(!openJoinSquadForm)
             refetch()
-          }} selecetedPosition={selectedPositions} squadId={id} refetch={refetch} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} />
+          }} selecetedPosition={selectedPositions} squadId={id} refetch={refetch} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} id={id} />
         }
 
 
@@ -112,7 +112,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
 export default SquadCard
 
-const ConnectBank = ({ squadType, onClick }: { squadType: string, onClick: () => void }) => {
+const ConnectBank = ({ squadType, onClick, id }: { squadType: string, onClick: () => void, id: string }) => {
   const [step, setStep] = useState(1);
   const [hasConnectedBank, setHasConnectedBank] = useState(false);
   const [authorisationUrl, setAuthorisationUrl] = useState<any>(null); // [authorisationUrl]
@@ -144,7 +144,7 @@ const ConnectBank = ({ squadType, onClick }: { squadType: string, onClick: () =>
       console.log('GoCardless connection failed. Perform action here.');
       // Add your failure logic here
     }
-  }, [connected]);
+  }, [connected, authorisationUrl]);
 
   const handleConnectBank = useMutation(async () => {
     const currentHost = window.location.origin; // Gets the current hostname (e.g., "https://ajosquad-app.vercel.app")
@@ -153,6 +153,7 @@ const ConnectBank = ({ squadType, onClick }: { squadType: string, onClick: () =>
     const payload = {
       client_url: `${currentHost}${basePath}?status=success`,
       exit_url: `${currentHost}${basePath}?status=failed`,
+      squadId: id
     };
 
     return await squadServices.connectBank(payload);

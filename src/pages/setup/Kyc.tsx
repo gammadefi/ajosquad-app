@@ -219,7 +219,7 @@ const Kyc = () => {
                 </div> : null) : <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
                     <img src='/success.svg' alt='' />
                     <h3 className='font-semibold text-center text-2xl'>Personal Information Updated</h3>
-                    <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>You have completely provided your personal information, kindly proceed to your KYC.</h5>
+                    <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>You have provided your personal information, kindly proceed to your KYC.</h5>
                     <Button label='Proceed to KYC' disabled={isKycLoading} onClick={() => initiateKyc()} isLoading={isKycLoading} className='mt-6 w-full text-center flex font-semibold justify-center' />
                 </div>
             }
