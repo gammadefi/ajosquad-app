@@ -78,9 +78,9 @@ const Index = () => {
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
                 <div>
-                    <h3 className='text-base md:text-xl font-semibold'>Manage and oversee all squad activities in one place</h3>
+                    <h3 className='text-base md:text-xl font-semibold'>Manage and oversee all your users in one place</h3>
                     <p className='max-w-[648px] text-[#5A5C5E]'>
-                        Monitor and control all squad activities from a centralized dashboard. Efficiently track progress, create squad, and drive squad productivity
+                        View and manage all Member information, interactions, and activities from a single, intuitive dashboard.
                     </p>
                 </div>
 

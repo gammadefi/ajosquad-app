@@ -17,7 +17,7 @@ const AllMembers = () => {
     const { id }: any = useParams()
     const [search, setSearch] = React.useState("")
     const [currentPage, setCurrentPage] = React.useState(1)
-    const { data: info, isLoading: isLoadingInfo } = useQuery(['squad-info', id], () => squadServices.getSquad(id))
+    const { data: info, isLoading: isLoadingInfo, refetch } = useQuery(['squad-info', id], () => squadServices.getSquad(id))
 
 
     const { data: members, isLoading } = useFetchWithParams([`query-all-members`, {
@@ -97,9 +97,15 @@ const AllMembers = () => {
 
 
             </div>
-            <Modal open={openModal} onClick={() => setOpenModal(false)}>
-                    <SquadInformationDetail userId={userId} squadId={id} closeModal={() => setOpenModal(false)} />
-                </Modal>
+            <Modal open={openModal} onClick={async () => {
+                await refetch()
+                setOpenModal(false)
+            }}>
+                <SquadInformationDetail userId={userId} squadId={id} closeModal={async () => {
+                    await refetch()
+                    setOpenModal(false)
+                }} />
+            </Modal>
         </div>
     )
 }

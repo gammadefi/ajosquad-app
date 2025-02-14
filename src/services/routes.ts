@@ -16,12 +16,13 @@ export const squadApiRoutes = {
   joinSquad: (id: string) => `/ajosquad/squad/${id}/join`,
   addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`,
   updateSquadMemberPosition: (squadId: string, squadMemberId: string) => `/ajosquad/squad/${squadId}/update-position/${squadMemberId}`,
+  updateSquadMemberGuarantor: (squadId: string) => `/ajosquad/squad/${squadId}/update-guarantor`,
   connectBank : "/ajosquad/payments/connect-bank",
   getSquadStats: "/ajosquad/squad/stats",
   getSquadStatsByStatus: (status: string) => `/ajosquad/squad/stats/status?status=${status}`,
   getSquadMembers: "/ajosquad/squad/squadmembers",
-  getUserSquads: (id: string) =>  `/ajosquad/squad/user/${id}`,
-
+  getUserSquad: (id: string) =>  `/ajosquad/squad/user/${id}`,
+  getUserSquads: "/ajosquad/squad/me",
 }
 
 export const userApiRoutes = {

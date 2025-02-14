@@ -9,6 +9,10 @@ import toast from 'react-hot-toast';
 import { guarantorServices } from '../../services/guarantor';
 import { AxiosResponse } from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
+import PageLoader from '../spinner/PageLoader';
+import { squadServices } from '../../services/squad';
+import Select from '../FormInputs/Select';
+import useFetchWithParams from '../../hooks/useFetchWithParams';
 
 const addGuarantor = async ({ payload }: { payload: any }) => {
   const res: AxiosResponse = await guarantorServices.addGuarantor(payload)
@@ -18,6 +22,22 @@ const addGuarantor = async ({ payload }: { payload: any }) => {
 const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
   const [hasAddedGuarantor, setHasAddedGuarantor] = useState(false);
   const queryClient = useQueryClient();
+
+  const { data, isLoading, error } = useFetchWithParams(
+    ["query-all-squads", {
+      limit: 20,
+      status: "upcoming"
+    }],
+    squadServices.getAllSquads,
+    {
+      onSuccess: (data: any) => {
+
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
 
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -33,17 +53,20 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     city: Yup.string()
       .trim()
       .required("*City is required"),
-    province: Yup.string()
+    squad: Yup.string()
+      .trim()
+      .required("*Squad is required"),
+    state: Yup.string()
       .trim()
       .required("*Province is required"),
-    zipCode: Yup.string()
-      .matches(
-        /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/,
-        "Invalid Canadian zip code format"
-      )
-      .required("ZIP code is required"),
+      zipCode: Yup.string()
+      .required('Posstal code is required')
+      .matches(/^[a-zA-Z0-9\s]+$/, 'Postal code should only contain letters, numbers')
+      .length(6, 'Postal code should be exactly 6 characters'),
     guarantorDocument: Yup.string()
       .required("*Guarantor Document is required"),
+    identityDocument: Yup.string()
+      .required("*Identity Document is required"),
   });
 
   const initialValues = {
@@ -51,9 +74,11 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     email: "",
     phone: "",
     city: "",
-    province: "",
+    squad: "",
+    state: "",
     zipCode: "",
-    guarantorDocument: ""
+    guarantorDocument: "",
+    identityDocument: ""
   };
 
   const mutation = useMutation(addGuarantor, {
@@ -61,6 +86,19 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
       queryClient.invalidateQueries(["guarantors"]);
     },
   });
+
+  const userSquads = data?.data?.reduce((acc: any[], squad: any) => {
+    if (squad.squadMembers.find((member: any) => member.userId === useAuth.getState().profile.id)) {
+      acc.push({
+        value: squad.id,
+        name: squad.name
+      });
+    }
+    return acc;
+  }, []) || [];
+
+  if (isLoading) return <PageLoader />
+  if (error) return <>Error</>
 
   return (
     <>
@@ -82,15 +120,19 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       "email": values.email,
                       "phoneNumber": values.phone,
                       "city": values.city,
-                      "province": values.province,
+                      "state": values.state,
                       "zipCode": values.zipCode,
                       "document_url": values.guarantorDocument,
+                      "id_url": values.identityDocument,
                       "user_id": useAuth.getState().profile.id
                     }
                     try {
                       const res = await mutation.mutateAsync({ payload });
                       if (res) {
-                        setHasAddedGuarantor(true);
+                        const result = await squadServices.updateSquadMemberGuarantor(values.squad, { guarantorId: res.id });
+                        if (result) {
+                          setHasAddedGuarantor(true);
+                        }
                       }
                     } catch (error) {
                       toast.error("Failed to add guarantor")
@@ -113,6 +155,11 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                         label="Email"
                         placeholder='linda@framcreative.com'
                       />
+                      <Select
+                        name='squad'
+                        label='Select Squad'
+                        options={userSquads}
+                      />
                       <TextInput
                         name='phone'
                         label="Phone Number"
@@ -124,7 +171,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                           placeholder='City'
                         />
                         <TextInput
-                          name='province'
+                          name='state'
                           label="Province"
                           placeholder='Province'
                         />
@@ -137,6 +184,10 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       <div className='space-y-1'>
                         <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
                         <FileUpload name='guarantorDocument' fileType='document' />
+                      </div>
+                      <div className='space-y-1'>
+                        <label htmlFor="identityDocument">Upload an approved identity document (Driver License, Internation Passport, etc)</label>
+                        <FileUpload name='identityDocument' fileType='document' />
                       </div>
                       <div className='mt-5 flex justify-between'>
                         <button

@@ -50,7 +50,7 @@ const validationSchema = Yup.object().shape({
     zipCode: Yup.string()
         .required('Posstal code is required')
         .matches(/^[a-zA-Z0-9\s]+$/, 'Postal code should only contain letters, numbers')
-        .length(6, 'Postal code should be exactly 6 digits'),
+        .length(6, 'Postal code should be exactly 6 characters'),
 
     jobTitle: Yup.string()
         .required('Job title is required')
@@ -242,7 +242,7 @@ const Kyc = () => {
                                 </div> : null) : <div className='w-[90vw] flex flex-col items-center gap-6 md:!w-[600px]  h-[450px]'>
                                     <img src='/success.svg' alt='' />
                                     <h3 className='font-semibold text-center text-2xl'>Personal Information Updated</h3>
-                                    <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>You have completely provided your personal information, kindly proceed to your KYC.</h5>
+                                    <h5 className='text-sm text-center  max-w-[318px] text-[#464749]'>You have provided your personal information, kindly proceed to your KYC.</h5>
                                     <Button label='Proceed to KYC' disabled={isKycLoading} onClick={() => initiateKyc()} isLoading={isKycLoading} className='mt-6 w-full text-center flex font-semibold justify-center' />
                                 </div>) :
 
@@ -298,7 +298,7 @@ const Kyc = () => {
                                                     <div className='mt-3'>
                                                         <TextInput name='jobTitle' label='Job Title *' placeholder='Enter your Job Title' />
                                                         <TextInput name='employerName' label='Employer Name *' wrapperClass='mt-3' placeholder='Enter your Employer Name' />
-                                                        <TextInput name='employerPhoneNumber' label='Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
+                                                        <TextInput name='employerPhoneNumber' label='Employer Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
 
                                                     </div>
                                                 </div>
@@ -312,6 +312,7 @@ const Kyc = () => {
                                                                 <option value="" disabled selected>
                                                                     Select an option
                                                                 </option>
+                                                                <option value="WhatsApp group">WhatsApp group</option>
                                                                 <option value="Instagram">Instagram</option>
                                                                 <option value="Referrals">Referrals</option>
                                                                 <option value="LinkedIn">LinkedIn</option>

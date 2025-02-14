@@ -149,6 +149,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
   const [bankInfoId, setBankInfoId] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
   const progress = (step / 3) * 100;
+  const profile = useAuth((s) => s.profile);
 
   const { data: userBanks, isLoading, error } = useQuery("userBanks", async () => {
     const res: AxiosResponse = await userServices.bank.getAllBanks();
@@ -173,13 +174,15 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
       .required("*Account Number is required")
   });
 
-  const handleOnSubmit = async () => {
+  const handleOnSubmit = async (id: string) => {
     if (!formData.desiredPosition.includes("1")) {
       try {
         const payload = {
           ...formData,
+          bankInfoId: id,
           desiredPosition: formData.desiredPosition.map((position: string) => Number(position))
         }
+        console.log(payload)
         const response = await squadServices.joinSquad(squadId, payload);
         if (response) {
           toast.success("Squad joined successfully");
@@ -191,11 +194,42 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
         toast.error("Failed to join to squad");
       }
     } else {
+      setFormData({
+        ...formData,
+        bankInfoId: id
+      })
+      setBankInfoId(id)
       setShowInfoModal(true)
     }
 
   }
 
+  const handleProceed = async () => {
+
+    const userName = `${profile?.firstName} ${profile?.lastName}` || "User";
+
+    const whatsappLink = `https://wa.me/16394705884?text=Hello%2C%20I%20need%20help%20with%20Request%20to%20Join%201%20-%205%20${userName}`;
+
+    window.open(whatsappLink, '_blank');
+
+    try {
+      const payload = {
+        ...formData,
+        bankInfoId: bankInfoId,
+        desiredPosition: []
+      }
+      const response = await squadServices.joinSquad(squadId, payload);
+      if (response) {
+        toast.success("Squad joined successfully");
+        setStep(4);
+        refetch();
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to join to squad");
+    }
+
+  }
   const initialValues = {
     bankName: "",
     accountName: "",
@@ -224,7 +258,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                 Back
               </button>
               <button
-                onClick={() => setStep(3)}
+                onClick={() => handleProceed()}
                 className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
               >
                 Proceed
@@ -259,18 +293,15 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
                       }
                       const res = await userServices.bank.createBank(addBankPayload)
                       if (res) {
-                        setFormData({
-                          ...formData,
-                          bankInfoId: res.data.id
-                        })
-                        handleOnSubmit()
+
+                        handleOnSubmit(res.data.id)
                       }
                     } else {
                       setFormData({
                         ...formData,
                         bankInfoId
                       })
-                      handleOnSubmit()
+                      handleOnSubmit(bankInfoId)
                     }
                   } catch (error) {
                     console.log(error)
@@ -485,7 +516,7 @@ const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, se
                   desiredPosition: [],
                   guarantorId: res.data.id
                 }
-                
+
                 const response = await squadServices.joinSquad(squadId, joinSquadPayload);
                 if (response) {
                   toast.success("Squad joined successfully")
