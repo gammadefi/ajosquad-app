@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { LogoutProvider } from "./context/LogoutContext";
 import { ProductProvider } from "./context/ProductContext";
 import { SideBarProvider } from "./context/SideBarContext";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration"; // Import service worker registration
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -35,7 +37,8 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// Register the service worker
+serviceWorkerRegistration.register();
+
+// Measure performance
 reportWebVitals();
