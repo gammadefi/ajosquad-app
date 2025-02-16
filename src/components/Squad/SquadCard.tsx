@@ -12,6 +12,7 @@ import UpdateSquadPositionFlow from './UpdateSquadPositionFlow';
 import CustomModal from '../Modal/CustomModal';
 import { useMutation } from 'react-query';
 import { squadServices } from '../../services/squad';
+import { useAuth } from '../../zustand/auth.store';
 
 dayjs.extend(advancedFormat)
 
@@ -113,12 +114,15 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 export default SquadCard
 
 const ConnectBank = ({ squadType, onClick, id }: { squadType: string, onClick: () => void, id: string }) => {
+  const profile = useAuth((s) => s.profile);
   const [step, setStep] = useState(1);
   const [hasConnectedBank, setHasConnectedBank] = useState(false);
-  const [authorisationUrl, setAuthorisationUrl] = useState<any>(null); // [authorisationUrl]
-
+  const [authorisationUrl, setAuthorisationUrl] = useState<any>(null);
   const [connected, setConnected] = useState(localStorage.getItem('connectedGocardless'));
 
+
+
+  // Check if bank is already connected on mount
   useEffect(() => {
     const handleStorageChange = (event: any) => {
       if (event.key === 'connectedGocardless') {
@@ -131,20 +135,42 @@ const ConnectBank = ({ squadType, onClick, id }: { squadType: string, onClick: (
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+  
+  useEffect(() => {
+    const storageKey = `squadRegistrationFlow_${profile.id}_${id}`;
+    const savedData = localStorage.getItem(storageKey);
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      if (parsedData.hasConnectedBank) {
+        setHasConnectedBank(true);
+        onClick(); // Proceed to next step
+      }
+    }
+  }, [id, onClick, profile.id]);
 
   useEffect(() => {
     if (connected === 'true') {
       console.log('GoCardless connected successfully. Perform action here.');
-      // Add your success logic here
       if (authorisationUrl !== "") {
         setHasConnectedBank(true)
+        // Update the registration flow storage
+        const storageKey = `squadRegistrationFlow_${profile.id}_${id}`;
+        const savedData = localStorage.getItem(storageKey);
+        if (savedData) {
+          const parsedData = JSON.parse(savedData);
+          localStorage.setItem(storageKey, JSON.stringify({
+            ...parsedData,
+            hasConnectedBank: true
+          }));
+        }
         localStorage.removeItem("connectedGocardless")
+        onClick(); // Proceed to next step
       }
     } else if (connected === 'false') {
       console.log('GoCardless connection failed. Perform action here.');
       // Add your failure logic here
     }
-  }, [connected, authorisationUrl]);
+  }, [connected, authorisationUrl, id, onClick, profile.id]);
 
   const handleConnectBank = useMutation(async () => {
     const currentHost = window.location.origin; // Gets the current hostname (e.g., "https://ajosquad-app.vercel.app")

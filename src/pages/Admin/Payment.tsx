@@ -29,6 +29,10 @@ const Payment = () => {
             })}</div>
         },
         {
+            header: "Member Name",
+            view: (row: any) => <div>{row.User.firstName} {row.User.lastName}</div>,
+        },
+        {
             header: "Member ID",
             view: (row: any) => <div>{row.squadMemberId}</div>,
         },

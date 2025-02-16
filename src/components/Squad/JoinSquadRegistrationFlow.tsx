@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import CircularProgressBar from '../Progress/CircularProgressBar';
@@ -18,15 +18,53 @@ import Tooltip from '../Tooltip/ToolTip';
 import { useQuery } from 'react-query';
 import PageLoader from '../spinner/PageLoader';
 
+const getStorageKey = (squadId: string) => {
+  const profile = useAuth.getState().profile;
+  return `squadRegistrationFlow_${profile.id}_${squadId}`;
+};
+
 const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClick }: { squadId: string, selecetedPosition: string[], refetch: () => void, onClick: () => void }) => {
-  const [formData, setFormData] = useState({
-    desiredPosition: [] as string[],
-    bankInfoId: ""
+  const STORAGE_KEY = getStorageKey(squadId);
+
+  const [formData, setFormData] = useState(() => {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      return {
+        desiredPosition: parsed.desiredPosition || [],
+        bankInfoId: parsed.bankInfoId || "",
+        hasConnectedBank: parsed.hasConnectedBank || false
+      };
+    }
+    return {
+      desiredPosition: [] as string[],
+      bankInfoId: "",
+      hasConnectedBank: false
+    };
   });
-  const [step, setStep] = useState(1);
+
+  const [step, setStep] = useState(() => {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      return JSON.parse(savedData).currentStep || 1;
+    }
+    return 1;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      ...formData,
+      currentStep: step
+    }));
+  }, [formData, step]);
 
   const handleFormDataChange = (data: { [key: string]: string | string[] }) => {
     setFormData({ ...formData, ...data });
+  };
+
+  const handleComplete = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    onClick();
   };
 
   return (
@@ -34,7 +72,7 @@ const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClic
       {step === 1 && <Step1 step={step} setStep={setStep} selecetedPosition={selecetedPosition} formData={formData} setFormData={handleFormDataChange} />}
       {step === 2 && <Step2 step={step} setStep={setStep} refetch={refetch} formData={formData} setFormData={handleFormDataChange} squadId={squadId} />}
       {step === 3 && <Step3 step={step} setStep={setStep} refetch={refetch} formData={formData} squadId={squadId} />}
-      {step === 4 && <SuccessModal onClick={onClick} />}
+      {step === 4 && <SuccessModal onClick={handleComplete} />}
     </div>
   );
 }
@@ -55,6 +93,15 @@ const Step1 = ({ step, setStep, formData, setFormData, selecetedPosition }: { st
     selectedOptions: formData.desiredPosition || [],
   };
 
+  const handleSubmit = (values: any) => {
+    setFormData({ 
+      ...formData, 
+      desiredPosition: values.selectedOptions,
+      hasConnectedBank: true
+    });
+    setStep(2);
+  };
+
   return (
     <div className='max-w-[630px] flex flex-col gap-2'>
       <div className='flex justify-between'>
@@ -71,10 +118,7 @@ const Step1 = ({ step, setStep, formData, setFormData, selecetedPosition }: { st
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
-            setFormData({ ...formData, desiredPosition: values.selectedOptions });
-            setStep(2);
-          }}
+          onSubmit={handleSubmit}
         >
           {() => (
             <Form>
