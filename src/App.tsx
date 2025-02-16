@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './App.css'
 import { AppRouter } from './Routes'
 import { Toaster } from 'react-hot-toast'
+import InstallPWA from './InstallPWA'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <BrowserRouter>
         <Toaster />
         <AppRouter />
+        <InstallPWA />
       </BrowserRouter>
     </div>
   )
