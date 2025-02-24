@@ -43,7 +43,7 @@ const Payment = () => {
         },
         {
             header: "Date",
-            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
+            view: (row: any) => <div>{fDate(row.dueDate)}</div>,
         },
         {
             header: "Status",
@@ -63,6 +63,7 @@ const Payment = () => {
             ...searchParamsObject,
             page: currentPage,
             paymentType: "AjosquadPayment"
+           
         }],
         PaymentService.getPayments,
         {
@@ -89,6 +90,8 @@ const Payment = () => {
             refetchOnMount: true,
         }
     )
+
+
 
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
@@ -130,7 +133,7 @@ const Payment = () => {
                 {
                     payments.data && payments.data.length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> :
                         <Table
-                            data={payments.data.payments}
+                            data={payments.data.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())}
                             columns={columns}
                             loading={false}
                             pagination={
@@ -138,10 +141,9 @@ const Payment = () => {
                                     page: currentPage,
                                     pageSize: 10,
                                     setPage: setCurrentPage,
-                                    totalRows: payments?.pages
+                                    totalRows: payments?.pagination.total
                                 }
                             }
-
                         />
                 }
             </>
