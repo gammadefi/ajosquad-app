@@ -64,7 +64,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
         </div>
         <div className='flex justify-between'>
-          <p className='text-sm'>CA$ {amount[category]}.00 / Every 2 weeks</p>
+          <p className='text-sm'>CA$ {amount[category]}.00 / Bimonthly</p>
           <span className='text-xs flex items-center gap-1'><LuCalendarDays className='w-5 h-5' /> {formattedDate}</span>
         </div>
         {
@@ -89,7 +89,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
       }}>
         {
-          openJoinSquadForm ? <JoinSquadRegistrationFlow onClick={() => {
+          openJoinSquadForm ? <JoinSquadRegistrationFlow title={title} onClick={() => {
             setOpenModal(!openModal)
             setOpenJoinSquadForm(!openJoinSquadForm)
             refetch()

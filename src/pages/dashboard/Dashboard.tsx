@@ -26,6 +26,8 @@ import { statisticsServices } from '../../services/statistics';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
 import { contractAgreementServices } from '../../services/contract-agreement';
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { fDate, formatStartDate } from '../../utils/formatTime';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -74,6 +76,23 @@ const Dashboard = () => {
       months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
     }],
     PayoutService.getTotalPayout,
+    {
+      onSuccess: (data: any) => {
+        // console.log(data.data);
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+  const { data: payouts, isLoading: isPayoutLoading, error } = useFetchWithParams(
+    [`query-all-payouts-${profile.id}`, {
+      ...searchParamsObject,
+      page: currentPage,
+      payoutType: "AjosquadPayout"
+    }],
+    PayoutService.getPayouts,
     {
       onSuccess: (data: any) => {
         // console.log(data.data);
@@ -165,10 +184,30 @@ const Dashboard = () => {
 
           <div className='px-3 md:px-6'>
             <div className='flex justify-between items-center'>
-              <div>
+
+              <div >
+                {
+                  payouts && payouts.data.length > 0 &&
+                  <>
+                    <h1 className="font-medium text-lg mb-2">Upcoming Payout</h1>
+                    <div className='flex gap-3 items-center'>
+                      {
+                        payouts.data
+                          .filter((payout: any) => payout.status === 'upcoming' && new Date(payout.payoutDate) >= new Date())
+                          .slice(0, 2)
+                          .map((payout: any) => <UpcomingPayout payout={payout} key={payout.id} />)
+                      }
+                    </div>
+
+
+                  </>
+                }
 
               </div>
-              <TodayDate />
+              <div className="hidden md:block">
+                <TodayDate />
+
+              </div>
 
             </div>
 
@@ -456,15 +495,15 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
     return response.data;
   });
 
-  
+
   const handleOpenIframe = () => setIframeVisible(true);
   const handleCloseIframe = () => setIframeVisible(false);
 
-  const handleAgreeToContractAgreement = async(contractorAgreementId: string) => {
+  const handleAgreeToContractAgreement = async (contractorAgreementId: string) => {
     setIsAgreeing(true);
     try {
       const res = await contractAgreementServices.user.agreeOrRejectContractAgreement(contractorAgreementId, { option: true });
-      if(res) {
+      if (res) {
         const updatedUserProfile = { ...profile, userAgreedAjosquad: true }
         setUserProfile(updatedUserProfile);
         setIframeVisible(false);
@@ -474,7 +513,7 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
       setIsAgreeing(false);
     }
   }
-  
+
   if (isLoading) return <PageLoader />
   if (error) return <div>An error occurred while fetching contracts</div>
 
@@ -545,6 +584,34 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
                 />
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+const UpcomingPayout = ({ payout }: { payout: any }) => {
+  return (
+    <div>
+
+      <div>
+        <div className="flex flex-col border rounded-lg p-3 shadow-md bg-white w-fit">
+          <div className="flex justify-between">
+            <span className="text-gray-700 font-medium">Silver 16.0</span>
+            <button className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+              {formatStartDate(payout.payoutDate).replace("Starts", "")}
+            </button>
+
+          </div>
+          <div className="ml-auto justify-between flex  gap-2  items-center">
+
+            <div className="flex items-center text-gray-600">
+              <FaRegCalendarAlt className="mr-1" />
+              <span>{fDate(payout.payoutDate)}</span>
+            </div>
+            <span className="text-sm font-bold">CA$ {payout.amount}.00</span>
           </div>
         </div>
       </div>
