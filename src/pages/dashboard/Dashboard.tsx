@@ -599,7 +599,7 @@ const UpcomingPayout = ({ payout }: { payout: any }) => {
       <div>
         <div className="flex flex-col border rounded-lg p-3 shadow-md bg-white w-fit">
           <div className="flex justify-between">
-            <span className="text-gray-700 font-medium">Silver 16.0</span>
+            <span className="text-gray-700 font-medium">{payout.description.split(' ')[2]} {payout.description.split(' ')[3]}</span>
             <button className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
               {formatStartDate(payout.payoutDate).replace("Starts", "")}
             </button>
