@@ -23,7 +23,7 @@ const getStorageKey = (squadId: string) => {
   return `squadRegistrationFlow_${profile.id}_${squadId}`;
 };
 
-const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClick }: { squadId: string, selecetedPosition: string[], refetch: () => void, onClick: () => void }) => {
+const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClick, title }: { squadId: string, selecetedPosition: string[], refetch: () => void, onClick: () => void , title: string}) => {
   const STORAGE_KEY = getStorageKey(squadId);
 
   const [formData, setFormData] = useState(() => {
@@ -72,7 +72,7 @@ const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClic
       {step === 1 && <Step1 step={step} setStep={setStep} selecetedPosition={selecetedPosition} formData={formData} setFormData={handleFormDataChange} />}
       {step === 2 && <Step2 step={step} setStep={setStep} refetch={refetch} formData={formData} setFormData={handleFormDataChange} squadId={squadId} />}
       {step === 3 && <Step3 step={step} setStep={setStep} refetch={refetch} formData={formData} squadId={squadId} />}
-      {step === 4 && <SuccessModal onClick={handleComplete} />}
+      {step === 4 && <SuccessModal title={title} onClick={handleComplete} />}
     </div>
   );
 }
@@ -639,7 +639,7 @@ const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, se
 
 
 
-const SuccessModal = ({ onClick }: { onClick: () => void }) => {
+const SuccessModal = ({ onClick, title }: { onClick: () => void,title:string }) => {
   return (
     <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
       <img src="./Trophy.svg" alt="Email verified" className='w-52 h-52' />
@@ -649,7 +649,7 @@ const SuccessModal = ({ onClick }: { onClick: () => void }) => {
         </h3>
       </div>
       <p className='text-sm text-center'>
-        You have successfully join the Bronze squad, track your payment day from the payment page.
+        You have successfully joined {title} squad, track your payment day from the payment page.
       </p>
       <button
         type='button'
