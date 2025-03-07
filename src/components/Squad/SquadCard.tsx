@@ -93,7 +93,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
             setOpenModal(!openModal)
             setOpenJoinSquadForm(!openJoinSquadForm)
             refetch()
-          }} selecetedPosition={selectedPositions} squadId={id} refetch={refetch} /> : <ConnectBank squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} id={id} />
+          }} selecetedPosition={selectedPositions} squadId={id} refetch={refetch} /> : <ConnectBank title={title} squadType={category} onClick={() => setOpenJoinSquadForm(!openJoinSquadForm)} id={id} />
         }
 
 
@@ -113,7 +113,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
 export default SquadCard
 
-const ConnectBank = ({ squadType, onClick, id }: { squadType: string, onClick: () => void, id: string }) => {
+const ConnectBank = ({ squadType, onClick, id , title}: { squadType: string, onClick: () => void, id: string, title:string }) => {
   const profile = useAuth((s) => s.profile);
   const [step, setStep] = useState(1);
   const [hasConnectedBank, setHasConnectedBank] = useState(false);
@@ -235,7 +235,7 @@ const ConnectBank = ({ squadType, onClick, id }: { squadType: string, onClick: (
               </h3>
             </div>
             <p className='text-sm text-center'>
-              You made the right choice joining the {squadType} Squad, Proceed to connect your bank information to complete the Squad joining Process.
+              You made the right choice joining the {title} Squad, Proceed to connect your bank information to complete the Squad joining Process.
             </p>
             <button
               type='submit'
