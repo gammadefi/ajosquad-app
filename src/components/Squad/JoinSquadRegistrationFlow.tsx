@@ -70,8 +70,8 @@ const JoinSquadRegistrationFlow = ({ squadId, selecetedPosition, refetch, onClic
   return (
     <div className="relative">
       {step === 1 && <Step1 step={step} setStep={setStep} selecetedPosition={selecetedPosition} formData={formData} setFormData={handleFormDataChange} />}
-      {step === 2 && <Step2 step={step} setStep={setStep} refetch={refetch} formData={formData} setFormData={handleFormDataChange} squadId={squadId} />}
-      {step === 3 && <Step3 step={step} setStep={setStep} refetch={refetch} formData={formData} squadId={squadId} />}
+      {step === 2 && <Step2 title={title} step={step} setStep={setStep} refetch={refetch} formData={formData} setFormData={handleFormDataChange} squadId={squadId} />}
+      {step === 3 && <Step3 title={title} step={step} setStep={setStep} refetch={refetch} formData={formData} squadId={squadId} />}
       {step === 4 && <SuccessModal title={title} onClick={handleComplete} />}
     </div>
   );
@@ -188,7 +188,7 @@ const Step1 = ({ step, setStep, formData, setFormData, selecetedPosition }: { st
   );
 };
 
-const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { step: number, setStep: any, formData: any, setFormData: any, squadId: string, refetch: () => void }) => {
+const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch, title }: { step: number, setStep: any, formData: any, setFormData: any, squadId: string, refetch: () => void , title: string}) => {
   const [showBanks, setShowBanks] = useState(false);
   const [bankInfoId, setBankInfoId] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -227,7 +227,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
           desiredPosition: formData.desiredPosition.map((position: string) => Number(position))
         }
         console.log(payload)
-        const response = await squadServices.joinSquad(squadId, payload);
+        const response = title.includes("test") ? await squadServices.joinTestSquad(squadId, payload) :await squadServices.joinSquad(squadId, payload);
         if (response) {
           toast.success("Squad joined successfully");
           setStep(4);
@@ -262,7 +262,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
         bankInfoId: bankInfoId,
         desiredPosition: []
       }
-      const response = await squadServices.joinSquad(squadId, payload);
+      const response =  title.includes("test") ? await squadServices.joinTestSquad(squadId, payload) :await squadServices.joinSquad(squadId, payload);
       if (response) {
         toast.success("Squad joined successfully");
         setStep(4);
@@ -485,7 +485,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch }: { ste
   )
 }
 
-const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, setStep: any, formData: any, squadId: string, refetch: () => void }) => {
+const Step3 = ({ step, setStep, formData, squadId, refetch, title }: { step: number, setStep: any, formData: any, squadId: string, refetch: () => void , title: string}) => {
   const progress = (step / 3) * 100;
 
   const validationSchema = Yup.object({
@@ -561,7 +561,7 @@ const Step3 = ({ step, setStep, formData, squadId, refetch }: { step: number, se
                   guarantorId: res.data.id
                 }
 
-                const response = await squadServices.joinSquad(squadId, joinSquadPayload);
+                const response = title.includes("test") ? await squadServices.joinTestSquad(squadId, joinSquadPayload) : await squadServices.joinSquad(squadId, joinSquadPayload);
                 if (response) {
                   toast.success("Squad joined successfully")
                   setStep(4);
