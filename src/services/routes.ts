@@ -14,6 +14,7 @@ export const squadApiRoutes = {
   getSquad: (id: string) => `/ajosquad/squad/${id}`,
   createSquad: "/ajosquad/squad",
   joinSquad: (id: string) => `/ajosquad/squad/${id}/join`,
+  joinTestSquad: (id: string) => `/ajosquad/squad/${id}/joinTestSquad`,
   addNewSquadPosition: (id: string) => `/ajosquad/squad/${id}/update-position`,
   updateSquadMemberPosition: (squadId: string, squadMemberId: string) => `/ajosquad/squad/${squadId}/update-position/${squadMemberId}`,
   updateSquadMemberGuarantor: (squadId: string) => `/ajosquad/squad/${squadId}/update-guarantor`,
