@@ -3,7 +3,11 @@ import { enUS } from 'date-fns/locale';
 // ----------------------------------------------------------------------
 
 export function fDate(date : string) {
-  return format(new Date(date), 'dd MMMM yyyy');
+  return new Date(date).toISOString().split("T")[0];
+}
+
+export function fDateUtc(date : string) {
+  return new Date(date).toISOString().split("T")[0];
 }
 
 export function fDateTime(date : string) {
