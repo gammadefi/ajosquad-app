@@ -41,8 +41,8 @@ const SquadInformation = () => {
             view: (row: any) => <div>CAD$ {row.amount.toLocaleString()}</div>,
         },
         {
-            header: "Memebrs",
-            view: (row: any) => <div>{row.squadMembers.length}</div>,
+            header: "Postition",
+            view: (row: any) => <div>{row.squadMembers.find((squadMember:any) => squadMember.userId	 === id)?.position}</div>,
         },
         {
             header: "Date created",

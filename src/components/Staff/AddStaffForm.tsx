@@ -54,7 +54,7 @@ const AddStaffForm = ({ closeModal }: { closeModal: () => void }) => {
       {
         hasAddedStaff ?
           <div className='md:w-[550px] lg:w-full flex flex-col items-center gap-5'>
-            <img src="./Trophy.svg" alt="Delete bank" className='w-52 h-52' />
+            <img src="/Trophy.svg" alt="Delete bank" className='w-52 h-52' />
             <div>
               <h3 className='font-bold text-2xl text-center'>
                 Invite Sent Successfully

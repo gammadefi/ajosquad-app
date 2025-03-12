@@ -11,6 +11,8 @@ import { useSearchParamsToObject } from '../../../hooks/useSearchParamsToObject'
 import { statisticsServices } from '../../../services/statistics';
 import PageLoader from '../../../components/spinner/PageLoader';
 import Filter from '../../../components/Filter/Filter';
+import { generateSerialNumber, jsonToCSV } from '../../../utils/helpers';
+import { fDate } from '../../../utils/formatTime';
 
 const Index = () => {
     const navigate = useNavigate()
@@ -28,7 +30,6 @@ const Index = () => {
             endDate: searchParamsObject.endDate,
             startDate: searchParamsObject.startDate,
             search,
-            type: "AjosquadPayment",
             page: currentPage,
 
         }], statisticsServices.getTransactions,
@@ -42,22 +43,31 @@ const Index = () => {
         }
     )
 
+    const handleDownload = () => {
+        if (transactionData && transactionData.data) {
+            jsonToCSV(transactionData.data, 'transactions.csv');
+        }
+    };
+
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+            view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                pageSize: 10,
+                currentPage
+            })}</div>
         },
         {
             header: "Member ID",
-            view: (row: any) => <div>{row.description}</div>,
+            view: (row: any) => <div>{row.id}</div>,
         },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.description}</div>,
-        },
+        // {
+        //     header: "Member Email",
+        //     view: (row: any) => <div>{row.description}</div>,
+        // },
         {
             header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            view: (row: any) => <div>{row.description}</div>,
         },
         {
             header: "Amount",
@@ -65,7 +75,7 @@ const Index = () => {
         },
         {
             header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            view: (row: any) => <div>{fDate(row.createdAt)}</div>,
         },
         {
             header: "Status",
@@ -119,7 +129,7 @@ const Index = () => {
                 <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                     <div className='flex justify-between'>
                         <h3 className='text-xl font-semibold'>All Transaction</h3>
-                        <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                        <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                     </div>
                     <div className='flex items-center gap-2'>
                         <SearchInput placeholder='Search...' />
@@ -136,7 +146,7 @@ const Index = () => {
                                 Filter By
                             </span>
                         </button>
-                        <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                        <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                     </div>
                     <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
                 </div>
@@ -148,7 +158,7 @@ const Index = () => {
                             loading={false}
                             pagination={
                                 {
-
+                                    pageSize: 10,
                                     page: currentPage,
                                     setPage: setCurrentPage,
                                     totalRows: transactionData.totalItems

@@ -1,18 +1,20 @@
+import clsx from 'clsx';
+import { useContext } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { LogoutContext } from '../../context/LogoutContext';
 
 interface TabBar2ITF {
   tabs: string[],
   activeTab: string,
-  isDashboard: boolean
+  isDashboard: boolean,
+  showLogout?: boolean
 }
 
-const TabBar2 = ({ tabs, activeTab, isDashboard }: TabBar2ITF) => {
+const TabBar2 = ({ tabs, activeTab, isDashboard , showLogout=false}: TabBar2ITF) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-
-
-
+    const logout: any = useContext(LogoutContext)
+  
 
   const handleTabChange = (val: string) => {
     const searchParams = new URLSearchParams(location.search);
@@ -26,6 +28,20 @@ const TabBar2 = ({ tabs, activeTab, isDashboard }: TabBar2ITF) => {
         {
           tabs.map((items: string) => <Tab2 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
         }
+        {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
+                <img
+                  src={`/sidebar-icons/logout.svg`}
+                  className={clsx("h-5 w-5")}
+                  alt="log_out"
+                />
+        
+                <span
+                  onClick={() => logout?.toggleLogout()}
+                  className={`whitespace-nowrap text-red-500`}
+                >
+                  Log Out
+                </span>
+              </div>}
       </div>
     )
   }
@@ -35,6 +51,20 @@ const TabBar2 = ({ tabs, activeTab, isDashboard }: TabBar2ITF) => {
       {
         tabs.map((items: string) => <Tab1 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
       }
+      {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
+        <img
+          src={`/sidebar-icons/logout.svg`}
+          className={clsx("h-5 w-5")}
+          alt="log_out"
+        />
+
+        <span
+          onClick={() => logout?.toggleLogout()}
+          className={`whitespace-nowrap text-red-500`}
+        >
+          Log Out
+        </span>
+      </div>}
     </div>
   )
 }

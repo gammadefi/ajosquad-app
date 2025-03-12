@@ -27,7 +27,8 @@ import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
 import { contractAgreementServices } from '../../services/contract-agreement';
 import { FaRegCalendarAlt } from "react-icons/fa";
-import { fDate, formatStartDate } from '../../utils/formatTime';
+import { fDate, formatDate2, formatStartDate } from '../../utils/formatTime';
+import { generateSerialNumber, jsonToCSV } from '../../utils/helpers';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -141,15 +142,14 @@ const Dashboard = () => {
   const columns = [
     {
       header: "S/N",
-      view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
+      view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+        pageSize: 10,
+        currentPage
+      })}</div>
     },
     {
       header: "Description",
       view: (row: any) => <div>{row.description}</div>,
-    },
-    {
-      header: "Position",
-      view: (row: any) => <div>{row.position}</div>,
     },
     {
       header: "Amount",
@@ -157,7 +157,7 @@ const Dashboard = () => {
     },
     {
       header: "Date",
-      view: (row: any) => <div>{row.date}</div>,
+      view: (row: any) => <div>{formatDate2(row.createdAt)	}</div>,
     },
     {
       header: "Status",
@@ -172,6 +172,12 @@ const Dashboard = () => {
   }
 
   console.log(transactionData);
+
+  const handleDownload = () => {
+    if (transactionData && transactionData.data) {
+        jsonToCSV(transactionData.data, 'transactions.csv');
+    }
+  };
 
   return (
     <div>
@@ -434,7 +440,7 @@ const Dashboard = () => {
               <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                 <div className='flex justify-between'>
                   <h3 className='text-xl font-semibold'>Transaction History</h3>
-                  <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                  <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <div className='flex items-center gap-2'>
                   <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
@@ -451,7 +457,7 @@ const Dashboard = () => {
                       Filter By
                     </span>
                   </button>
-                  <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                  <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <Filter filterBy={["amount", "date", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
               </div>
@@ -463,7 +469,7 @@ const Dashboard = () => {
                     loading={false}
                     pagination={
                       {
-
+                        pageSize: 10,
                         page: currentPage,
                         setPage: setCurrentPage,
                         totalRows: transactionData.totalItems

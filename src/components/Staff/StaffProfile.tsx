@@ -167,7 +167,7 @@ function RevokeStaff({ id, closeModal, handleReturnToStaffProfile }: { id: strin
       {
         hasRevoked ?
           <div className='md:w-[550px] lg:w-full flex flex-col items-center gap-5'>
-            <img src="./Trophy.svg" alt="Delete bank" className='w-52 h-52' />
+            <img src="/Trophy.svg" alt="Delete bank" className='w-52 h-52' />
             <div>
               <h3 className='font-bold text-2xl text-center'>
                 Access & Permission Revoked successfully
@@ -254,7 +254,7 @@ const UpdateStaffForm = ({ id, email, role, closeModal, handleReturnToStaffProfi
       {
         hasUpdatedStaff ?
           <div className='md:w-[550px] lg:w-full flex flex-col items-center gap-5'>
-            <img src="./Trophy.svg" alt="Delete bank" className='w-52 h-52' />
+            <img src="/Trophy.svg" alt="Delete bank" className='w-52 h-52' />
             <div>
               <h3 className='font-bold text-2xl text-center'>
                 Staff Role Updated

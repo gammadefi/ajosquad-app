@@ -252,7 +252,7 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch, title }
 
     const userName = `${profile?.firstName} ${profile?.lastName}` || "User";
 
-    const whatsappLink = `https://wa.me/16394705884?text=Hello%2C%20I%20need%20help%20with%20Request%20to%20Join%201%20-%205%20${userName}`;
+    const whatsappLink = `https://wa.me/16394705884?text=Hello%20Ajosquad%2C%0AI'm%20interested%20in%20securing%20one%20of%20the%20priority%20positions%20(1-5)%20in%20an%20upcoming%20savings%20squad.%20I%20understand%20this%20requires%20a%20guarantor.%20Please%20provide%20me%20with%20information%20on%20the%20next%20steps%20to%20secure%20this%20position.%0AThank%20you.%0A${userName}`;
 
     window.open(whatsappLink, '_blank');
 
@@ -642,7 +642,7 @@ const Step3 = ({ step, setStep, formData, squadId, refetch, title }: { step: num
 const SuccessModal = ({ onClick, title }: { onClick: () => void,title:string }) => {
   return (
     <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
-      <img src="./Trophy.svg" alt="Email verified" className='w-52 h-52' />
+      <img src="/Trophy.svg" alt="Email verified" className='w-52 h-52' />
       <div>
         <h3 className='font-bold text-2xl text-center'>
           Squad Joined Successfully

@@ -15,12 +15,15 @@ const CompletedSquad = () => {
     const navigate = useNavigate()
 
     const [currentPage, setCurrentPage] = React.useState(1)
+        const [search, setSearch] = React.useState('')
+    
     const { data: stats, isLoading, error } = useQuery(['admin-squad-stats-completed'], () => squadServices.getSquadStatsByStatus("completed"));
 
     const { data: squads, isLoading: isLoadingSquads } = useFetchWithParams([`query-all-completed-squads`,
         {
             status: "completed",
-            page: currentPage
+            page: currentPage,
+            search
         }],
         squadServices.getAllSquads,
         {
@@ -91,8 +94,8 @@ const CompletedSquad = () => {
                     <h3 className='text-xl font-semibold'>Squad</h3>
 
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
-                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                        <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
+                        {/* <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button> */}
                     </div>
 
 

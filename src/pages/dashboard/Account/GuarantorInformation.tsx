@@ -19,7 +19,7 @@ const GuarantorInformation = () => {
       <div className='flex flex-col lg:flex-row gap-3 justify-between'>
         <div className='flex gap-3 justify-between items-center lg:w-fit lg:gap-8'>
           <h2 className='font-semibold md:text-xl'>Guarantor Information</h2>
-          <p className='text-black/[42%] text-sm md:text-base'>Upload Guarantor Information </p>
+          {/* <p className='text-black/[42%] text-sm md:text-base'>Upload Guarantor Information </p> */}
         </div>
 
         <div className="flex items-center gap-3">
@@ -32,7 +32,7 @@ const GuarantorInformation = () => {
             className="w-fit flex items-center gap-2 justify-center border border-primary py-2 px-10 rounded-lg"
           >
             <MdOutlineUploadFile className='h-5 w-5' />
-            Upload Guarantor
+            Upload Guarantor Form
           </button>
         </div>
 

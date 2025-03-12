@@ -177,3 +177,23 @@ export function paramsObjectToQueryString(payload: any) {
     return (currentPage - 1) * pageSize + index + 1;
   };
 
+export const jsonToCSV = (jsonArray: any[], fileName: string = 'data.csv') => {
+  if (!jsonArray.length) {
+    return;
+  }
+
+  const keys = Object.keys(jsonArray[0]);
+  const csvContent = [
+    keys.join(','), // header row
+    ...jsonArray.map(item => keys.map(key => item[key]).join(',')) // data rows
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', fileName);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+

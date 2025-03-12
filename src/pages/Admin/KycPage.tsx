@@ -48,6 +48,10 @@ const KycPage = () => {
             view: (row: any) => <div>{row.id}</div>,
         },
         {
+            header: "Member Name",
+            view: (row: any) => <div>{row.firstName} {row.lastName}</div>,
+        },
+        {
             header: "Member Email",
             view: (row: any) => <div>{row.email_address}</div>,
         },

@@ -37,6 +37,7 @@ const Account = () => {
                 isDashboard={false}
                 tabs={tabs}
                 activeTab={activeTab}
+                showLogout={true}
             />
             <div className='mt-6'>
                 {displayAccountContent(activeTab)}
