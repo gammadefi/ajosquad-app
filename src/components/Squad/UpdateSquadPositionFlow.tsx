@@ -343,7 +343,7 @@ const Step2 = ({ step, back, next, formData, setFormData, squadId }: { step: num
 const SuccessModal = () => {
   return (
     <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
-      <img src="./Trophy.svg" alt="Email verified" className='w-52 h-52' />
+      <img src="/Trophy.svg" alt="Email verified" className='w-52 h-52' />
       <div>
         <h3 className='font-bold text-2xl text-center'>
           Squad Joined Successfully

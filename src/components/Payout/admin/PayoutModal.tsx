@@ -81,11 +81,11 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
                 </div>
                 <div className="flex justify-between">
                   <span>Member Name</span>
-                  <span className='text-[#464749]'>{data.data.squadMemberName || "John Doe"}</span>
+                  <span className='text-[#464749]'>{data.data.user.firstName || ""} {data.data.user.lastName || ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Member Email</span>
-                  <span className='text-[#464749]'>{data.data.squadMemberEmail || "johndoe@gmail.com"}</span>
+                  <span className='text-[#464749]'>{data.data.user.email || ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Member ID</span>
@@ -201,7 +201,7 @@ export default function PayoutAction({ id, closeModal }: { id: string, closeModa
         {
           step === 3 &&
           <div className='flex flex-col items-center gap-5'>
-            <img src="./Trophy.svg" alt="Trophy" className='w-52 h-52' />
+            <img src="/Trophy.svg" alt="Trophy" className='w-52 h-52' />
             <div>
               <h3 className='font-bold text-2xl text-center'>
                 Payout Successfully

@@ -23,6 +23,7 @@ import { userServices } from '../../services/user';
 import Spinner from '../../components/spinner/Spinner';
 import { generateSerialNumber } from '../../utils/helpers';
 import { fDate } from '../../utils/formatTime';
+import { squadServices } from '../../services/squad';
 
 export const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -39,6 +40,8 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
+
+  const { data: stats, isLoading:isLoadingSquadStats, error } = useQuery(['admin-squad-stats'], squadServices.getSquadStats);
 
   const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
   const profile = useAuth((s) => s.profile);
@@ -310,24 +313,24 @@ const Dashboard = () => {
                   <h3 className='text-lg font-medium'>Activoty Graph</h3>
                   <select className='px-3 py-2 rounded border border-[#FCAD14] bg-white'>
                     <option>Squad</option>
-                    <option>Pod</option>
-                    <option>Business</option>
+                    {/* <option>Pod</option>
+                    <option>Business</option> */}
                   </select>
                 </div>
                 <SemiDoughnutChart datasets={[
-                  { label: "", data: [0, 8], backgroundColor: ["#07441B", "#FCAD14"] }
+                  { label: "", data: [stats.data.completedSquads.toString(), stats.data.activeSquads.toString()], backgroundColor: ["#07441B", "#FCAD14"] }
                 ]
 
                 } />
                 <div className='flex justify-between items-center'>
                   <div className='flex flex-col whitespace-nowrap items-center'>
                     <span>Completed</span>
-                    <h3 className='font-semibold'>0</h3>
+                    <h3 className='font-semibold'>{stats.data.completedSquads.toString()}</h3>
                     <h5>Squad</h5>
                   </div>
                   <div className='flex flex-col whitespace-nowrap items-center'>
                     <span>In Progress</span>
-                    <h3 className='font-semibold'>8</h3>
+                    <h3 className='font-semibold'>{stats.data.activeSquads.toString()}</h3>
                     <h5>Squad</h5>
                   </div>
                 </div>

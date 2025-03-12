@@ -360,7 +360,7 @@ export function SquadInformationDetail({ squadId, userId, closeModal }: { userId
             {
                 (step === 3) &&
                 <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
-                    <img src="./Trophy.svg" alt="Trophy" className='w-52 h-52' />
+                    <img src="/Trophy.svg" alt="Trophy" className='w-52 h-52' />
                     <div>
                         <h3 className='font-bold text-2xl text-center'>
                             Member Position Changed

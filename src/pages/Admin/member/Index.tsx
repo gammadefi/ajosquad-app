@@ -14,10 +14,12 @@ import { generateSerialNumber } from '../../../utils/helpers';
 const Index = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate()
+    const [search, setSearch] = useState('')
 
     const { data, isLoading } = useFetchWithParams(
         ["admin-all-users", {
-            page: currentPage
+            page: currentPage,
+            search
         }],
         userServices.user.getAllUsers,
         {
@@ -69,10 +71,10 @@ const Index = () => {
             header: "KYC Status",
             view: (row: any) => <div>{row.kycVerificationStatus}</div>,
         },
-        {
-            header: "Operation Status",
-            view: (row: any) => <Label variant="success" >{row?.operationStatus || "N/A"}</Label>,
-        },
+        // {
+        //     header: "Operation Status",
+        //     view: (row: any) => <Label variant="success" >{row?.operationStatus || "N/A"}</Label>,
+        // },
     ];
     return (
         <div className='px-3  md:px-6'>
@@ -123,7 +125,7 @@ const Index = () => {
                     <h3 className='text-xl font-semibold'>All Member</h3>
 
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
+                        <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
                         <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
                     </div>
 
@@ -135,6 +137,7 @@ const Index = () => {
                     isLoading ? <PageLoader /> :
                         data.users && data.users.length === 0 ? <TableEmpty title='No members yet' image='/empty-states/people.png' subtitle="You're just getting started! No members has registered yet on the platform." /> : <Table
                             data={data.users}
+                            clickRowAction={(row: any) => navigate(`/member-management/member-information/${row.id}`)}
                             columns={columns}
                             loading={false}
                             pagination={

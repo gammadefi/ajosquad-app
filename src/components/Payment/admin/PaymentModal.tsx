@@ -24,11 +24,11 @@ export default function PaymentModal({ id }: { id: string }) {
           </div>
           <div className="flex justify-between">
             <span>Member Name</span>
-            <span className='text-[#464749]'>{data.data.squadMemberName || "John Doe"}</span>
+            <span className='text-[#464749]'>{data.data?.User?.firstName || ""} {data.data?.User?.lastName}</span>
           </div>
           <div className="flex justify-between">
             <span>Member Email</span>
-            <span className='text-[#464749]'>{data.data.squadMemberEmail || "johndoe@gmail.com"}</span>
+            <span className='text-[#464749]'>{data.data.User?.email_address || ""}</span>
           </div>
           <div className="flex justify-between">
             <span>Member ID</span>

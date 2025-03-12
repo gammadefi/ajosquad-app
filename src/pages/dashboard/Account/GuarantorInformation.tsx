@@ -32,7 +32,7 @@ const GuarantorInformation = () => {
             className="w-fit flex items-center gap-2 justify-center border border-primary py-2 px-10 rounded-lg"
           >
             <MdOutlineUploadFile className='h-5 w-5' />
-            Upload Guarantor
+            Upload Guarantor Form
           </button>
         </div>
 
