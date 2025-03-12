@@ -228,7 +228,7 @@ const ConnectBank = ({ squadType, onClick, id , title}: { squadType: string, onC
         step === 2 &&
         (!hasConnectedBank && !authorisationUrl ?
           <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
-            <img src="./Bank.svg" alt="Email verified" className='w-52 h-52' />
+            <img src="/Bank.svg" alt="Email verified" className='w-52 h-52' />
             <div>
               <h3 className='font-bold text-2xl text-center'>
                 Connect your Bank
@@ -260,7 +260,7 @@ const ConnectBank = ({ squadType, onClick, id , title}: { squadType: string, onC
           </div>
             :
             <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
-              <img src="./Bank.svg" alt="Email verified" className='w-52 h-52' />
+              <img src="/Bank.svg" alt="Email verified" className='w-52 h-52' />
               <div>
                 <h3 className='font-bold text-2xl text-center'>
                   Bank Connected

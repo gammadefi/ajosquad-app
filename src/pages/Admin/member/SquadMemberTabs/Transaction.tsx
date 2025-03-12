@@ -6,6 +6,8 @@ import { useQuery } from 'react-query';
 import { statisticsServices } from '../../../../services/statistics';
 import { useParams } from 'react-router-dom';
 import PageLoader from '../../../../components/spinner/PageLoader';
+import { generateSerialNumber } from '../../../../utils/helpers';
+import { formatDate2 } from '../../../../utils/formatTime';
 
 const Transaction = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -14,19 +16,14 @@ const Transaction = () => {
     const columns = [
         {
             header: "S/N",
-            view: (row: any) => <div className="pc-text-blue">{row.serialNumber}</div>
-        },
-        {
-            header: "Member ID",
-            view: (row: any) => <div>{row.id}</div>,
-        },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.email}</div>,
+             view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
+                           pageSize: 10,
+                           currentPage
+                       })}</div>
         },
         {
             header: "Payment Description",
-            view: (row: any) => <div>{row.position}</div>,
+            view: (row: any) => <div>{row.description}</div>,
         },
         {
             header: "Amount",
@@ -34,7 +31,7 @@ const Transaction = () => {
         },
         {
             header: "Date",
-            view: (row: any) => <div>{row.date}</div>,
+            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
         },
         {
             header: "Status",
@@ -63,10 +60,10 @@ const Transaction = () => {
                                 <div className='my-8 flex justify-between items-center '>
                                     <h3 className='text-xl font-semibold'>All transaction</h3>
 
-                                    <div className='flex items-center gap-2'>
+                                    {/* <div className='flex items-center gap-2'>
                                         <SearchInput placeholder='Search...' />
                                         <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
-                                    </div>
+                                    </div> */}
 
 
                                 </div>

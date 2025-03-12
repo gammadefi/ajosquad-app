@@ -10,7 +10,8 @@ import PageLoader from '../../components/spinner/PageLoader'
 import { formatDate2 } from '../../utils/formatTime'
 import Modal from '../../components/Modal/Modal'
 import PayoutModal from '../../components/Payout/admin/PayoutModal'
-import { generateSerialNumber } from '../../utils/helpers'
+import { generateSerialNumber, jsonToCSV } from '../../utils/helpers'
+ // Import the jsontocsv function
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -19,13 +20,14 @@ const Payout = () => {
     const [openModal, setOpenModal] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
     const [lastMonths, setLastMonths] = useState("All Time");
+    const [search, setSearch] = useState("");
 
     const columns = [
         {
             header: "S/N",
             view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
                 pageSize: 10,
-                currentPage
+                currentPage,
             })}</div>
         },
         {
@@ -42,7 +44,7 @@ const Payout = () => {
         },
         {
             header: "Type",
-            view: (row: any) => <div>{row.type || "N/A"}</div>,
+            view: (row: any) => <div>{row.payoutType || "N/A"}</div>,
         },
         {
             header: "Amount",
@@ -50,7 +52,7 @@ const Payout = () => {
         },
         {
             header: "Date",
-            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
+            view: (row: any) => <div className='whitespace-nowrap'>{row.payoutDate ? formatDate2(row.payoutDate): "N/A"}</div>,
         },
         {
             header: "Status",
@@ -62,7 +64,8 @@ const Payout = () => {
     const { data: payouts, isLoading, error } = useFetchWithParams(
         ["query-all-payouts-admin", {
             ...searchParamsObject,
-            page: currentPage
+            page: currentPage,
+            search,
         }],
         PayoutService.getPayouts,
         {
@@ -91,6 +94,22 @@ const Payout = () => {
             refetchOnMount: true,
         }
     )
+
+    const handleDownload = () => {
+        if (payouts && payouts.data) {
+            const formattedData = payouts.data.map((payout: any) => {
+                const { user, ...rest } = payout;
+                return {
+                    ...rest,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                };
+            });
+            jsonToCSV(formattedData, 'payouts.csv');
+        }
+    };
+
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
@@ -113,10 +132,10 @@ const Payout = () => {
             <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                 <div className='flex justify-between'>
                     <h3 className='text-xl font-semibold'>Payout Information</h3>
-                    <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                    <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <div className='flex items-center gap-2'>
-                    <SearchInput placeholder='Search...' />
+                    <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
                     <button onClick={() => setOpenFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect width="20" height="3.33333" transform="translate(0 1.66797)" fill="#464749" />
@@ -130,7 +149,7 @@ const Payout = () => {
                             Filter By
                         </span>
                     </button>
-                    <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                    <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
             </div>

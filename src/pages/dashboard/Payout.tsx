@@ -10,7 +10,7 @@ import PageLoader from '../../components/spinner/PageLoader'
 import { fDate } from '../../utils/formatTime'
 import clsx from 'clsx'
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
-import { generateSerialNumber } from '../../utils/helpers'
+import { generateSerialNumber, jsonToCSV } from '../../utils/helpers'
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -60,7 +60,8 @@ const Payout = () => {
         [`query-all-payouts-${profile.id}`, {
             ...searchParamsObject,
             page: currentPage,
-            payoutType: "AjosquadPayout"
+            payoutType: "AjosquadPayout",
+            search
         }],
         PayoutService.getPayouts,
         {
@@ -88,6 +89,11 @@ const Payout = () => {
         }
     )
 
+    const handleDownload = () => {
+        if (payouts && payouts.data) {
+            jsonToCSV(payouts.data, 'payouts.csv');
+        }
+    };
 
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
@@ -112,7 +118,7 @@ const Payout = () => {
                         <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                             <div className='flex justify-between'>
                                 <h3 className='text-xl font-semibold'>All Payout  Transaction</h3>
-                                <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                                <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                             </div>
                             <div className='flex items-center gap-2'>
                                 <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
@@ -129,7 +135,7 @@ const Payout = () => {
                                         Filter By
                                     </span>
                                 </button>
-                                <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                                <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                             </div>
                             <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
                         </div>

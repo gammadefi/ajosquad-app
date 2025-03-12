@@ -8,7 +8,7 @@ import { PaymentService } from '../../services/payment'
 import PageLoader from '../../components/spinner/PageLoader'
 import { useAuth } from '../../zustand/auth.store'
 import { fDate } from '../../utils/formatTime'
-import { generateSerialNumber } from '../../utils/helpers'
+import { generateSerialNumber, jsonToCSV } from '../../utils/helpers'
 import clsx from 'clsx'
 import { useSearchParams } from 'react-router-dom'
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
@@ -19,6 +19,8 @@ const Payment = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const [lastMonths, setLastMonths] = useState("All Time");
     const searchParamsObject = useSearchParamsToObject();
+
+
     const profile = useAuth((s) => s.profile)
 
     const columns = [
@@ -62,7 +64,8 @@ const Payment = () => {
         [`query-all-payments-${profile.id}`, {
             ...searchParamsObject,
             page: currentPage,
-            paymentType: "AjosquadPayment"
+            paymentType: "AjosquadPayment",
+            search
            
         }],
         PaymentService.getPayments,
@@ -91,7 +94,11 @@ const Payment = () => {
         }
     )
 
-
+    const handleDownload = () => {
+        if (payments && payments.data) {
+            jsonToCSV(payments.data, 'payments.csv');
+        }
+    };
 
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
@@ -108,10 +115,10 @@ const Payment = () => {
                 <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                     <div className='flex justify-between'>
                         <h3 className='text-xl font-semibold'>All Payment  Transaction</h3>
-                        <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                        <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                     </div>
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
+                        <SearchInput onChange={(e) => setSearch(e.target.value)} value={search} placeholder='Search...' />
                         <button onClick={() => setOpenFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
                             <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="20" height="3.33333" transform="translate(0 1.66797)" fill="#464749" />
@@ -125,7 +132,7 @@ const Payment = () => {
                                 Filter By
                             </span>
                         </button>
-                        <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                        <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                     </div>
                     <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
                 </div>

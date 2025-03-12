@@ -10,7 +10,7 @@ import PageLoader from '../../components/spinner/PageLoader'
 import { formatDate2 } from '../../utils/formatTime'
 import Modal from '../../components/Modal/Modal'
 import PaymentModal from '../../components/Payment/admin/PaymentModal'
-import { generateSerialNumber } from '../../utils/helpers'
+import { generateSerialNumber, jsonToCSV } from '../../utils/helpers'
 
 const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -19,6 +19,8 @@ const Payment = () => {
     const [id, setId] = useState("");
     const [openModal, setOpenModal] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
+    const [search, setSearch] = useState("");
+    
 
     const columns = [
         {
@@ -46,7 +48,7 @@ const Payment = () => {
         },
         {
             header: "Type",
-            view: (row: any) => <div>{row.type || "N/A"}</div>,
+            view: (row: any) => <div>{row.paymentType	 || "N/A"}</div>,
         },
         {
             header: "Amount",
@@ -54,7 +56,7 @@ const Payment = () => {
         },
         {
             header: "Date",
-            view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
+            view: (row: any) => <div className='whitespace-nowrap'>{formatDate2(row.dueDate)}</div>,
         },
         {
             header: "Status",
@@ -66,7 +68,8 @@ const Payment = () => {
     const { data: payments, isLoading, error } = useFetchWithParams(
         ["query-all-payments-admin", {
             ...searchParamsObject,
-            page: currentPage
+            page: currentPage,
+            search
         }],
         PaymentService.getPayments,
         {
@@ -94,6 +97,21 @@ const Payment = () => {
         }
     )
 
+    const handleDownload = () => {
+        if (payments && payments.data) {
+            const formattedData = payments.data.map((payment: any) => {
+                const { User, ...rest } = payment;
+                return {
+                    ...rest,
+                    firstName: User.firstName,
+                    lastName: User.lastName,
+                    email: User.email_address,
+                };
+            });
+            jsonToCSV(formattedData, 'payments.csv');
+        }
+    };
+
     return (
         <div className='px-3  md:px-6'>
             <div className='flex justify-between items-center'>
@@ -116,7 +134,7 @@ const Payment = () => {
             <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                 <div className='flex justify-between'>
                     <h3 className='text-xl font-semibold'>Payment Information</h3>
-                    <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                    <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <div className='flex items-center gap-2'>
                     <SearchInput placeholder='Search...' />
@@ -133,7 +151,7 @@ const Payment = () => {
                             Filter By
                         </span>
                     </button>
-                    <button className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                    <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
                 <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
             </div>
@@ -141,7 +159,7 @@ const Payment = () => {
             {
                 isLoading ? <PageLoader /> :
                     payments.data && payments.data.length === 0 ? <TableEmpty title='Payment History Details' image='/empty-states/payment.png' subtitle="On this page, you'll find a record of your previous payment, and upcoming payment." /> : <Table
-                        data={payments.data}
+                        data={payments.data.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())}
                         columns={columns}
                         loading={false}
                         clickRowAction={(row) => {
