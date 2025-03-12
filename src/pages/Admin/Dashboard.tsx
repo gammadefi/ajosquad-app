@@ -308,7 +308,8 @@ const Dashboard = () => {
               </GraphWrapper>
             </div>
             <div className=''>
-              <GraphWrapper graphTitle="Revenue Chart">
+              {
+                isLoadingSquadStats ? <Spinner /> :   <GraphWrapper graphTitle="Revenue Chart">
                 <div className='flex items-center justify-between '>
                   <h3 className='text-lg font-medium'>Activoty Graph</h3>
                   <select className='px-3 py-2 rounded border border-[#FCAD14] bg-white'>
@@ -317,6 +318,8 @@ const Dashboard = () => {
                     <option>Business</option> */}
                   </select>
                 </div>
+
+                
                 <SemiDoughnutChart datasets={[
                   { label: "", data: [stats.data.completedSquads.toString(), stats.data.activeSquads.toString()], backgroundColor: ["#07441B", "#FCAD14"] }
                 ]
@@ -335,6 +338,8 @@ const Dashboard = () => {
                   </div>
                 </div>
               </GraphWrapper>
+              }
+            
             </div>
           </div>
         </div>
