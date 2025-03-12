@@ -177,11 +177,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleDownload = () => {
-    if (transactionData && transactionData.data) {
-        jsonToCSV(transactionData.data, 'transactions.csv');
-    }
-  };
+
 
   return (
     <div>
