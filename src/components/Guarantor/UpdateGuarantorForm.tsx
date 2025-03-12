@@ -18,7 +18,9 @@ const updateGuarantor = async ({ guarantorId, payload }: { guarantorId: string, 
 const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => void, guarantorId: string }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const [fileSize, setFileSize] = useState<string>('');
-  const [showFileUploadInput, setShowFileUploadInput] = useState(false);
+  const [showGuarantorLetterFileUploadInput, setShowGuarantorLetterFileUploadInput] = useState(false);
+  const [showGuarantorIDFileUploadInput, setShowGuarantorIDFileUploadInput] = useState(false);
+  const [showGuarantorWorkIDFileUploadInput, setShowGuarantorWorkIDFileUploadInput] = useState(false);
   const [hasUpdatedGuarantor, setHasUpdatedGuarantor] = useState(false);
   const queryClient = useQueryClient();
 
@@ -42,9 +44,10 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
   });
 
   useEffect(() => {
-    const fetchUserBank = async () => {
+    const fetchGuarantorData = async () => {
       const res: AxiosResponse = await guarantorServices.getGuarantor(guarantorId);
       const guarantorInformation = res.data;
+      console.log(guarantorInformation);
       setInitialValues({
         name: guarantorInformation.name || "",
         email: guarantorInformation.email || "",
@@ -56,7 +59,7 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
       const res2 = await getFileSize(guarantorInformation.document_url);
       setFileSize(res2);
     }
-    fetchUserBank();
+    fetchGuarantorData();
   }, [])
 
   const mutation = useMutation(updateGuarantor, {
@@ -125,10 +128,33 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                         <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
                         <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
                           <p>{truncateString(initialValues.guarantorDocument, 30)} {fileSize}Kb</p>
-                          <span onClick={() => setShowFileUploadInput(!showFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                          <span onClick={() => setShowGuarantorLetterFileUploadInput(!showGuarantorLetterFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
                         </div>
                         {
-                          showFileUploadInput &&
+                          showGuarantorLetterFileUploadInput &&
+                          <FileUpload name='guarantorDocument' fileType='document' />
+                        }
+                      </div>
+                      <div className='space-y-1'>
+                        <label htmlFor="identityDocument">Upload an approved identity document (Driver License, Internation Passport, etc)</label>
+                        <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
+                          <p>{truncateString(initialValues.identityDocument, 30) || "N/A"} {fileSize}Kb</p>
+                          <span onClick={() => setShowGuarantorIDFileUploadInput(!showGuarantorIDFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                        </div>
+                        {
+                          showGuarantorIDFileUploadInput &&
+                          <FileUpload name='guarantorDocument' fileType='document' />
+                        }
+                      </div>
+
+                      <div className='space-y-1'>
+                        <label htmlFor="workIdentityDocument">Upload your approved work identity document</label>
+                        <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
+                          <p>{truncateString(initialValues.workIdentityDocument, 30) || "N/A"} {fileSize}Kb</p>
+                          <span onClick={() => setShowGuarantorWorkIDFileUploadInput(!showGuarantorWorkIDFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                        </div>
+                        {
+                          showGuarantorWorkIDFileUploadInput &&
                           <FileUpload name='guarantorDocument' fileType='document' />
                         }
                       </div>

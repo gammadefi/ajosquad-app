@@ -10,14 +10,14 @@ import { useMutation, useQueryClient } from "react-query";
 import { banks } from "../../utils/banks";
 import Tooltip from "../Tooltip/ToolTip";
 
-const updateBankInformation = async ({ payload }: { payload: any }) => {
+const addBankInformation = async ({ payload }: { payload: any }) => {
   const res: AxiosResponse = await userServices.bank.createBank(payload)
   return res.data
 };
 
-const AddPayoutBankForm = ({ closeModal }: { closeModal: () => void }) => {
+const AddPayoutBankForm = ({ userBanks, closeModal }: {userBanks: any[], closeModal: () => void }) => {
   const [hasAddedBank, setHasAddedBank] = useState(false);
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const validationSchema = Yup.object({
     bankName: Yup.string()
@@ -45,7 +45,7 @@ const AddPayoutBankForm = ({ closeModal }: { closeModal: () => void }) => {
     accountNumber: ""
   }
 
-  const mutation = useMutation(updateBankInformation, {
+  const mutation = useMutation(addBankInformation, {
     onSuccess: () => {
       queryClient.invalidateQueries(["userBanks"]);
     },
@@ -86,6 +86,12 @@ const AddPayoutBankForm = ({ closeModal }: { closeModal: () => void }) => {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={async (values) => {
+                console.log(userBanks)
+                const existingPayoutBank = userBanks.find((userBank) => userBank.bankName === values.bankName && userBank.accountNumber === values.accountNumber);
+                if (existingPayoutBank) {
+                  toast.error("Payout bank already exists")
+                  return
+                }
                 if (values) {
                   const payload = {
                     bankName: values.bankName,
