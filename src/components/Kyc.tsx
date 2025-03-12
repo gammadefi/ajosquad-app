@@ -100,7 +100,8 @@ const Kyc = () => {
             "jobTitle": profile.jobTitle ?? "",
             "employerName": profile.employerName ?? "",
             "employerPhoneNumber": profile.employerPhoneNumber ?? "",
-            "others": ""
+            "others": "",
+            "other": ""
         },
         validationSchema: validationSchema,
         onSubmit: (values: any) => {
@@ -148,7 +149,9 @@ const Kyc = () => {
 
     const handleSubmit = useMutation(
         async (values: any) => {
-            return await KycServices.addKyc(values, profile.id)
+            const payload = {...values, ...(values.others === "other" ? {others: values.other} : {others: values.others})}
+            delete payload.other;
+            return await KycServices.addKyc(payload, profile.id)
         },
         {
             onSuccess: (data) => {
@@ -299,7 +302,6 @@ const Kyc = () => {
                                                         <TextInput name='jobTitle' label='Job Title *' placeholder='Enter your Job Title' />
                                                         <TextInput name='employerName' label='Employer Name *' wrapperClass='mt-3' placeholder='Enter your Employer Name' />
                                                         <TextInput name='employerPhoneNumber' label='Employer Phone Number *' wrapperClass='mt-3' placeholder='Enter your phone number' />
-
                                                     </div>
                                                 </div>
 
@@ -317,15 +319,16 @@ const Kyc = () => {
                                                                 <option value="Referrals">Referrals</option>
                                                                 <option value="LinkedIn">LinkedIn</option>
                                                                 <option value="other">Other</option>
-
                                                             </select>
                                                             {form.touched.others && form.errors.others ? (
                                                                 // @ts-ignore
                                                                 <small className='text-red-600 mt-1 text-xs md:text-sm'>{form.errors.others && form.errors?.others}</small>
                                                             ) : null}
+
+                                                            {
+                                                                form.getFieldProps("others").value === "other" && <TextInput name='other' wrapperClass='mt-3' placeholder='' />
+                                                            }
                                                         </div>
-
-
                                                     </div>
                                                 </div>
 

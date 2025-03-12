@@ -10,11 +10,12 @@ interface TabBar2ITF {
   showLogout?: boolean
 }
 
-const TabBar2 = ({ tabs, activeTab, isDashboard , showLogout=false}: TabBar2ITF) => {
+const TabBar2 = ({ tabs, activeTab, isDashboard, showLogout = false }: TabBar2ITF) => {
   const navigate = useNavigate();
   const location = useLocation();
-    const logout: any = useContext(LogoutContext)
-  
+  const logout: any = useContext(LogoutContext)
+
+
 
   const handleTabChange = (val: string) => {
     const searchParams = new URLSearchParams(location.search);
@@ -51,6 +52,7 @@ const TabBar2 = ({ tabs, activeTab, isDashboard , showLogout=false}: TabBar2ITF)
       {
         tabs.map((items: string) => <Tab1 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
       }
+
       {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
         <img
           src={`/sidebar-icons/logout.svg`}
