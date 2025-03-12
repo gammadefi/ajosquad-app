@@ -16,6 +16,7 @@ const TabBar2 = ({ tabs, activeTab, isDashboard, showLogout = false }: TabBar2IT
   const logout: any = useContext(LogoutContext)
 
 
+
   const handleTabChange = (val: string) => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("activeTab", val);
@@ -29,19 +30,19 @@ const TabBar2 = ({ tabs, activeTab, isDashboard, showLogout = false }: TabBar2IT
           tabs.map((items: string) => <Tab2 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
         }
         {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
-          <img
-            src={`/sidebar-icons/logout.svg`}
-            className={clsx("h-5 w-5")}
-            alt="log_out"
-          />
-
-          <span
-            onClick={() => logout?.toggleLogout()}
-            className={`whitespace-nowrap text-red-500`}
-          >
-            Log Out
-          </span>
-        </div>}
+                <img
+                  src={`/sidebar-icons/logout.svg`}
+                  className={clsx("h-5 w-5")}
+                  alt="log_out"
+                />
+        
+                <span
+                  onClick={() => logout?.toggleLogout()}
+                  className={`whitespace-nowrap text-red-500`}
+                >
+                  Log Out
+                </span>
+              </div>}
       </div>
     )
   }
@@ -51,7 +52,8 @@ const TabBar2 = ({ tabs, activeTab, isDashboard, showLogout = false }: TabBar2IT
       {
         tabs.map((items: string) => <Tab1 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
       }
-      {showLogout && <div className="w-full justify-end ml-auto px-6 flex cursor-pointer items-center gap-3.5">
+
+      {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
         <img
           src={`/sidebar-icons/logout.svg`}
           className={clsx("h-5 w-5")}
