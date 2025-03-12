@@ -171,8 +171,6 @@ const Dashboard = () => {
     return squadData.squadMembers.some((member: any) => member.userId === userId);
   }
 
-  console.log(transactionData);
-
   const handleDownload = () => {
     if (transactionData && transactionData.data) {
         jsonToCSV(transactionData.data, 'transactions.csv');
@@ -563,7 +561,7 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
                   zIndex: 1000,
                 }}
               >
-                <div className='z-[1000] absolute flex gap-6 top-5 right-10'>
+                <div className='bg-gray-600 rounded-lg p-3 z-[1000] absolute flex gap-6 bottom-12 right-24'>
                   <button
                     onClick={handleCloseIframe}
                     className='py-2 px-4 bg-white rounded-md'

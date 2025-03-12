@@ -67,7 +67,7 @@ const Bank = () => {
             )
       }
       <Modal open={showAddPayoutBankForm} onClick={() => setShowAddPayoutBankForm(false)}>
-        <AddPayoutBankForm closeModal={() => setShowAddPayoutBankForm(false)} />
+        <AddPayoutBankForm userBanks={userBanks.data} closeModal={() => setShowAddPayoutBankForm(false)} />
       </Modal>
     </div >
   )

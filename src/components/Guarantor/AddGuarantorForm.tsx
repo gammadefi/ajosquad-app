@@ -47,38 +47,24 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
       .trim()
       .email("*Email must be a valid address")
       .required("*Email is required"),
-    phone: Yup.string()
-      .trim()
-      .required('Phone number is required'),
-    city: Yup.string()
-      .trim()
-      .required("*City is required"),
     squad: Yup.string()
       .trim()
       .required("*Squad is required"),
-    state: Yup.string()
-      .trim()
-      .required("*Province is required"),
-      zipCode: Yup.string()
-      .required('Posstal code is required')
-      .matches(/^[a-zA-Z0-9\s]+$/, 'Postal code should only contain letters, numbers')
-      .length(6, 'Postal code should be exactly 6 characters'),
-    guarantorDocument: Yup.string()
+    guarantorDocument: Yup.string().url("Must be a valid url")
       .required("*Guarantor Document is required"),
-    identityDocument: Yup.string()
+    identityDocument: Yup.string().url("Must be a valid url")
       .required("*Identity Document is required"),
+    workIdentityDocument: Yup.string().url("Must be a valid url")
+      .required("*Work Identity Document is required")
   });
 
   const initialValues = {
     name: "",
     email: "",
-    phone: "",
-    city: "",
     squad: "",
-    state: "",
-    zipCode: "",
     guarantorDocument: "",
-    identityDocument: ""
+    identityDocument: "",
+    workIdentityDocument: ""
   };
 
   const mutation = useMutation(addGuarantor, {
@@ -118,12 +104,9 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                     const payload = {
                       "name": values.name,
                       "email": values.email,
-                      "phoneNumber": values.phone,
-                      "city": values.city,
-                      "state": values.state,
-                      "zipCode": values.zipCode,
                       "document_url": values.guarantorDocument,
                       "id_url": values.identityDocument,
+                      "employmentDocument_url": values.workIdentityDocument,
                       "user_id": useAuth.getState().profile.id
                     }
                     try {
@@ -136,7 +119,6 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       }
                     } catch (error) {
                       toast.error("Failed to add guarantor")
-                      // closeModal();
                     }
                   }
                 }}
@@ -160,27 +142,6 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                         label='Select Squad'
                         options={userSquads}
                       />
-                      <TextInput
-                        name='phone'
-                        label="Phone Number"
-                      />
-                      <div className='grid md:grid-cols-3 gap-3'>
-                        <TextInput
-                          name='city'
-                          label="City"
-                          placeholder='City'
-                        />
-                        <TextInput
-                          name='state'
-                          label="Province"
-                          placeholder='Province'
-                        />
-                        <TextInput
-                          name='zipCode'
-                          label="Zip Code"
-                          placeholder='Zip Code'
-                        />
-                      </div>
                       <div className='space-y-1'>
                         <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
                         <FileUpload name='guarantorDocument' fileType='document' />
@@ -188,6 +149,10 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                       <div className='space-y-1'>
                         <label htmlFor="identityDocument">Upload an approved identity document (Driver License, Internation Passport, etc)</label>
                         <FileUpload name='identityDocument' fileType='document' />
+                      </div>
+                      <div className='space-y-1'>
+                        <label htmlFor="workIdentityDocument">Upload your approved work identity document</label>
+                        <FileUpload name='workIdentityDocument' fileType='document' />
                       </div>
                       <div className='mt-5 flex justify-between'>
                         <button

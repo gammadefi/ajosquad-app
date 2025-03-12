@@ -18,7 +18,9 @@ const updateGuarantor = async ({ guarantorId, payload }: { guarantorId: string, 
 const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => void, guarantorId: string }) => {
   const [initialValues, setInitialValues] = useState<any>(null);
   const [fileSize, setFileSize] = useState<string>('');
-  const [showFileUploadInput, setShowFileUploadInput] = useState(false);
+  const [showGuarantorLetterFileUploadInput, setShowGuarantorLetterFileUploadInput] = useState(false);
+  const [showGuarantorIDFileUploadInput, setShowGuarantorIDFileUploadInput] = useState(false);
+  const [showGuarantorWorkIDFileUploadInput, setShowGuarantorWorkIDFileUploadInput] = useState(false);
   const [hasUpdatedGuarantor, setHasUpdatedGuarantor] = useState(false);
   const queryClient = useQueryClient();
 
@@ -30,40 +32,34 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
       .trim()
       .email("*Email must be a valid address")
       .required("*Email is required"),
-    phone: Yup.string()
+    squad: Yup.string()
       .trim()
-      .required('Phone number is required'),
-    city: Yup.string()
-      .trim()
-      .required("*City is required"),
-    state: Yup.string()
-      .trim()
-      .required("*State is required"),
-    zipCode: Yup.string()
-      .matches(/^\d{6}$/, 'ZIP code must be exactly 5 digits')
-      .required('ZIP code is required'),
-    guarantorDocument: Yup.string()
+      .required("*Squad is required"),
+    guarantorDocument: Yup.string().url("Must be a valid url")
       .required("*Guarantor Document is required"),
+    identityDocument: Yup.string().url("Must be a valid url")
+      .required("*Identity Document is required"),
+    workIdentityDocument: Yup.string().url("Must be a valid url")
+      .required("*Work Identity Document is required")
   });
 
   useEffect(() => {
-    const fetchUserBank = async () => {
+    const fetchGuarantorData = async () => {
       const res: AxiosResponse = await guarantorServices.getGuarantor(guarantorId);
       const guarantorInformation = res.data;
+      console.log(guarantorInformation);
       setInitialValues({
         name: guarantorInformation.name || "",
         email: guarantorInformation.email || "",
-        phone: guarantorInformation.phoneNumber || "",
-        city: guarantorInformation.city || "",
-        state: guarantorInformation.state || "",
-        zipCode: guarantorInformation.zipCode || "",
-        guarantorDocument: guarantorInformation.document_url || ""
+        guarantorDocument: guarantorInformation.document_url || "",
+        identityDocument: guarantorInformation.id_url || "",
+        workIdentityDocument: guarantorInformation.employmentDocument_url || ""
       })
 
       const res2 = await getFileSize(guarantorInformation.document_url);
       setFileSize(res2);
     }
-    fetchUserBank();
+    fetchGuarantorData();
   }, [])
 
   const mutation = useMutation(updateGuarantor, {
@@ -98,10 +94,8 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                     const payload = {
                       "name": values.name,
                       "email": values.email,
-                      "phoneNumber": values.phone,
-                      "city": values.city,
-                      "state": values.state,
-                      "zipCode": values.zipCode,
+                      "id_url": values.identityDocument,
+                      "employmentDocument_url": values.workIdentityDocument,
                       "document_url": values.guarantorDocument
                     }
                     try {
@@ -111,7 +105,6 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                       }
                     } catch (error) {
                       toast.error("Failed to update guarantor")
-                      // closeModal();
                     }
                   }
                 }}
@@ -131,35 +124,37 @@ const UpdateGuarantorForm = ({ closeModal, guarantorId }: { closeModal: () => vo
                         label="Email"
                         placeholder='linda@framcreative.com'
                       />
-                      <TextInput
-                        name='phone'
-                        label="Phone Number"
-                      />
-                      <div className='grid md:grid-cols-3 gap-3'>
-                        <TextInput
-                          name='city'
-                          label="City"
-                          placeholder='City'
-                        />
-                        <TextInput
-                          name='state'
-                          label="State"
-                          placeholder='State'
-                        />
-                        <TextInput
-                          name='zipCode'
-                          label="Zip Code"
-                          placeholder='Zip Code'
-                        />
-                      </div>
                       <div className='space-y-1'>
                         <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
                         <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
                           <p>{truncateString(initialValues.guarantorDocument, 30)} {fileSize}Kb</p>
-                          <span onClick={() => setShowFileUploadInput(!showFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                          <span onClick={() => setShowGuarantorLetterFileUploadInput(!showGuarantorLetterFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
                         </div>
                         {
-                          showFileUploadInput &&
+                          showGuarantorLetterFileUploadInput &&
+                          <FileUpload name='guarantorDocument' fileType='document' />
+                        }
+                      </div>
+                      <div className='space-y-1'>
+                        <label htmlFor="identityDocument">Upload an approved identity document (Driver License, Internation Passport, etc)</label>
+                        <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
+                          <p>{truncateString(initialValues.identityDocument, 30) || "N/A"} {fileSize}Kb</p>
+                          <span onClick={() => setShowGuarantorIDFileUploadInput(!showGuarantorIDFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                        </div>
+                        {
+                          showGuarantorIDFileUploadInput &&
+                          <FileUpload name='guarantorDocument' fileType='document' />
+                        }
+                      </div>
+
+                      <div className='space-y-1'>
+                        <label htmlFor="workIdentityDocument">Upload your approved work identity document</label>
+                        <div className='flex justify-between items-center py-2 px-3 border border-primary rounded-lg'>
+                          <p>{truncateString(initialValues.workIdentityDocument, 30) || "N/A"} {fileSize}Kb</p>
+                          <span onClick={() => setShowGuarantorWorkIDFileUploadInput(!showGuarantorWorkIDFileUploadInput)} className='cursor-pointer px-3 py-0.5 border rounded-lg text-red-500 bg-red-100'>Replace</span>
+                        </div>
+                        {
+                          showGuarantorWorkIDFileUploadInput &&
                           <FileUpload name='guarantorDocument' fileType='document' />
                         }
                       </div>
