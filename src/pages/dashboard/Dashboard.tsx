@@ -47,6 +47,7 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
+  const [stat, setStat] = useState("active");
 
   console.log(kycVerified);
 
@@ -56,11 +57,10 @@ const Dashboard = () => {
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const profile = useAuth((s) => s.profile);
 
-  const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
-
-  const { data: squads, isLoading, refetch } = useFetchWithParams(
-    ["query-all-squads", {
-      status: activeTab == "pending" ? "upcoming" : activeTab.toLowerCase()
+   const { data: stats, isLoading:isStatsLoading, error:statsError } = useFetchWithParams(
+    [`query-all-squads-stats-${profile.id}`, {
+      status: stat.toLowerCase(),
+      limit: 1000
     }],
     squadServices.getAllSquads,
     {
@@ -71,6 +71,27 @@ const Dashboard = () => {
       refetchOnMount: true,
     }
   )
+
+  const { data: graphData, isLoading: isLoadingGraphData } = useQuery(['userDashBoardData'], fetchDashboardGraphData);
+
+  const { data: squads, isLoading, refetch } = useFetchWithParams(
+    ["query-all-squads", {
+      status: activeTab == "pending" ? "upcoming" : activeTab.toLowerCase(),
+
+    }],
+    squadServices.getAllSquads,
+    {
+      onSuccess: (data: any) => {
+      },
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+    }
+  )
+
+
+
+  console.log(stats);
 
   const { data: payoutsTotal, isLoading: isLoadingCount, refetch: refetchCount } = useFetchWithParams(
     [`query-all-total-payouts-${profile.id}`, {
@@ -219,9 +240,8 @@ const Dashboard = () => {
 
             <div className='grid my-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
-              <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
-              <InfoCard type='squad' iconName='people' value='2' header='Squad' />
-
+              <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrawal' />
+              <InfoCard onfilterChange={(e) => setStat(e) } type='squad' iconName='people' value={stats?.data.filter((squad: any) => hasUser(squad, profile.id)).length.toString() ?? "0"} header='Squad' />
             </div>
 
             <div className='lg:h-[630px] grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>

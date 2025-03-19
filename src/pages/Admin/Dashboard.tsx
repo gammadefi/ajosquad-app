@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const searchParamsObject = useSearchParamsToObject();
   const [currentPage, setCurrentPage] = useState(1)
+   const [stat, setStat] = useState("active");
 
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
 
@@ -78,6 +79,21 @@ const Dashboard = () => {
     }
   )
 
+   const { data: squdstats, isLoading:isStatsLoading, error:statsError } = useFetchWithParams(
+      [`query-all-squads-stats-${profile.id}`, {
+        status: stat.toLowerCase(),
+        limit: 1000
+      }],
+      squadServices.getAllSquads,
+      {
+        onSuccess: (data: any) => {
+        },
+        keepPreviousData: false,
+        refetchOnWindowFocus: false,
+        refetchOnMount: true,
+      }
+    )
+
   const { data: data2, isLoading: isLoading2, error: error2 } = useQuery("admin-all-users", async () => {
     const response = await userServices.user.countAll()
     return response.data
@@ -108,43 +124,6 @@ const Dashboard = () => {
     return response.data
   })
 
-  const allData: any = {
-    "24h": {
-      xAxisLabel: ["12AM", "4AM", "8AM", "12PM", "4PM", "8PM", "12AM"],
-      seriesData: [
-        { name: "Products", data: [10, 15, 8, 20, 14, 18, 22] },
-        { name: "Services", data: [12, 10, 18, 14, 16, 10, 20] },
-      ],
-    },
-    "7d": {
-      xAxisLabel: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      seriesData: [
-        { name: "Products", data: [30, 40, 45, 50, 49, 60, 70] },
-        { name: "Services", data: [13, 50, 42, 60, 34, 63, 43] },
-      ],
-    },
-    "6M": {
-      xAxisLabel: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      seriesData: [
-        { name: "Products", data: [100, 90, 80, 85, 95, 110] },
-        { name: "Services", data: [70, 75, 60, 65, 55, 60] },
-      ],
-    },
-    "1Y": {
-      xAxisLabel: ["J", "F", "M", "A", "M", "J", "JY", "AG", "S", "O", "N", "D"],
-      seriesData: [
-        { name: "Products", data: [30, 40, 45, 50, 49, 60, 70, 30, 20, 50, 70, 100] },
-        { name: "Services", data: [13, 50, 42, 60, 34, 63, 43, 45, 50, 49, 60, 90] },
-      ],
-    },
-    Max: {
-      xAxisLabel: ["2019", "2020", "2021", "2022", "2023", "2024"],
-      seriesData: [
-        { name: "Products", data: [200, 250, 300, 350, 400, 450] },
-        { name: "Services", data: [150, 180, 210, 190, 220, 240] },
-      ],
-    },
-  };
 
   const [selectedRange, setSelectedRange] = useState("1Y"); // Default range
 
@@ -191,7 +170,7 @@ const Dashboard = () => {
           <div className='lg:col-span-4 xl:col-span-4 md:col-span-2 gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 '>
             <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
             <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
-            <InfoCard type='squad' iconName='people' value='2' header='Squad' />
+            <InfoCard onfilterChange={(e) => setStat(e) } type='squad' iconName='people' value={ (!isStatsLoading && squdstats?.data.length.toString()) ?? "0"} header='Squad' />
             <div className='my-5 md:col-span-2 xl:col-span-3'>
               <div className='col-span-3'>
                 {/* <GraphWrapper graphTitle="Overall Sale">

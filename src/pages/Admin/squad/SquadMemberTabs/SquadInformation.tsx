@@ -13,6 +13,8 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { MdArrowDropDown } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import SquadMemberDetails from '../SquadMemberDetails';
+import { ca } from 'date-fns/locale';
+import { FaArrowRight } from 'react-icons/fa6';
 
 const SquadInformation = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -162,6 +164,19 @@ export function SquadInformationDetail({ squadId, userId, closeModal }: { userId
         },
     });
 
+    const removeMutation = useMutation(async () => {
+        const res = await squadServices.removeSquadMember(squadId, user.id);
+        return res;
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries([`query-all-user-squads-${userId}`]);
+            queryClient.invalidateQueries([`admin-user-squad-information-${squadId}`]);
+        },
+    });
+
+
+    // console.log(user)
+
     const handleUpdatePosition = async () => {
         if (!newPosition) {
             toast.error("Please select a position")
@@ -186,6 +201,29 @@ export function SquadInformationDetail({ squadId, userId, closeModal }: { userId
         }
     }
 
+    const handleRemoveMember = async () => {
+        if (user.position.length > 0 && parseInt(user.position[0].slice(9)) >= 1 && parseInt(user.position[0].slice(9)) <= 5 && user.guarantorId) {
+            toast.error("Cannot remove member with a guarantor in positions 1 to 5");
+            return;
+        }
+
+        try {
+            setIsUpdating(true);
+            const res = await removeMutation.mutateAsync();
+            console.log(res)
+            if (res) {
+                toast.success("Member removed successfully");
+                setIsUpdating(false);
+                closeModal();
+            }
+        } catch (error: any) {
+            setIsUpdating(false);
+            toast.error(error.response.data.message || "Failed to remove member. Please try again");
+        }
+    }
+
+
+
     if (isLoading) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
 
@@ -194,8 +232,14 @@ export function SquadInformationDetail({ squadId, userId, closeModal }: { userId
             {
                 (step === 1) &&
                 <div>
-                    <h2 className='text-2xl md:text-3xl font-semibold'>Squad Information</h2>
-                    <p>Squad information are provided below:</p>
+                    <div className='flex items-center justify-between'>
+                        <div>
+                        <h2 className='text-2xl md:text-3xl font-semibold'>Squad Information</h2>
+                        <p>Squad information are provided below:</p>
+                        </div>
+                        <button  className=' font-semibold px-10 border border-[#f78457] rounded-lg text-red-500 inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50' onClick={() => setStep(4)}>Remove Member</button>
+                    </div>
+                   
                     <div className='mt-2 space-y-5 text-sm md:text-base'>
                         <div className='bg-[#F8F8F8] flex flex-col gap-2 p-2.5 rounded-lg mt-4'>
                             <div className="flex justify-between">
@@ -375,6 +419,40 @@ export function SquadInformationDetail({ squadId, userId, closeModal }: { userId
                     >
                         Dismiss
                     </button>
+                </div>
+            }
+
+            {
+                (step === 4) &&
+
+                <div className='md:w-[550px] lg:w-full flex flex-col items-center gap-5'>
+                    <img src="/Delete.svg" alt="Delete bank" className='w-52 h-52' />
+                    <div>
+                        <h3 className='font-bold text-2xl text-center'>
+                            Are you sure you want to remove this user?
+                        </h3>
+                    </div>
+                    <p className='text-sm text-center'>
+                        This action cannot be undone. The member will be permanently removed from the squad. If you're sure, click 'Remove' to confirm.
+                    </p>
+                    <div className="my-3 w-full flex justify-between">
+                        <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            className="border border-primary font-medium px-10 rounded-lg"
+                        >
+                            Back
+                        </button>
+                        <button
+                            type='submit'
+                            disabled={false}
+                            onClick={() => handleRemoveMember()}
+                            className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
+                        >
+                            {removeMutation.isLoading ? "Removeing" : "Remove"}
+                            <FaArrowRight />
+                        </button>
+                    </div>
                 </div>
             }
         </div>

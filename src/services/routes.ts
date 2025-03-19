@@ -24,6 +24,7 @@ export const squadApiRoutes = {
   getSquadMembers: "/ajosquad/squad/squadmembers",
   getUserSquad: (id: string) =>  `/ajosquad/squad/user/${id}`,
   getUserSquads: "/ajosquad/squad/me",
+  removeSquaMember: (squadId: string, squadMemberId: string) => `/ajosquad/squad/${squadId}/remove-member/${squadMemberId}`,
 }
 
 export const userApiRoutes = {

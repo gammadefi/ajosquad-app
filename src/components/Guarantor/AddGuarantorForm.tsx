@@ -50,6 +50,21 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
     squad: Yup.string()
       .trim()
       .required("*Squad is required"),
+    phone: Yup.string()
+      .trim()
+      .required('Phone number is required'),
+    city: Yup.string()
+      .trim()
+      .required("*City is required"),
+    state: Yup.string()
+      .trim()
+      .required("*Province is required"),
+    zipCode: Yup.string()
+      .matches(
+        /^[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d$/,
+        "Invalid Canadian zip code format"
+      )
+      .required("ZIP code is required"),
     guarantorDocument: Yup.string().url("Must be a valid url")
       .required("*Guarantor Document is required"),
     identityDocument: Yup.string().url("Must be a valid url")
@@ -61,7 +76,11 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
   const initialValues = {
     name: "",
     email: "",
+    phone: "",
+    city: "",
     squad: "",
+    state: "",
+    zipCode: "",
     guarantorDocument: "",
     identityDocument: "",
     workIdentityDocument: ""
@@ -104,6 +123,10 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                     const payload = {
                       "name": values.name,
                       "email": values.email,
+                      "phoneNumber": values.phone,
+                      "city": values.city,
+                      "state": values.state,
+                      "zipCode": values.zipCode,
                       "document_url": values.guarantorDocument,
                       "id_url": values.identityDocument,
                       "employmentDocument_url": values.workIdentityDocument,
@@ -142,8 +165,29 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                         label='Select Squad'
                         options={userSquads}
                       />
+                       <TextInput
+                        name='phone'
+                        label="Phone Number"
+                      />
+                      <div className='grid md:grid-cols-3 gap-3'>
+                        <TextInput
+                          name='city'
+                          label="City"
+                          placeholder='City'
+                        />
+                        <TextInput
+                          name='state'
+                          label="Province"
+                          placeholder='Province'
+                        />
+                        <TextInput
+                          name='zipCode'
+                          label="Zip Code"
+                          placeholder='Zip Code'
+                        />
+                      </div>
                       <div className='space-y-1'>
-                        <label htmlFor="guarantorDocument">Uploaded Guarantor letter or approval document</label>
+                        <label htmlFor="guarantorDocument">Upload signed Guarantor form</label>
                         <FileUpload name='guarantorDocument' fileType='document' />
                       </div>
                       <div className='space-y-1'>
@@ -151,7 +195,7 @@ const AddGuarantorForm = ({ closeModal }: { closeModal: () => void }) => {
                         <FileUpload name='identityDocument' fileType='document' />
                       </div>
                       <div className='space-y-1'>
-                        <label htmlFor="workIdentityDocument">Upload your approved work identity document</label>
+                        <label htmlFor="workIdentityDocument">Upload a Work ID or document</label>
                         <FileUpload name='workIdentityDocument' fileType='document' />
                       </div>
                       <div className='mt-5 flex justify-between'>

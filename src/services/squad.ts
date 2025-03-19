@@ -61,5 +61,13 @@ export const squadServices = {
   getSquadMembers: async (payload:any) => {
     const response = await createApiClient().get(squadApiRoutes.getSquadMembers + paramsObjectToQueryString(payload));
     return response.data
+  },
+
+
+  removeSquadMember: async (squadId: string, squadMemberId: string) => {
+
+    const response = await createApiClient().delete(squadApiRoutes.removeSquaMember(squadId, squadMemberId));
+    return response.data;
+
   }
 }

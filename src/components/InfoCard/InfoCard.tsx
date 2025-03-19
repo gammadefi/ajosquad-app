@@ -41,9 +41,8 @@ export const InfoCard = ({
   }
 
   const handleFilterChange2 = (param: string) => {
-    setActiveFilter2(param)
-    onfilterChange(param)
-
+    setActiveFilter2(param);
+    onfilterChange(param === "Active Squad" ? "Active" : param);
   }
 
   return (

@@ -16,12 +16,15 @@ import PageLoader from '../../../components/spinner/PageLoader';
 const UpcomingSquad = () => {
     const navigate = useNavigate()
     const [currentPage, setCurrentPage] = React.useState(1)
+    const [search, setSearch] = React.useState('')
+
     const { data: stats, isLoading, error } = useQuery(['admin-squad-stats-upcoming'], () => squadServices.getSquadStatsByStatus("upcoming"));
 
     const { data: squads, isLoading: isLoadingSquads } = useFetchWithParams([`query-all-upcoming-squads`,
         {
             status: "upcoming",
-            page: currentPage
+            page: currentPage,
+            search
         }],
         squadServices.getAllSquads,
         {
@@ -35,7 +38,7 @@ const UpcomingSquad = () => {
             header: "S/N",
             view: (row: any, index: number) => <div className="pc-text-blue">{generateSerialNumber(index, {
                 pageSize: 10,
-                currentPage
+                currentPage,
             })}</div>
         },
         {
@@ -83,7 +86,7 @@ const UpcomingSquad = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-5'>
-                <InfoCard isLoading={isLoading} header="Total Active Squad" iconName='tick-square' value={stats && stats.data.total} />
+                <InfoCard isLoading={isLoading} header="Total Upcoming Squad" iconName='tick-square' value={stats && stats.data.total} />
                 <InfoCard isLoading={isLoading} header="Brass Squad" iconName='tick-square' value={stats && stats.data.brass} />
                 <InfoCard isLoading={isLoading} header="Bronze Squad" iconName='tick-square' value={stats && stats.data.bronze} />
                 <InfoCard isLoading={isLoading} header="Silver Squad" iconName='tick-square' value={stats && stats.data.silver} />
@@ -98,8 +101,8 @@ const UpcomingSquad = () => {
                     <h3 className='text-xl font-semibold'>Squad</h3>
 
                     <div className='flex items-center gap-2'>
-                        <SearchInput placeholder='Search...' />
-                        <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button>
+                        <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
+                        {/* <button className='bg-[#F5F5F9] border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>Filter</button> */}
                     </div>
 
 
