@@ -17,7 +17,8 @@ const Squad = () => {
 
   const { data: squads, isLoading, refetch } = useFetchWithParams(
     ["query-all-squads", {
-      status: activeTab === "pending" ? "upcoming" : activeTab.toLowerCase()
+      status: activeTab === "pending" ? "upcoming" : activeTab.toLowerCase(),
+      limit: 100
     }],
     squadServices.getAllSquads,
     {
