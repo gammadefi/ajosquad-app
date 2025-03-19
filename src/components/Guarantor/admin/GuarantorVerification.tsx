@@ -142,6 +142,26 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
                     </div>
                   </div>
                 </div>
+
+                {
+                  data.data.employmentDocument_url  && <div className="w-full mt-3 rounded-xl border-[0.5px] border-[#B4B8BB]">
+                  
+                  <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl w-full">
+                    <a href={data.data.id_url} className='w-.datafull' target="_blank" rel="noopener noreferrer" download="Guarantor form">
+                      <img src={convertToThumbnailUrl(data.data.employmentDocument_url) || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
+                    </a>
+                  </div>
+                  <div className="px-4 py-3 flex justify-between">
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <h2 className="font-bold text-sm">Work ID or document</h2>
+                        {/* <span className={`px-3 mr-1 border py-1 rounded-lg text-xs ${data.data.verificationStatus === "verified" ? "text-[#036B26] bg-[#E7F6EC]" : data.data.verificationStatus === "failed" ? "bg-[#fde4dc] text-red-700" : "bg-[#FDF1DC] text-[#AD3307]"}`}>{data.data.verificationStatus}</span> */}
+                      </div>
+                      <span className="text-xs">{timeAgo(new Date(data.data.createdAt))}</span>
+                    </div>
+                  </div>
+                </div>
+                }
               </>
             }
             {

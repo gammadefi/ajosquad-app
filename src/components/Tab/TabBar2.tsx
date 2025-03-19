@@ -29,7 +29,7 @@ const TabBar2 = ({ tabs, activeTab, isDashboard, showLogout = false }: TabBar2IT
         {
           tabs.map((items: string) => <Tab2 activeTab={activeTab} label={items} onClick={() => handleTabChange(items)} />)
         }
-        {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
+        {/* {showLogout && <div className="w-full justify-end ml-auto px-6 py-2 flex cursor-pointer items-center gap-3.5">
                 <img
                   src={`/sidebar-icons/logout.svg`}
                   className={clsx("h-5 w-5")}
@@ -42,7 +42,7 @@ const TabBar2 = ({ tabs, activeTab, isDashboard, showLogout = false }: TabBar2IT
                 >
                   Log Out
                 </span>
-              </div>}
+              </div>} */}
       </div>
     )
   }
@@ -82,9 +82,9 @@ const Tab1 = ({ activeTab, label, onClick }: { activeTab: string, label: string,
 
 const Tab2 = ({ activeTab, label, onClick }: { activeTab: string, label: string, onClick: (param: string) => void }) => {
   return (
-    <button onClick={() => onClick(label)} className={`flex items-center justify-center gap-2 text-xs lg:text-sm font-semibold py-2 px-2 lg:px-3 capitalize md:w-36 ${activeTab === label.toLowerCase() ? "text-primary border-[0.2px] border-primary rounded-lg shadow-sm" : "text-gray-500"}`}>
+    <button onClick={() => onClick(label)} className={`flex items-center justify-center gap-2 text-xs lg:text-sm font-semibold py-2 px-2 lg:px-3 capitalize md:w-36 ${activeTab.toLowerCase() === label.toLowerCase() ? "text-primary border-[0.2px] border-primary rounded-lg shadow-sm" : "text-gray-500"}`}>
       <span className='text-nowrap'>{label}</span>
-      <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${activeTab === label.toLowerCase() ? "bg-primary" : "bg-gray-400"}`}>8</span>
+      {/* <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${activeTab === label.toLowerCase() ? "bg-primary" : "bg-gray-400"}`}>8</span> */}
     </button>
   )
 }

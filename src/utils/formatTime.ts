@@ -3,11 +3,13 @@ import { enUS } from 'date-fns/locale';
 // ----------------------------------------------------------------------
 
 export function fDate(date : string) {
-  return new Date(date).toISOString().split("T")[0];
+  const [year, month, day] = new Date(date).toISOString().split("T")[0].split("-");
+  return `${day}-${month}-${year}`;
 }
 
 export function fDateUtc(date : string) {
-  return new Date(date).toISOString().split("T")[0];
+  const [year, month, day] = new Date(date).toISOString().split("T")[0].split("-");
+  return `${day}-${month}-${year}`;
 }
 
 export function fDateTime(date : string) {

@@ -20,7 +20,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ name, wrapperClass, onFileChang
 
     const validateFile = (file: File) => {
         const validFormats = fileType === "document"
-            ? ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+            ? ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/jpeg", "image/png", "image/jpg"]
             : ["image/jpeg", "image/png", "image/jpg"];
         const minSize = 10 * 1024; // 10 KB
         const maxSize = 5 * 1024 * 1024; // 5 MB
@@ -106,12 +106,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ name, wrapperClass, onFileChang
                 </h3>
                 <h3 className='text-center text-xs truncate whitespace-nowrap '>{isUploading && "Uploading..."}</h3>
                 <h3 className='text-center text-xs truncate whitespace-nowrap '>{fileName}</h3>
-                {fileType === "document" ? <h5 className='text-xs text-[#6F7174] mt-5'>Supported formats: PDF, WPS, WORD</h5> : <h5 className='text-xs text-[#6F7174] mt-5'>Supported formats: PNG, JPG, SVG</h5>}
+                {fileType === "document" ? <h5 className='text-xs text-[#6F7174] mt-5'>Supported formats: PDF, WPS, WORD, JPG, PNG</h5> : <h5 className='text-xs text-[#6F7174] mt-5'>Supported formats: PNG, JPG, SVG</h5>}
                 <input
                     onChange={handleFileChange}
                     id={name}
                     type="file"
-                    accept={fileType === "document" ? ".pdf,.doc,.docx" : ".png,.jpg,.jpeg,.svg"}
+                    accept={fileType === "document" ? ".pdf,.doc,.docx,png,.jpg,.jpeg," : ".png,.jpg,.jpeg,.svg"}
                     className="cursor-pointer absolute opacity-0 h-full w-full"
                     {...restProps}
                 />

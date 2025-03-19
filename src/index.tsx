@@ -12,10 +12,10 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration"; // Imp
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
-      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      retry: true,
+      staleTime: 0,
     },
   },
 });

@@ -326,14 +326,14 @@ const Kyc = () => {
                                                             ) : null}
 
                                                             {
-                                                                form.getFieldProps("others").value === "other" && <TextInput name='other' wrapperClass='mt-3' placeholder='' />
+                                                                (form.getFieldProps("others").value === "other" || form.getFieldProps("WhatsApp group").value === "Other") && <TextInput name='other' wrapperClass='mt-3' placeholder='' />
                                                             }
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div className='flex justify-between mt-6'>
-                                                    <button type='button' className='px-5 py-2 border border-[#D42620] text-[#D42620] rounded-md'>Cancel</button>
+                                                    {/* <button type='button' className='px-5 py-2 border border-[#D42620] text-[#D42620] rounded-md'>Cancel</button> */}
 
                                                     <Button label='Proceed' isLoading={handleSubmit.isLoading} disabled={handleSubmit.isLoading} className='px-5' />
 

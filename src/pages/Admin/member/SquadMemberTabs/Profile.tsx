@@ -16,7 +16,7 @@ const Profile = () => {
   return (
     <div>
       <div className='flex flex-col lg:flex-row gap-3'>
-        <div className='border border-[#E2DFDF] rounded-lg py-4 px-4 md:py-5 md:px-6 h-60 w-full lg:w-[420px]'>
+        <div className='border border-[#E2DFDF] rounded-lg py-4 px-4 md:py-5 md:px-6 h-auto w-full lg:w-[420px]'>
           <div className='text-lg mb-3 flex justify-between items-center'>
             <h2 className='font-semibold'>Personal Information</h2>
 
@@ -48,13 +48,13 @@ const Profile = () => {
                 <p className='font-normal'>{data.data.homeAddress || ""} {data.data.city} {data.data.state}</p>
               </div>
               <div className='w-2/5'>
-                <p className='text-[#96999C]'>Referral Source</p>
+                <p className='text-[#96999C]'>How did you hear about us?</p>
                 <p className='font-normal'>{data.data.others || "N/A"}</p>
               </div>
             </div>
           </div>
         </div>
-        <div className='border border-[#E2DFDF] rounded-lg py-4 px-4 md:py-5 md:px-6 h-60 w-full lg:w-[420px]'>
+        <div className='border border-[#E2DFDF] rounded-lg py-4 px-4 md:py-5 md:px-6 h-auto w-full lg:w-[420px]'>
           <div className='text-lg mb-3 flex justify-between items-center'>
             <h2 className='font-semibold'>Employer Information</h2>
           </div>

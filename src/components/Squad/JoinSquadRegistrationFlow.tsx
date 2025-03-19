@@ -327,29 +327,32 @@ const Step2 = ({ step, setStep, setFormData, formData, squadId, refetch, title }
                 validationSchema={validationSchema}
                 onSubmit={async (values) => {
                   try {
-                    if (!bankInfoId) {
+                    const existingBank = userBanks.find((bank: any) => 
+                      bank.bankName === values.bankName &&
+                      bank.accountName === values.accountName &&
+                      bank.institutionNumber === values.institutionNumber &&
+                      bank.transitNumber === values.transitNumber &&
+                      bank.accountNumber === values.accountNumber
+                    );
+
+                    if (existingBank) {
+                      handleOnSubmit(existingBank.id);
+                    } else {
                       const addBankPayload = {
                         bankName: values.bankName,
                         accountName: values.accountName,
                         institutionNumber: values.institutionNumber,
                         transitNumber: values.transitNumber,
                         accountNumber: values.accountNumber
-                      }
-                      const res = await userServices.bank.createBank(addBankPayload)
+                      };
+                      const res = await userServices.bank.createBank(addBankPayload);
                       if (res) {
-
-                        handleOnSubmit(res.data.id)
+                        handleOnSubmit(res.data.id);
                       }
-                    } else {
-                      setFormData({
-                        ...formData,
-                        bankInfoId
-                      })
-                      handleOnSubmit(bankInfoId)
                     }
                   } catch (error) {
-                    console.log(error)
-                    toast.error("Failed to add bank")
+                    console.log(error);
+                    toast.error("Failed to add bank");
                   }
                 }}
               >

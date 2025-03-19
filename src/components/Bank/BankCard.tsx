@@ -30,7 +30,7 @@ const BankCard = ({ id, accountName, bankName, accountNumber, institutionNumber,
   );
   return (
     <div>
-      <div className='relative border border-[#A29999] p-5 rounded-lg lg:w-[400px]'>
+      <div className='relative border border-[#dbd6d6] p-5 rounded-lg w-full lg:max-w-[400px]'>
         <div className='flex justify-between mb-4'>
           <h2 className='font-semibold text-xl'>Payout Bank Account</h2>
           <div ref={optionsRef} className='relative w-10 h-10 flex items-center justify-center rounded border border-[#E4E7EC]'>

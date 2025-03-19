@@ -100,7 +100,7 @@ const Payment = () => {
         }
     };
 
-    if (isLoading) return <PageLoader />
+    if (isLoadingCount) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
 
     return (
@@ -132,7 +132,7 @@ const Payment = () => {
                                 Filter By
                             </span>
                         </button>
-                        <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                        {/* <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button> */}
                     </div>
                     <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
                 </div>
