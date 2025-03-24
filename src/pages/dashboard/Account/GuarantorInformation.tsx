@@ -35,6 +35,7 @@ const GuarantorInformation = () => {
             Upload Guarantor Form
           </button>
         </div>
+        
 
       </div>
       {
@@ -50,7 +51,7 @@ const GuarantorInformation = () => {
               guarantors.data.length > 0 ?
                 <div className='my-5 place-content-center grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8'>
                   {
-                    guarantors.data.map((guarantor: any) => (
+                    guarantors.data.filter((g:any) => g.isDeleted === false).map((guarantor: any) => (
                       <GuarantorCard
                         key={guarantor.id}
                         id={guarantor.id}

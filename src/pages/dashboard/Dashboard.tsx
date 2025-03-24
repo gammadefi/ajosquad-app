@@ -29,6 +29,7 @@ import { contractAgreementServices } from '../../services/contract-agreement';
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { fDate, formatDate2, formatStartDate } from '../../utils/formatTime';
 import { generateSerialNumber, jsonToCSV } from '../../utils/helpers';
+import { ProductContext } from '../../context/ProductContext';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -511,6 +512,9 @@ const Dashboard = () => {
 
 const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activeSquad: false }) => {
   const profile: any = useAuth((s) => s.profile);
+  const product: any = React.useContext(ProductContext);
+  const isVerified: boolean = useAuth((s) => s.verified);
+  
   const { setUserProfile } = useAuth();
 
   const [isAgreeing, setIsAgreeing] = useState(false);
@@ -550,7 +554,24 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
       <div className='mt-8'>
         <h3 className='text-2xl font-semibold'>Account set up Checklist</h3>
         <div className='flex mt-2 gap-3'>
-          <div className='w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] bg-[#08354C] text-white'>
+          {!isVerified && <div className='w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] bg-[#08354C] text-white'>
+            <div className='flex gap-2'>
+              <div className="mt-2">
+                <LiaFileContractSolid size={24} />
+              </div>
+
+              <h3 className=" text-lg font-bold md:text-2xl">Personal Information & KYC</h3>
+            </div>
+
+            <h5 className='text-xs md:text-sm mt-3'>Please complete your personal information and KYC to unlock all Ajosquad features and start exploring.</h5>
+
+            <button onClick={() => product.toggleKyc()} className={clsx('px-5 max-w-[205px] py-2 border border-white rounded-md mt-auto',
+
+
+            )}>Fill Personal Information</button>
+
+          </div>}
+         {contractAgreements.data.find((contract: any) => contract.productType === "Ajosquad") && <div className='w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] bg-[#08354C] text-white'>
             <div className='flex gap-2'>
               <div className="mt-2">
                 <LiaFileContractSolid size={24} />
@@ -566,7 +587,7 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
 
             )}>Read & Sign Agreement</button>
 
-          </div>
+          </div>}
           <div>
             {isIframeVisible && (
               <div

@@ -12,6 +12,7 @@ import PageLoader from './spinner/PageLoader'
 import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import AddressAutocomplete from './FormInputs/AutoComplete'
+import { ProductContext } from '../context/ProductContext'
 
 const libraries: ("places")[] = ["places"];
 
@@ -77,6 +78,7 @@ const validationSchema = Yup.object().shape({
 
 const Kyc = () => {
     const [isKycLoading, setIsKycLoading] = React.useState(false)
+    const product: any = React.useContext(ProductContext);
     const [pageLoading, setPageLoading] = React.useState(true)
     const [isModalOpen, setIsModalOpen] = React.useState(true)
     const [verificationUrl, setVerificationUrl] = React.useState(null);
@@ -225,7 +227,7 @@ const Kyc = () => {
 
     return (
 
-        <Modal showCloseButton={false} open={isModalOpen} >
+        <Modal showCloseButton={false} open={product.isKycOpen} >
             <div className='max-h-[90vh] overflow-y-auto'>
 
 
@@ -326,14 +328,24 @@ const Kyc = () => {
                                                             ) : null}
 
                                                             {
-                                                                (form.getFieldProps("others").value === "other" || form.getFieldProps("WhatsApp group").value === "Other") && <TextInput name='other' wrapperClass='mt-3' placeholder='' />
+                                                                (form.getFieldProps("others").value === "other" || form.getFieldProps("others").value === "WhatsApp group" || form.getFieldProps("others").value === "Referrals") && (
+                                                                    <TextInput 
+                                                                        name='other' 
+                                                                        wrapperClass='mt-3' 
+                                                                        placeholder={
+                                                                            form.getFieldProps("others").value === "other" ? "Please specify" : 
+                                                                            form.getFieldProps("others").value === "WhatsApp group" ? "Enter WhatsApp group name" : 
+                                                                            "Enter referral details"
+                                                                        } 
+                                                                    />
+                                                                )
                                                             }
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div className='flex justify-between mt-6'>
-                                                    {/* <button type='button' className='px-5 py-2 border border-[#D42620] text-[#D42620] rounded-md'>Cancel</button> */}
+                                                    <button onClick={() => product.closeKyc(false)} type='button' className='px-5 py-2 border border-[#D42620] text-[#D42620] rounded-md'>Cancel</button>
 
                                                     <Button label='Proceed' isLoading={handleSubmit.isLoading} disabled={handleSubmit.isLoading} className='px-5' />
 

@@ -25,7 +25,7 @@ const events = [
 
 export const ProductProvider = ({ children } : ProductITF) => {
   const [isProductOpen, setIsProductOpen] = useState(false)
-  const [isKycOpen, setIsKycOpen] = useState(true)
+  const [isKycOpen, setIsKycOpen] = useState(false)
 
   function toggleProduct() {
     setIsProductOpen(!isProductOpen)
