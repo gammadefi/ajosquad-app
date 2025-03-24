@@ -11,7 +11,7 @@ import { formatDate2 } from '../../utils/formatTime'
 import Modal from '../../components/Modal/Modal'
 import PayoutModal from '../../components/Payout/admin/PayoutModal'
 import { generateSerialNumber, jsonToCSV } from '../../utils/helpers'
- // Import the jsontocsv function
+// Import the jsontocsv function
 
 const Payout = () => {
     const [openFilter, setOpenFilter] = useState(false);
@@ -52,7 +52,7 @@ const Payout = () => {
         },
         {
             header: "Date",
-            view: (row: any) => <div className='whitespace-nowrap'>{row.payoutDate ? formatDate2(row.payoutDate): "N/A"}</div>,
+            view: (row: any) => <div className='whitespace-nowrap'>{row.payoutDate ? formatDate2(row.payoutDate) : "N/A"}</div>,
         },
         {
             header: "Status",
@@ -98,12 +98,17 @@ const Payout = () => {
     const handleDownload = () => {
         if (payouts && payouts.data) {
             const formattedData = payouts.data.map((payout: any) => {
-                const { user, ...rest } = payout;
+                const { user, bankDetails,Squad, ...rest } = payout;
                 return {
                     ...rest,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
+                    bankName: bankDetails.bankName,
+                    accountName: bankDetails.accountName,
+                    accountNumber: bankDetails.accountNumber,
+                    institutionNumber: bankDetails.institutionNumber,
+                    transitNumber: bankDetails.transitNumber
                 };
             });
             jsonToCSV(formattedData, 'payouts.csv');

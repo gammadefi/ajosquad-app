@@ -100,12 +100,17 @@ const Payment = () => {
     const handleDownload = () => {
         if (payments && payments.data) {
             const formattedData = payments.data.map((payment: any) => {
-                const { User, ...rest } = payment;
+                const { User,bankDetails, ...rest } = payment;
                 return {
                     ...rest,
                     firstName: User.firstName,
                     lastName: User.lastName,
                     email: User.email_address,
+                    bankName: bankDetails.bankName,
+                    accountName: bankDetails.accountName,
+                    accountNumber: bankDetails.accountNumber,
+                    institutionNumber: bankDetails.institutionNumber,
+                    transitNumber: bankDetails.transitNumber
                 };
             });
             jsonToCSV(formattedData, 'payments.csv');

@@ -118,7 +118,7 @@ const Payout = () => {
                         <div className='my-8 flex flex-col lg:flex-row gap-3 justify-between lg:items-center'>
                             <div className='flex justify-between'>
                                 <h3 className='text-xl font-semibold'>All Payout  Transaction</h3>
-                                <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
+                                {/* <button onClick={handleDownload} className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button> */}
                             </div>
                             <div className='flex items-center gap-2'>
                                 <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Search...' />
