@@ -30,6 +30,8 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { fDate, formatDate2, formatStartDate } from '../../utils/formatTime';
 import { generateSerialNumber, jsonToCSV } from '../../utils/helpers';
 import { ProductContext } from '../../context/ProductContext';
+import Modal from '../../components/Modal/Modal';
+import { is } from 'date-fns/locale';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -58,7 +60,7 @@ const Dashboard = () => {
   const activeTab = searchParams.get("activeTab") || "upcoming";
   const profile = useAuth((s) => s.profile);
 
-   const { data: stats, isLoading:isStatsLoading, error:statsError } = useFetchWithParams(
+  const { data: stats, isLoading: isStatsLoading, error: statsError } = useFetchWithParams(
     [`query-all-squads-stats-${profile.id}`, {
       status: stat.toLowerCase(),
       limit: 1000
@@ -77,7 +79,7 @@ const Dashboard = () => {
 
   const { data: squads, isLoading, refetch } = useFetchWithParams(
     ["query-all-squads", {
-      status: activeTab == "pending" ? "upcoming" : activeTab.toLowerCase(),
+      status: activeTab == "Pending" ? "upcoming" : activeTab.toLowerCase(),
 
     }],
     squadServices.getAllSquads,
@@ -179,7 +181,7 @@ const Dashboard = () => {
     },
     {
       header: "Date",
-      view: (row: any) => <div>{formatDate2(row.createdAt)	}</div>,
+      view: (row: any) => <div>{formatDate2(row.createdAt)}</div>,
     },
     {
       header: "Status",
@@ -195,7 +197,7 @@ const Dashboard = () => {
 
   const handleDownload = () => {
     if (transactionData && transactionData.data) {
-        jsonToCSV(transactionData.data, 'transactions.csv');
+      jsonToCSV(transactionData.data, 'transactions.csv');
     }
   };
 
@@ -242,7 +244,7 @@ const Dashboard = () => {
             <div className='grid my-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
               <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrawal' />
-              <InfoCard onfilterChange={(e) => setStat(e) } type='squad' iconName='people' value={stats?.data.filter((squad: any) => hasUser(squad, profile.id)).length.toString() ?? "0"} header='Squad' />
+              <InfoCard onfilterChange={(e) => setStat(e)} type='squad' iconName='people' value={stats?.data.filter((squad: any) => hasUser(squad, profile.id)).length.toString() ?? "0"} header='Squad' />
             </div>
 
             <div className='lg:h-[630px] grid my-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
@@ -312,13 +314,21 @@ const Dashboard = () => {
                           <div onClick={() => setShowBrassSquad(!showBrassSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBrassSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Brass Squad</h3>
-                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBrassSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBrassSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Brass').length : squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
                             </div>
                             <BsChevronDown size={20} className={`transition-all duration-200 ${showBrassSquad && "rotate-180"}`} />
                           </div>
                           <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showBrassSquad ? "max-h-screen" : "max-h-0"}`}>
                             {
-                              squads.data.filter((squad: any) => squad.category === 'Brass').map((squad: any) => (
+                              activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Brass').map((squad: any) => (
                                 <SquadCard
                                   key={squad.id}
                                   id={squad.id}
@@ -331,15 +341,37 @@ const Dashboard = () => {
                                   squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
                                   numOfMaxMembers={10}
                                   selectedPositions={squad?.squadMembers?.length > 0
-                                    ? squad.squadMembers.map((member: any) => member.position).flat()
-                                    : []}
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
                                   hasJoinedSquad={
-                                    hasUser(squad, profile.id)
+                                  hasUser(squad, profile.id)
                                   }
                                   information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
                                   myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
                                 />
-                              ))
+                                ))
+                              : squads.data.filter((squad: any) => squad.category === 'Brass').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
+                                  hasJoinedSquad={
+                                  hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                                ))
                             }
                           </div>
                         </div>
@@ -347,13 +379,21 @@ const Dashboard = () => {
                           <div onClick={() => setShowBronzeSquad(!showBronzeSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showBronzeSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Bronze Squad</h3>
-                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBronzeSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showBronzeSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Bronze').length : squads.data.filter((squad: any) => squad.category === 'Bronze').length}</span>
                             </div>
                             <BsChevronDown size={20} className={`transition-all duration-200 ${showBronzeSquad && "rotate-180"}`} />
                           </div>
                           <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showBronzeSquad ? "max-h-screen" : "max-h-0"}`}>
                             {
-                              squads.data.filter((squad: any) => squad.category === 'Bronze').map((squad: any) => (
+                              activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Bronze').map((squad: any) => (
                                 <SquadCard
                                   key={squad.id}
                                   id={squad.id}
@@ -366,15 +406,37 @@ const Dashboard = () => {
                                   squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
                                   numOfMaxMembers={10}
                                   selectedPositions={squad?.squadMembers?.length > 0
-                                    ? squad.squadMembers.map((member: any) => member.position).flat()
-                                    : []}
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
                                   hasJoinedSquad={
-                                    hasUser(squad, profile.id)
+                                  hasUser(squad, profile.id)
                                   }
                                   information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
                                   myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
                                 />
-                              ))
+                                ))
+                              : squads.data.filter((squad: any) => squad.category === 'Bronze').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
+                                  hasJoinedSquad={
+                                  hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                                ))
                             }
                           </div>
                         </div>
@@ -382,13 +444,21 @@ const Dashboard = () => {
                           <div onClick={() => setShowSilverSquad(!showSilverSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showSilverSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Silver Squad</h3>
-                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showSilverSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showSilverSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Silver').length : squads.data.filter((squad: any) => squad.category === 'Silver').length}</span>
                             </div>
                             <BsChevronDown size={20} className={`transition-all duration-200 ${showSilverSquad && "rotate-180"}`} />
                           </div>
                           <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showSilverSquad ? "max-h-screen" : "max-h-0"}`}>
                             {
-                              squads.data.filter((squad: any) => squad.category === 'Silver').map((squad: any) => (
+                              activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Silver').map((squad: any) => (
                                 <SquadCard
                                   key={squad.id}
                                   id={squad.id}
@@ -401,15 +471,37 @@ const Dashboard = () => {
                                   squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
                                   numOfMaxMembers={10}
                                   selectedPositions={squad?.squadMembers?.length > 0
-                                    ? squad.squadMembers.map((member: any) => member.position).flat()
-                                    : []}
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
                                   hasJoinedSquad={
-                                    hasUser(squad, profile.id)
+                                  hasUser(squad, profile.id)
                                   }
                                   information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
                                   myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
                                 />
-                              ))
+                                ))
+                              : squads.data.filter((squad: any) => squad.category === 'Silver').map((squad: any) => (
+                                <SquadCard
+                                  key={squad.id}
+                                  id={squad.id}
+                                  payoutAmount={squad.amount}
+                                  date={new Date(squad.createdAt)}
+                                  startDate={squad.startDate}
+                                  title={squad.name}
+                                  refetch={refetch}
+                                  category={squad.category}
+                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                  numOfMaxMembers={10}
+                                  selectedPositions={squad?.squadMembers?.length > 0
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
+                                  hasJoinedSquad={
+                                  hasUser(squad, profile.id)
+                                  }
+                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                                ))
                             }
                           </div>
                         </div>
@@ -417,32 +509,62 @@ const Dashboard = () => {
                           <div onClick={() => setShowGoldSquad(!showGoldSquad)} className={`flex justify-between items-center p-4 cursor-pointer rounded-lg border ${showGoldSquad ? "border-[#DCC841] bg-[#DCC8411A]" : "border"}`}>
                             <div className='flex gap-2 items-center'>
                               <h3 className='text-lg'>Gold Squad</h3>
-                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showGoldSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{squads.data.filter((squad: any) => squad.category === 'Brass').length}</span>
+                              <span className={`h-5 w-5 rounded-full p-1 text-white flex items-center justify-center ${showGoldSquad ? "bg-[#DCC31D]" : "bg-primary"}`}>{activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                                ).filter((squad: any) => squad.category === 'Gold').length : squads.data.filter((squad: any) => squad.category === 'Gold').length}</span>
                             </div>
                             <BsChevronDown size={20} className={`transition-all duration-200 ${showGoldSquad && "rotate-180"}`} />
                           </div>
                           <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showGoldSquad ? "max-h-screen" : "max-h-0"}`}>
                             {
-                              squads.data.filter((squad: any) => squad.category === 'Gold').map((squad: any) => (
+                              activeTab === "Pending"
+                              ? squads.data.filter((squad: any) =>
+                                squad.status === "upcoming" &&
+                                squad.squadMembers?.some((member: any) => member.userId === profile.id)
+                              ).filter((squad: any) => squad.category === 'Gold').map((squad: any) => (
                                 <SquadCard
-                                  key={squad.id}
-                                  id={squad.id}
-                                  payoutAmount={squad.amount}
-                                  date={new Date(squad.createdAt)}
-                                  startDate={squad.startDate}
-                                  title={squad.name}
-                                  refetch={refetch}
-                                  category={squad.category}
-                                  squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
-                                  numOfMaxMembers={10}
-                                  selectedPositions={squad?.squadMembers?.length > 0
-                                    ? squad.squadMembers.map((member: any) => member.position).flat()
-                                    : []}
-                                  hasJoinedSquad={
-                                    hasUser(squad, profile.id)
-                                  }
-                                  information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
-                                  myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                key={squad.id}
+                                id={squad.id}
+                                payoutAmount={squad.amount}
+                                date={new Date(squad.createdAt)}
+                                startDate={squad.startDate}
+                                title={squad.name}
+                                refetch={refetch}
+                                category={squad.category}
+                                squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                numOfMaxMembers={10}
+                                selectedPositions={squad?.squadMembers?.length > 0
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
+                                hasJoinedSquad={
+                                  hasUser(squad, profile.id)
+                                }
+                                information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
+                                />
+                              ))
+                              : squads.data.filter((squad: any) => squad.category === 'Gold').map((squad: any) => (
+                                <SquadCard
+                                key={squad.id}
+                                id={squad.id}
+                                payoutAmount={squad.amount}
+                                date={new Date(squad.createdAt)}
+                                startDate={squad.startDate}
+                                title={squad.name}
+                                refetch={refetch}
+                                category={squad.category}
+                                squadDuration={dayjs(squad.endDate).diff(squad.startDate, 'month')}
+                                numOfMaxMembers={10}
+                                selectedPositions={squad?.squadMembers?.length > 0
+                                  ? squad.squadMembers.map((member: any) => member.position).flat()
+                                  : []}
+                                hasJoinedSquad={
+                                  hasUser(squad, profile.id)
+                                }
+                                information={squad?.squadMembers?.find((member: any) => member.userId === profile.id)}
+                                myPosition={squad?.squadMembers?.find((member: any) => member.userId === profile.id)?.position}
                                 />
                               ))
                             }
@@ -514,11 +636,12 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
   const profile: any = useAuth((s) => s.profile);
   const product: any = React.useContext(ProductContext);
   const isVerified: boolean = useAuth((s) => s.verified);
-  
+
   const { setUserProfile } = useAuth();
 
   const [isAgreeing, setIsAgreeing] = useState(false);
   const [isIframeVisible, setIframeVisible] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
 
   const { data: contractAgreements, error, isLoading } = useQuery('contractAgreements', async () => {
     const response = await contractAgreementServices.user.getAllContractAgreements();
@@ -571,7 +694,9 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
             )}>Fill Personal Information</button>
 
           </div>}
-         {contractAgreements.data.find((contract: any) => contract.productType === "Ajosquad") && <div className='w-[350px] h-[214px] flex flex-col rounded-xl p-[16px] bg-[#08354C] text-white'>
+          {contractAgreements.data.find((contract: any) => contract.productType === "Ajosquad") && <div className={clsx('w-[350px] h-[214px] flex flex-col rounded-xl p-[16px]',
+             !isVerified ? "bg-[#0000002E] text-[#1e232c44] " : "bg-[#08354C] text-white"
+          )}>
             <div className='flex gap-2'>
               <div className="mt-2">
                 <LiaFileContractSolid size={24} />
@@ -582,7 +707,7 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
 
             <h5 className='text-xs md:text-sm mt-3'>Almost done! Read and sign our User Agreement to unlock all Ajosquad features and start exploring.</h5>
 
-            <button onClick={handleOpenIframe} className={clsx('px-5 max-w-[205px] py-2 border border-white rounded-md mt-auto',
+            <button  disabled={!isVerified} onClick={handleOpenIframe} className={clsx('px-5 max-w-[205px] disabled:cursor-not-allowed py-2 border border-white rounded-md mt-auto',
 
 
             )}>Read & Sign Agreement</button>
@@ -634,6 +759,11 @@ const Verification = ({ kycVerified, activeSquad } = { kycVerified: false, activ
           </div>
         </div>
       </div>
+
+      <Modal open={successModal} onClick={() => setSuccessModal(false)} showCloseButton={false}>
+        <SuccessModal onClick={() => setSuccessModal(false)} title="Registration Process Complete" />
+      </Modal>
+
     </div>
   )
 }
@@ -662,6 +792,29 @@ const UpcomingPayout = ({ payout }: { payout: any }) => {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+const SuccessModal = ({ onClick, title }: { onClick: () => void, title: string }) => {
+  return (
+    <div className='md:w-[450px] mx-auto flex flex-col items-center gap-5'>
+      <img src="/Trophy.svg" alt="Email verified" className='w-52 h-52' />
+      <div>
+        <h3 className='font-bold text-2xl text-center'>
+          Registration Process Complete
+        </h3>
+      </div>
+      <p className='text-sm text-center'>
+        Your registration is now complete. You can proceed to join a squad and start your journey with us.
+      </p>
+      <button
+        type='button'
+        onClick={onClick}
+        className='bg-primary font-semibold w-full rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
+      >
+        Dismiss
+      </button>
     </div>
   )
 }

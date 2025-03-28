@@ -34,14 +34,14 @@ const Payment = () => {
             header: "Member Name",
             view: (row: any) => <div>{row.User.firstName} {row.User.lastName}</div>,
         },
-        {
-            header: "Member ID",
-            view: (row: any) => <div>{row.squadMemberId}</div>,
-        },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.email || "N/A"}</div>,
-        },
+        // {
+        //     header: "Member ID",
+        //     view: (row: any) => <div>{row.squadMemberId}</div>,
+        // },
+        // {
+        //     header: "Member Email",
+        //     view: (row: any) => <div>{row.email || "N/A"}</div>,
+        // },
         {
             header: "Payment Description",
             view: (row: any) => <div>{row.description}</div>,
@@ -55,7 +55,7 @@ const Payment = () => {
             view: (row: any) => <div>CAD$ {row.amount}</div>,
         },
         {
-            header: "Date",
+            header: "Debit Date",
             view: (row: any) => <div className='whitespace-nowrap'>{formatDate2(row.dueDate)}</div>,
         },
         {

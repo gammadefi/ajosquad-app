@@ -36,6 +36,8 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
   const [openJoinSquadForm, setOpenJoinSquadForm] = useState<boolean>(false);
+  const isVerified: boolean = useAuth((s) => s.verified);
+
   const amount: any = {
     "Silver": 500,
     "Gold": 1000,
@@ -73,7 +75,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
               <span>Already Joined Squad</span>
               {/* <FaArrowRight /> */}
             </div>
-          </button> : <button disabled={selectedPositions.length === 10} onClick={() => setOpenModal(!openModal)} className="w-full rounded-lg p-0.5 bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]">
+          </button> : <button disabled={selectedPositions.length === 10 || !isVerified} onClick={() => setOpenModal(!openModal)} className="w-full disabled:cursor-not-allowed rounded-lg p-0.5 bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]">
             <div className="bg-white flex justify-center font-medium items-center gap-2 py-2 px-10 rounded-[calc(0.5rem-2px)]">
               <span>Join Squad</span>
               <FaArrowRight />
@@ -113,7 +115,7 @@ const SquadCard = ({ id, date, payoutAmount, category, title, numOfMaxMembers, s
 
 export default SquadCard
 
-const ConnectBank = ({ squadType, onClick, id , title}: { squadType: string, onClick: () => void, id: string, title:string }) => {
+const ConnectBank = ({ squadType, onClick, id, title }: { squadType: string, onClick: () => void, id: string, title: string }) => {
   const profile = useAuth((s) => s.profile);
   const [step, setStep] = useState(1);
   const [hasConnectedBank, setHasConnectedBank] = useState(false);
@@ -135,7 +137,7 @@ const ConnectBank = ({ squadType, onClick, id , title}: { squadType: string, onC
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
-  
+
   useEffect(() => {
     const storageKey = `squadRegistrationFlow_${profile.id}_${id}`;
     const savedData = localStorage.getItem(storageKey);

@@ -39,7 +39,7 @@ const Payout = () => {
             view: (row: any) => <div>{row.amount}</div>,
         },
         {
-            header: "Date",
+            header: "Payout Date",
             view: (row: any) => <div>{fDate(row.payoutDate)}</div>,
         },
         {
