@@ -83,7 +83,7 @@ const AddContractAgreementForm = ({ closeModal }: { closeModal: () => void }) =>
                       </div>
                       <div className='space-y-1'>
                         <label htmlFor="contractDocumentURL">Uploaded Contract Agreement</label>
-                        <FileUpload name='contractDocumentURL' fileType='document' />
+                        <FileUpload allowWordDocument={true} name='contractDocumentURL' fileType='document' />
                       </div>
                     </>
                     <div className='mt-5 flex justify-between'>
