@@ -32,15 +32,15 @@ const Payout = () => {
         },
         {
             header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            view: (row: any) => <div>{row.position || "N/A"}</div>,
         },
         {
             header: "Amount",
             view: (row: any) => <div>{row.amount}</div>,
         },
         {
-            header: "Date",
-            view: (row: any) => <div>{fDate(row.payoutDate)}</div>,
+            header: "Payout Date",
+            view: (row: any) => <div>{ row.payoutDate ? fDate(row.payoutDate) : "N/A"}</div>,
         },
         {
             header: "Status",

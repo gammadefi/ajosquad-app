@@ -49,7 +49,7 @@ const Modal: FunctionComponent<ModalPropsInterface> = ({ children, onClick = () 
 					</div>
 					}
 					
-					<div className="modal-body p-5 rounded-xl">{children}</div>
+					<div className="modal-body p-5 overflow-y-auto rounded-xl">{children}</div>
 				</div>
 			</div>
 		</div>

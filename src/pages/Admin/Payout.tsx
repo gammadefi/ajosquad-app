@@ -34,10 +34,10 @@ const Payout = () => {
             header: "Member Name",
             view: (row: any) => <div>{`${row.user.firstName} ${row.user.lastName}`}</div>
         },
-        {
-            header: "Member Email",
-            view: (row: any) => <div>{row.email || "N/A"}</div>,
-        },
+        // {
+        //     header: "Member Email",
+        //     view: (row: any) => <div>{row.email || "N/A"}</div>,
+        // },
         {
             header: "Payment Description",
             view: (row: any) => <div>{row.description}</div>,
@@ -51,7 +51,7 @@ const Payout = () => {
             view: (row: any) => <div>CAD$ {row.amount}</div>,
         },
         {
-            header: "Date",
+            header: "Payout Date",
             view: (row: any) => <div className='whitespace-nowrap'>{row.payoutDate ? formatDate2(row.payoutDate) : "N/A"}</div>,
         },
         {

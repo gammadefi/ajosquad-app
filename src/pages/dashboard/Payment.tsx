@@ -37,7 +37,7 @@ const Payment = () => {
         },
         {
             header: "Position",
-            view: (row: any) => <div>{row.position}</div>,
+            view: (row: any) => <div>{ row.position?.length > 0 ? row.position : "N/A"}</div>,
         },
         {
             header: "Amount",
