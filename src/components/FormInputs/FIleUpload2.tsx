@@ -33,7 +33,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ name, wrapperClass, onFileChang
         const maxSize = 5 * 1024 * 1024; // 5 MB
 
         if (!validFormats.includes(file.type)) {
-            setUploadError(`Invalid file format. Supported formats are ${fileType === "document" ? "PDF, WPS, WORD" : "PNG, JPG, SVG"}`);
+            const supportedFormats = fileType === "document" 
+            ? `PDF${allowWordDocument ? ", WORD" : ""}, JPG, PNG` 
+            : "PNG, JPG, SVG";
+            setUploadError(`Invalid file format. Supported formats are ${supportedFormats}`);
             return false;
         }
 
