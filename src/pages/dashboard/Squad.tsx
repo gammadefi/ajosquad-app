@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SquadCard from '../../components/Squad/SquadCard';
 import { squadServices } from '../../services/squad';
 import SquadCategoryTabBar from '../../components/Tab/SquadCategoryTabBar';
@@ -6,12 +6,17 @@ import dayjs from 'dayjs';
 import TabBar2 from '../../components/Tab/TabBar2';
 import useFetchWithParams from '../../hooks/useFetchWithParams';
 import { useAuth } from '../../zustand/auth.store';
+import React from 'react';
+import { ProductContext } from '../../context/ProductContext';
 
 
 const Squad = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const navigate = useNavigate()
   const activeTab = searchParams.get("activeTab") || "upcoming";
+   const product: any = React.useContext(ProductContext);
+    const isVerified: boolean = useAuth((s) => s.verified);
   // const squadCartegory = searchParams.get("squadType") || "Brass";
   const profile = useAuth((s) => s.profile);
 
@@ -58,6 +63,20 @@ const Squad = () => {
           activeTab={squadCartegory}
         />
       </div> */}
+
+      {!isVerified && (
+        <div className="mt-5 p-4 bg-yellow-100 text-yellow-800 rounded-md">
+          <p className="mb-3">
+        You cannot join a squad until you complete your KYC and Agreement.
+          </p>
+          <button
+        onClick={() => navigate("/dashboard")}
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+        Complete KYC
+          </button>
+        </div>
+      )}
       {
         isLoading &&
         <div className='mt-10 flex justify-center'>
