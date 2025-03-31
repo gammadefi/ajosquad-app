@@ -102,7 +102,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
     <>
       {
         showFinalModal ? <SuccessModal content={finalModalContent} closeModal={closeModal} /> :
-          <div className='md:w-[500px]'>
+          <div className='md:w-[500px] h-[90vh] overflow-y-auto '>
             {
               step === 1 &&
               <>
@@ -110,7 +110,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
                 <div className="w-full rounded-xl border-[0.5px] border-[#B4B8BB]">
                   <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl w-full">
                     <a href={data.data.document_url} className='w-.datafull' target="_blank" rel="noopener noreferrer" download="Guarantor form">
-                      <img src={convertToThumbnailUrl(data.data.document_url) || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
+                      <img src={convertToThumbnailUrl(data.data.document_url) || "/DocumentPrev.svg"} alt="" className="max-h-[120px] w-full" />
                     </a>
                   </div>
                   
@@ -129,7 +129,7 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
                   
                   <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl w-full">
                     <a href={data.data.id_url} className='w-.datafull' target="_blank" rel="noopener noreferrer" download="Guarantor form">
-                      <img src={convertToThumbnailUrl(data.data.id_url) || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
+                      <img src={convertToThumbnailUrl(data.data.id_url) || "/DocumentPrev.svg"} alt="" className="max-h-[120px] w-full" />
                     </a>
                   </div>
                   <div className="px-4 py-3 flex justify-between">
@@ -146,9 +146,9 @@ export default function GuarantorVerificationModal({ id, closeModal }: { id: str
                 {
                   data.data.employmentDocument_url  && <div className="w-full mt-3 rounded-xl border-[0.5px] border-[#B4B8BB]">
                   
-                  <div className="bg-[#EEEFF0] px-5 pt-5 rounded-t-xl w-full">
+                  <div className="bg-[#EEEFF0]  px-5 pt-5 rounded-t-xl w-full">
                     <a href={data.data.id_url} className='w-.datafull' target="_blank" rel="noopener noreferrer" download="Guarantor form">
-                      <img src={convertToThumbnailUrl(data.data.employmentDocument_url) || "/DocumentPrev.svg"} alt="" className="max-h-28 w-full" />
+                      <img src={convertToThumbnailUrl(data.data.employmentDocument_url) || "/DocumentPrev.svg"} alt="" className="max-h-[120px] w-full" />
                     </a>
                   </div>
                   <div className="px-4 py-3 flex justify-between">
