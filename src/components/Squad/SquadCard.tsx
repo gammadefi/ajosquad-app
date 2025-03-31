@@ -154,7 +154,7 @@ const ConnectBank = ({ squadType, onClick, id, title }: { squadType: string, onC
     if (connected === 'true') {
       console.log('GoCardless connected successfully. Perform action here.');
       if (authorisationUrl !== "") {
-        setHasConnectedBank(true)
+       
         // Update the registration flow storage
         const storageKey = `squadRegistrationFlow_${profile.id}_${id}`;
         const savedData = localStorage.getItem(storageKey);
@@ -166,6 +166,7 @@ const ConnectBank = ({ squadType, onClick, id, title }: { squadType: string, onC
           }));
         }
         localStorage.removeItem("connectedGocardless")
+        setHasConnectedBank(true)
         onClick(); // Proceed to next step
       }
     } else if (connected === 'false') {
