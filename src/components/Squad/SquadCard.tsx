@@ -154,20 +154,27 @@ const ConnectBank = ({ squadType, onClick, id, title }: { squadType: string, onC
     if (connected === 'true') {
       console.log('GoCardless connected successfully. Perform action here.');
       if (authorisationUrl !== "") {
-       
         // Update the registration flow storage
         const storageKey = `squadRegistrationFlow_${profile.id}_${id}`;
         const savedData = localStorage.getItem(storageKey);
         if (savedData) {
           const parsedData = JSON.parse(savedData);
           localStorage.setItem(storageKey, JSON.stringify({
-            ...parsedData,
-            hasConnectedBank: true
+        ...parsedData,
+        hasConnectedBank: true
           }));
+        }else {
+          localStorage.setItem(storageKey, JSON.stringify({
+            hasConnectedBank: true
+          }))
         }
-        localStorage.removeItem("connectedGocardless")
-        setHasConnectedBank(true)
-        onClick(); // Proceed to next step
+        localStorage.removeItem("connectedGocardless");
+        setHasConnectedBank(true);
+
+        // Ensure the state update is reflected immediately
+        setTimeout(() => {
+          onClick(); // Proceed to next step
+        }, 0);
       }
     } else if (connected === 'false') {
       console.log('GoCardless connection failed. Perform action here.');
