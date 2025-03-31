@@ -124,8 +124,11 @@ const Step1 = ({ step, setStep, formData, setFormData, selecetedPosition }: { st
             <Form>
               <div className="grid gap-4 grid-cols-2 items-center">
                 {positions.map((position, index) => {
-                  const isDisabled = selecetedPosition.includes(`POSITION_${position}`);
-                  console.log(isDisabled, selecetedPosition)
+            
+                    const isDisabled = position !== "1" 
+                    ? selecetedPosition.includes(`POSITION_${position}`) 
+                    : ["POSITION_1", "POSITION_2", "POSITION_3", "POSITION_4", "POSITION_5"].every(pos => selecetedPosition.includes(pos));
+                    console.log(isDisabled, selecetedPosition);
                   return (
                     <div key={index} className="py-2 h-[48px] px-4 flex items-center border gap-2">
                       {
@@ -166,15 +169,15 @@ const Step1 = ({ step, setStep, formData, setFormData, selecetedPosition }: { st
                 className="text-red-500 text-sm mt-2"
               />
               <div className="mt-5 flex justify-between">
-                <button
+                {/* <button
                   type="button"
                   className="border border-primary font-medium px-10 rounded-lg"
                 >
                   Back
-                </button>
+                </button> */}
                 <button
                   type='submit'
-                  className='bg-primary font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
+                  className='bg-primary ml-auto font-semibold px-10 rounded-lg text-white inline-flex items-center gap-3 justify-center text-center p-3 disabled:bg-opacity-50'
                 >
                   Proceed
                   <FaArrowRight />
