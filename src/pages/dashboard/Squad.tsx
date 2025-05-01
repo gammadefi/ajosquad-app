@@ -88,7 +88,7 @@ const Squad = () => {
         squads &&
         <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
           {
-            [].length === 0 ?  <div className='flex justify-center col-span-3 items-center'> <TableEmpty image='/empty-states/people.png' subtitle='No squads yet! Squads will be available soon' title='No squads Yet' /></div> :
+            squads.data.length === 0 ?  <div className='flex justify-center col-span-3 items-center'> <TableEmpty image='/empty-states/people.png' subtitle='No squads yet! Squads will be available soon' title='No squads Yet' /></div> :
             activeTab === "pending" ? squads.data.filter((squad: any) =>
               squad.status === "upcoming" &&
               squad.squadMembers?.some((member: any) => member.userId === profile.id)
