@@ -15,10 +15,9 @@ import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject'
 
 const Payment = () => {
     const [openFilter, setOpenFilter] = useState(false);
-    const [filterParams, setFilterParams] = useState({});
-    const [searchParams, setSearchParams] = useSearchParams()
     const [lastMonths, setLastMonths] = useState("All Time");
-    const searchParamsObject = useSearchParamsToObject();
+    const {status, ...searchParamsObject} = useSearchParamsToObject();
+    const newFIlterParams = {status, }
 
 
     const profile = useAuth((s) => s.profile)
@@ -65,8 +64,8 @@ const Payment = () => {
             ...searchParamsObject,
             page: currentPage,
             paymentType: "AjosquadPayment",
-            search
-           
+            search,
+            paymentStatus: status // Added paymentStatus while keeping status
         }],
         PaymentService.getPayments,
         {
@@ -78,6 +77,8 @@ const Payment = () => {
             refetchOnMount: true,
         }
     )
+
+    console.log(searchParamsObject);
 
     const { data: paymentsTotal, isLoading: isLoadingCount, refetch : refetchCount } = useFetchWithParams(
         [`query-all-total-payments-${profile.id}`, {
@@ -94,11 +95,6 @@ const Payment = () => {
         }
     )
 
-    const handleDownload = () => {
-        if (payments && payments.data) {
-            jsonToCSV(payments.data, 'payments.csv');
-        }
-    };
 
     if (isLoadingCount) return <PageLoader />
     if (error) return <div className='px-3 md:px-6 text-center text-lg mt-10'>Error fetching payment history</div>
