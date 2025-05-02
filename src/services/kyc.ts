@@ -1,3 +1,4 @@
+import { verify } from "crypto";
 import { createApiClient } from "../utils/api"
 
 
@@ -18,6 +19,13 @@ export const KycServices = {
 
     kycCallbac : async (payload: any) => {
         const response = await createApiClient().post(`/user/kyc/callback`, payload);
+        return response.data;
+    },
+    verifyKyc : async (id: string) => {
+        const payload = {
+            "kycVerificationStatus": "verified"   
+        }
+        const response = await createApiClient().patch(`/admin/update-user-kyc/${id}`, payload);
         return response.data;
     }
 }

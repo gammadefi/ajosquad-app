@@ -8,11 +8,14 @@ import { userServices } from '../../services/user';
 import PageLoader from '../../components/spinner/PageLoader';
 import clsx from 'clsx';
 import { fDate } from '../../utils/formatTime';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import { generateSerialNumber } from '../../utils/helpers';
+import { Action } from '../../components/Action/Action';
+import { KycServices } from '../../services/kyc';
+import toast from 'react-hot-toast';
 
 const KycPage = () => {
     const navigate = useNavigate();
@@ -23,7 +26,7 @@ const KycPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
 
     const { data: count, isLoading, error } = useQuery(['admin-user-count'], userServices.user.countAll);
-    const { data: users, isLoading: isLoadingUsers } = useFetchWithParams([`get-all-users+${profile.id}`, {
+    const { data: users, isLoading: isLoadingUsers, refetch } = useFetchWithParams([`get-all-users+${profile.id}`, {
         page: currentPage,
         ...searchParamsObject
     }], userServices.user.getAllUsers, {
@@ -33,7 +36,23 @@ const KycPage = () => {
 
     })
 
+    const handleChangeUserStatus = useMutation(
 
+        async (id: any) => {
+        
+            return await KycServices.verifyKyc(id)
+        },
+        {
+
+            onSuccess: (data: any) => {
+                toast.success("User status changed successfully");
+                refetch()
+                // Optionally, you can refetch the users or update the state here
+            },
+            onError: (error: any) => {
+                toast.error("Error changing user status");
+            }
+        });
 
     const columns = [
         {
@@ -63,6 +82,24 @@ const KycPage = () => {
             header: "Status",
             view: (row: any) => <span className={clsx("px-2 py-1 rounded-md whitespace-nowrap", row?.kycVerificationStatus === "verified" ? "bg-[#E7F6EC] text-[#036B26]" : "bg-[#FBEAE9] text-[#9E0A05]")} >{row?.kycVerificationStatus === "verified" ? "Verified" : "Not Verified"}</span>,
         },
+        {
+            header: "Action",
+            view: (row: any) => (
+                row?.kycVerificationStatus !== "verified" ? (
+                    <Action
+                        options={[
+                            {
+                                name: "Verify",
+                                action: () => {
+                                    handleChangeUserStatus.mutate(row.id);
+                                    console.log("Verify user:", row.id);
+                                },
+                            }
+                        ]}
+                    />
+                ) : null
+            ),
+        }
     ];
 
     return (
