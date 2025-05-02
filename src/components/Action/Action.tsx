@@ -62,7 +62,7 @@ export const Action = ({
                     className={clsx(
                       "text-left pl-4 pr-10 py-2 text-sm",
                       "min-w-[8rem] inline-block font-medium",
-                      "hover:bg-fara-blue hover:text-white",
+                      "hover:bg-fara-blue hover:text-primary",
                       option.disabled &&
                         "opacity-50 cursor-not-allowed text-kGrey",
                       typeof option.name === "string"
