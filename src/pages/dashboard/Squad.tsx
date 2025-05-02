@@ -89,9 +89,21 @@ const Squad = () => {
         <div className='mt-10 grid lg:grid-cols-3 gap-4 lg:gap-8'>
           {
             squads.data.length === 0 ? (
-              <div className='flex justify-center col-span-3 items-center'>
-                <TableEmpty image='/empty-states/people.png' subtitle='No squads yet! Squads will be available soon' title='No squads Yet' />
-              </div>
+                <div className='flex justify-center col-span-3 items-center'>
+                <TableEmpty 
+                  image='/empty-states/people.png' 
+                  subtitle={
+                  activeTab === "upcoming" 
+                    ? "No upcoming squads available at the moment" 
+                    : activeTab === "active"
+                    ? "No active squads at the moment"
+                    : activeTab === "completed"
+                    ? "No completed squads yet"
+                    : "No squads available"
+                  } 
+                  title={`No ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Squads`} 
+                />
+                </div>
             ) : activeTab === "pending" ? (
               (() => {
                 const pendingSquads = squads.data.filter((squad: any) =>
