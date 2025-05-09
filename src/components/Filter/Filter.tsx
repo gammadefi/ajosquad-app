@@ -121,7 +121,7 @@ const Filter: FunctionComponent<FilterITF> = ({
 
                                     {filterBy.includes("paymentStatus") && (
                                         <div className='w-full'>
-                                            <select name="paymentStatus" value={status} onChange={(e) => setPaymentStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                            <select name="paymentStatus" value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                 <option disabled value="">Payment Status</option>
                                                 <option value="pending">Pending</option>
                                                 <option value="completed">Completed</option>
