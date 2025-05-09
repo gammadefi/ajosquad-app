@@ -12,19 +12,21 @@ const Product = () => {
         {
             image: "ajo-squad.png",
             title: "AjoSquad",
-            description: "Join Ajosquad's Ajo community: Contribute weekly, connect with others, and build financial prosperity together"
+            description: "Join Ajosquad's Ajo community: Contribute weekly, connect with others, and build financial prosperity together",
+            comingSoon: false
         },
         {
             image: "ajo-home.png",
             title: "AjoHome",
             description:"Join AjoHome, Ajosquad's community-driven platform, where you collaborate with like-minded investors to achieve financial success through real estate investing.",
+            comingSoon: false
         },
-        {
-            image: "ajo-business.png",
-            title: "AjoBusiness",
-            description:"Ajosquad a product that help you grow your finances by a weekly contribution called Ajo",
-            comingSoon: true
-        }
+        // {
+        //     image: "ajo-business.png",
+        //     title: "AjoBusiness",
+        //     description:"Ajosquad a product that help you grow your finances by a weekly contribution called Ajo",
+        //     comingSoon: true
+        // }
     ]
     return (
         <div className='px-3 py-20 md:px-12'>
@@ -35,7 +37,7 @@ const Product = () => {
             {
                 products.map((product, index) => <ProductCard key={index} {...product} selected={selected === product.title} onClick={(title) => {
                     setSelected(title)
-                    if (product.comingSoon) {
+                    if (product?.comingSoon) {
                         setError(true)
                     }else{
                         setError(false)

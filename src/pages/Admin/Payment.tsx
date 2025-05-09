@@ -20,7 +20,7 @@ const Payment = () => {
     const [openModal, setOpenModal] = useState(false);
     const searchParamsObject = useSearchParamsToObject();
     const [search, setSearch] = useState("");
-    
+
 
     const columns = [
         {
@@ -48,7 +48,7 @@ const Payment = () => {
         },
         {
             header: "Type",
-            view: (row: any) => <div>{row.paymentType	 || "N/A"}</div>,
+            view: (row: any) => <div>{row.paymentType || "N/A"}</div>,
         },
         {
             header: "Amount",
@@ -60,8 +60,8 @@ const Payment = () => {
         },
         {
             header: "Status",
-            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.status === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : row.status === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}>{row.status === 'completed' ? "Successful" : row.status === 'upcoming' ? "Upcoming" : "Pending"}</span>
-            ,
+            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.paymentStatus === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : row.paymentStatus === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}> {row.paymentStatus === 'completed' ? "Successful" : row.paymentStatus === 'upcoming' ? "Upcoming" : "Pending"}</span>
+
         },
     ];
 
@@ -82,6 +82,8 @@ const Payment = () => {
         }
     )
 
+    // console.log(payments)
+
     const { data: paymentsTotal, isLoading: isLoadingCount } = useFetchWithParams(
         ["query-all-total-payments-admin", {
             months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
@@ -100,7 +102,7 @@ const Payment = () => {
     const handleDownload = () => {
         if (payments && payments.data) {
             const formattedData = payments.data.map((payment: any) => {
-                const { User,bankDetails, ...rest } = payment;
+                const { User, bankDetails, ...rest } = payment;
                 return {
                     ...rest,
                     firstName: User.firstName,
