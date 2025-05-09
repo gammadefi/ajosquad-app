@@ -4,6 +4,7 @@ import Modal from './Modal';
 import { ProductCard } from '../../pages/setup/Product';
 import { Button } from '../Button/Button';
 import { FaArrowRight } from 'react-icons/fa6';
+import { combine } from 'zustand/middleware';
 
 const OurProductModal = ({ open, onClick = () => { } }: { open: boolean, onClick?: () => void }) => {
     // const profile: any = useAuth((s) => s.profile);
@@ -20,11 +21,6 @@ const OurProductModal = ({ open, onClick = () => { } }: { open: boolean, onClick
             image: "ajo-home.png",
             title: "AjoHome",
             description: "Join AjoHome, Ajosquad's community-driven platform, where you collaborate with like-minded investors to achieve financial success through real estate investing.",
-        },
-        {
-            image: "ajo-business.png",
-            title: "AjoBusiness",
-            description: "Ajosquad a product that help you grow your finances by a weekly contribution called Ajo",
             comingSoon: true
         }
     ]
