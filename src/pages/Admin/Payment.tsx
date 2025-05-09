@@ -160,7 +160,7 @@ const Payment = () => {
                     </button>
                     <button onClick={handleDownload} className='hidden lg:block text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
                 </div>
-                <Filter filterBy={["amount", "date", "position", "squad", "status"]} open={openFilter} onClose={() => setOpenFilter(false)} />
+                <Filter filterBy={["amount", "date", "position", "squad", "paymentStatus"]} open={openFilter} onClose={() => setOpenFilter(false)} />
             </div>
 
             {

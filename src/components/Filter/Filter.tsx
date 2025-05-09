@@ -8,7 +8,7 @@ interface FilterITF {
     onClear?: () => void;
     onFilter?: () => void;
     open?: boolean;
-    filterBy: ("date" | "amount" | "status" | "squad" | "position")[];
+    filterBy: ("date" | "amount" | "status" | "squad" | "position" | "paymentStatus")[];
     onClose?: () => void;
 
 }
@@ -21,6 +21,7 @@ const Filter: FunctionComponent<FilterITF> = ({
     onClose = () => { } }) => {
     const [searchParams] = useSearchParams();
     const [status, setStatus] = useState(searchParams.get("status") || "");
+    const [paymentStatus, setPaymentStatus] = useState(searchParams.get("paymentStatus") || "");
     const [squad, setSquad] = useState(searchParams.get("squad") || "");
     const [position, setPosition] = useState(searchParams.get("position") || "");
     const [amount, setAmount] = useState({
@@ -41,7 +42,7 @@ const Filter: FunctionComponent<FilterITF> = ({
     })
 
     const handleOnFilter = () => {
-        const filters = { squad, position, status, startDate: date.startDate, endDate: date.endDate, minAmount: amount.minAmount, maxAmount: amount.maxAmount }
+        const filters = { squad, position, status, startDate: date.startDate, endDate: date.endDate, minAmount: amount.minAmount, maxAmount: amount.maxAmount, paymentStatus }
         const filteredParams = new URLSearchParams();
         Object.entries(filters).forEach(([key, value]) => {
             if (value.trim() !== "") {
@@ -55,7 +56,7 @@ const Filter: FunctionComponent<FilterITF> = ({
 
     const handleOnClearFilters = () => {
         setSearchParams({}, { replace: true });
-        resetFilters({ setStatus, setSquad, setPosition, setAmount, setDate });
+        resetFilters({ setStatus, setSquad, setPosition, setAmount, setDate, setPaymentStatus });
         onClose();
     };
 
@@ -116,6 +117,18 @@ const Filter: FunctionComponent<FilterITF> = ({
                                                 </select>
                                             </div>
                                         )
+                                    }
+
+                                    {filterBy.includes("paymentStatus") && (
+                                        <div className='w-full'>
+                                            <select name="paymentStatus" value={status} onChange={(e) => setPaymentStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
+                                                <option disabled value="">Payment Status</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="completed">Completed</option>
+                                                <option value="upcoming">Upcoming</option>
+                                            </select>
+                                        </div>
+                                    )
                                     }
                                     {
                                         filterBy.includes("squad") && (
@@ -276,6 +289,7 @@ interface FilterState {
     setPosition: (val: string) => void;
     setAmount: (val: { minAmount: string; maxAmount: string }) => void;
     setDate: (val: { startDate: string; endDate: string }) => void;
+    setPaymentStatus: (val: string) => void;
 }
 
 const resetFilters = ({
@@ -284,10 +298,12 @@ const resetFilters = ({
     setPosition,
     setAmount,
     setDate,
+    setPaymentStatus
 }: FilterState) => {
     setStatus("");
     setSquad("");
     setPosition("");
     setAmount({ minAmount: "", maxAmount: "" });
     setDate({ startDate: "", endDate: "" });
+    setPaymentStatus("");
 };
