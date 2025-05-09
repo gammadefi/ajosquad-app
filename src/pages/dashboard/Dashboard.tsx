@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { LiaFileContractSolid } from "react-icons/lia";
 import { useAuth } from '../../zustand/auth.store'
 import clsx from 'clsx'
-import People from '../../icons/reusables/people';
 import TodayDate from '../../components/common/TodayDate';
 import { InfoCard } from '../../components/InfoCard/InfoCard';
 import { GraphWrapper } from '../../components/Graph/GraphWrapper';
@@ -21,7 +20,7 @@ import dayjs from 'dayjs';
 import { PayoutService } from '../../services/payout';
 import { PaymentService } from '../../services/payment';
 import Filter from '../../components/Filter/Filter';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { statisticsServices } from '../../services/statistics';
 import { useSearchParamsToObject } from '../../hooks/useSearchParamsToObject';
 import PageLoader from '../../components/spinner/PageLoader';
@@ -31,7 +30,6 @@ import { fDate, formatDate2, formatStartDate } from '../../utils/formatTime';
 import { generateSerialNumber, jsonToCSV } from '../../utils/helpers';
 import { ProductContext } from '../../context/ProductContext';
 import Modal from '../../components/Modal/Modal';
-import { is } from 'date-fns/locale';
 
 const fetchDashboardGraphData = async () => {
   const res = await statisticsServices.getUserStatDashboard();
@@ -51,8 +49,6 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [lastMonthsPayment, setLastMonthsPayment] = useState("All Time");
   const [stat, setStat] = useState("active");
-
-  console.log(kycVerified);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);

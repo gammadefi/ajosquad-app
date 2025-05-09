@@ -2,7 +2,7 @@ import React, { FunctionComponent, useRef, useState } from 'react'
 import useOnClickOutside from '../../hooks/useClickOutside';
 import { Button } from '../Button/Button';
 import { FaChevronDown } from 'react-icons/fa6';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface FilterITF {
     onClear?: () => void;
@@ -51,6 +51,13 @@ const Filter: FunctionComponent<FilterITF> = ({
         setSearchParams(filteredParams);
         onClose();
     }
+
+
+    const handleOnClearFilters = () => {
+        setSearchParams({}, { replace: true });
+        resetFilters({ setStatus, setSquad, setPosition, setAmount, setDate });
+        onClose();
+    };
 
     return (
         <>
@@ -104,7 +111,7 @@ const Filter: FunctionComponent<FilterITF> = ({
                                                 <select name="status" value={status} onChange={(e) => setStatus(e.target.value)} id="status" className='bg-[#F5F5F9] w-full md:w-fit disabled:text-[#666666] py-2.5 px-2 border-[0.4px] border-[#C8CCD0] rounded text-lg'>
                                                     <option disabled value="">Status</option>
                                                     <option value="pending">Pending</option>
-                                                    <option value="paid">Paid</option>
+                                                    <option value="completed">Paid</option>
                                                     <option value="upcoming">Upcoming</option>
                                                 </select>
                                             </div>
@@ -247,10 +254,8 @@ const Filter: FunctionComponent<FilterITF> = ({
                                         }
                                     </div>
                                     <div className='ml-auto flex items-center gap-2'>
+                                        <Button className='bg-red-500' onClick={handleOnClearFilters} label="Clear Filters" />
                                         <Button onClick={handleOnFilter} label="Filter Search" />
-                                        {/* <button className='border-gray-400 border px-3 h-10 flex focus:outline-none justify-start my-auto rounded  items-center default-button text-center'>
-                                        Clear
-                                    </button> */}
                                     </div>
                                 </div>
                             </div>
@@ -263,3 +268,26 @@ const Filter: FunctionComponent<FilterITF> = ({
 }
 
 export default Filter
+
+
+interface FilterState {
+    setStatus: (val: string) => void;
+    setSquad: (val: string) => void;
+    setPosition: (val: string) => void;
+    setAmount: (val: { minAmount: string; maxAmount: string }) => void;
+    setDate: (val: { startDate: string; endDate: string }) => void;
+}
+
+const resetFilters = ({
+    setStatus,
+    setSquad,
+    setPosition,
+    setAmount,
+    setDate,
+}: FilterState) => {
+    setStatus("");
+    setSquad("");
+    setPosition("");
+    setAmount({ minAmount: "", maxAmount: "" });
+    setDate({ startDate: "", endDate: "" });
+};
