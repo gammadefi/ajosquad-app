@@ -71,7 +71,7 @@ const Index = () => {
         },
         {
             header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            view: (row: any) => <div> {row.type === "AjosquadPayment" ? parseInt(row.amount) / 10 : row.amount}</div>,
         },
         {
             header: "Date",
