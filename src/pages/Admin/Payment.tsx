@@ -52,7 +52,7 @@ const Payment = () => {
         },
         {
             header: "Amount",
-            view: (row: any) => <div>CAD$ {parseInt(row.amount)/10}</div>,
+            view: (row: any) => <div>CAD$ {parseInt(row.amount)}</div>,
         },
         {
             header: "Debit Date",
