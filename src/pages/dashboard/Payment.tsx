@@ -80,7 +80,7 @@ const Payment = () => {
 
     const { data: paymentsTotal, isLoading: isLoadingCount, refetch : refetchCount } = useFetchWithParams(
         [`query-all-total-payments-${profile.id}`, {
-            months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2" 
+            months: lastMonths === "All Time" ? "" : lastMonths === "Last Month" ? "1" : "2"
         }],
         PaymentService.getTotalPayment,
         {
@@ -101,7 +101,7 @@ const Payment = () => {
         <div className='px-3  md:px-6'>
             <>
                 <div>
-                    <InfoCard onfilterChange={(e) => setLastMonths(e) } iconName='moneys-credit'  value={`CA$ ${(parseInt(paymentsTotal?.total) / 10).toLocaleString() ?? "0"}`} header='Total deposit' />
+                    <InfoCard onfilterChange={(e) => setLastMonths(e) } iconName='moneys-credit'  value={`CA$ ${(parseInt(paymentsTotal?.total)).toLocaleString() ?? "0"}`} header='Total deposit' />
                 </div>
 
                 <h3 className='mt-8 text-[#0000006B] text-sm '><span className='text-[#000] mr-2 font-semibold text-xl '>Payment</span>  Stay on top of your finances! Track every payment made on your account.</h3>
