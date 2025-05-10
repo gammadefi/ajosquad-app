@@ -238,7 +238,7 @@ const Dashboard = () => {
             </div>
 
             <div className='grid my-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${paymentsTotal?.total.toLocaleString() ?? "0"}`} header='Total deposit' />
+              <InfoCard onfilterChange={(e) => setLastMonthsPayment(e)} iconName='moneys-credit' value={`CA$ ${(parseInt(paymentsTotal?.total) / 10).toLocaleString()  ?? "0"}`} header='Total deposit' />
               <InfoCard onfilterChange={(e) => setLastMonths(e)} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrawal' />
               <InfoCard onfilterChange={(e) => setStat(e)} type='squad' iconName='people' value={stats?.data.filter((squad: any) => hasUser(squad, profile.id)).length.toString() ?? "0"} header='Squad' />
             </div>
