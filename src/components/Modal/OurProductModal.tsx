@@ -32,7 +32,7 @@ const OurProductModal = ({ open, onClick = () => { } }: { open: boolean, onClick
                 <div className='lg:w-[1000px] lg:h-[526px]'>
                 <h3 className=' text-3xl md:text-2xl font-semibold '>Select a product</h3>
                 <h5 className='text-sm md:text-base mt-2 text-[#656565]'>Yay! You're now verified! Welcome to Ajosquad! Browse our products and discover how we can help you achieve your financial goals. What would you like to explore first?</h5>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 mt-8'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 md:gap-8 mt-8'>
                         {
                             products.map((product, index) => <ProductCard key={index} {...product} selected={selected === product.title} onClick={(title) => {
                                 setSelected(title)

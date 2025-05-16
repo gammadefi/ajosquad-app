@@ -33,7 +33,7 @@ const Product = () => {
 
             <h3 className=' text-3xl md:text-5xl font-semibold '>Hi, <span className='text-transparent bg-clip-text bg-gradient-to-r from-[#23454F] via-[#0066FF] to-[#1EB7CF]'>{profile.firstName} {profile.lastName}</span></h3>
             <h5 className='text-base md:text-xl mt-2 text-[#656565]'>You still have a few more step to complete your profile</h5>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 mt-8'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 md:gap-8 mt-8'>
             {
                 products.map((product, index) => <ProductCard key={index} {...product} selected={selected === product.title} onClick={(title) => {
                     setSelected(title)
