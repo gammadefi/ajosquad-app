@@ -131,8 +131,8 @@ const Payment = () => {
 
             </div>
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
-                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-credit' value={`CA$ ${(parseInt(paymentsTotal?.total) / 10).toLocaleString() ?? "0"}`} header='Total deposit' />
-                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-credit' value={`CA$ ${(parseInt(paymentsTotal?.total) / 10).toLocaleString() ?? "0"}`} header='AjoSquad deposit' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-credit' value={`CA$ ${(parseInt(paymentsTotal?.total)).toLocaleString() ?? "0"}`} header='Total deposit' />
+                <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-credit' value={`CA$ ${(parseInt(paymentsTotal?.total)).toLocaleString() ?? "0"}`} header='AjoSquad deposit' />
                 <InfoCard iconName='moneys-credit' isLoading={false} value='CA$ 0.00' header='AjoHome deposit' />
                 <InfoCard iconName='moneys-credit' isLoading={false} value='CA$ 0.00' header='AjoBusiness deposit' />
             </div>
