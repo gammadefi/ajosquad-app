@@ -36,7 +36,7 @@ const Payout = () => {
         },
         {
             header: "Amount",
-            view: (row: any) => <div>{row.amount}</div>,
+            view: (row: any) => <div>CAD$ {row.amount}</div>,
         },
         {
             header: "Payout Date",

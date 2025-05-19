@@ -206,8 +206,8 @@ const Dashboard = () => {
                         <BarGraph
                           data={{
                             colors: ["#005CE6", "#005CE6", "#0C7931", "#FCAD14", "#FCAD14", "#FCAD14"], // Custom colors for each bar
-                            xAxisLabel: ["All", "Registered Today", "Verified users", "Ajosquad", "AjoHome", "AjoBusiness"], // X-axis labels
-                            seriesData: [data2.totalUsers, data2.todaySignups, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers, 0], // Bar values
+                            xAxisLabel: ["All", "Registered Today", "Verified users", "Ajosquad", "AjoHome"], // X-axis labels
+                            seriesData: [data2.totalUsers, data2.todaySignups, data2.verifiedUsers, data2.ajoSquadMembers, data2.ajoHomeMembers], // Bar values
                           }}
                         />
                         <div className='justify-around flex'>
@@ -240,7 +240,7 @@ const Dashboard = () => {
                 <div>
                   <h3 className='font-medium'>Cash Flow Breakdown</h3>
 
-                  <h2 className='text-2xl my-3 font-bold'>CA$ {(cashFLow?.AjosquadPayment + cashFLow?.AjohomePayment + 0 ).toLocaleString()}</h2>
+                  <h2 className='text-2xl my-3 font-bold'>CA$ {(cashFLow?.AjosquadPayment + cashFLow?.AjohomePayment ).toLocaleString()}</h2>
 
                 </div>
                 <HorizontalBarChart data={{ // Empty labels
@@ -252,7 +252,7 @@ const Dashboard = () => {
                         (cashFLow?.AjohomePayment || 0) / ((cashFLow?.AjosquadPayment || 0) + (cashFLow?.AjohomePayment || 0)) * 100,
                         0
                       ],  // Values
-                      backgroundColor: ["#003D99", "#137AAD", "#FCAD14"], // Colors for the bars
+                      backgroundColor: ["#003D99", "#137AAD"], // Colors for the bars
                     },
                   ],
                 }} />
@@ -272,15 +272,6 @@ const Dashboard = () => {
 
                     </div>
                     <h3>CA$ {cashFLow?.AjoHomePayment > 0 ? cashFLow?.AjoHomePayment?.toLocaleString() : "0.00"}</h3>
-
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <div className='flex items-center gap-2'>
-                      <div className='h-6 w-6 bg-[#FCAD14]' />
-                      <h3>AjoBusiness</h3>
-
-                    </div>
-                    <h3>CA$0.00</h3>
 
                   </div>
                 </div>
@@ -364,7 +355,7 @@ const Dashboard = () => {
               <button className='lg:hidden text-primary px-4 py-2 border border-primary rounded-lg font-semibold'>Download</button>
             </div>
             <div className='flex items-center gap-2'>
-              <SearchInput placeholder='Search...' />
+              
               <button onClick={() => setShowFilter(true)} className='bg-[#F5F5F9] w-full md:w-1/5 lg:w-full flex items-center justify-center gap-2 border-[0.4px] border-[#C8CCD0] text-[#666666] py-2 px-3 rounded-md'>
                 <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect width="20" height="3.33333" transform="translate(0 1.66797)" fill="#464749" />

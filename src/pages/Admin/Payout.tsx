@@ -129,8 +129,8 @@ const Payout = () => {
             <div className='lg:grid flex my-6 py-4 gap-3 overflow-x-auto grid-cols-4'>
                 <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='Total Withdrwal' />
                 <InfoCard onfilterChange={(e) => setLastMonths(e)} isLoading={isLoadingCount} iconName='moneys-debit' value={`CA$ ${payoutsTotal?.data.toLocaleString() ?? "0"}`} header='AjoSquad Withdrawal' />
-                <InfoCard iconName='moneys-debit' isLoading={false} value='CA$ 0.00' header='AjoHome Withdrawal' />
-                <InfoCard iconName='moneys-debit' isLoading={false} value='CA$ 0.00' header='AjoBusiness Withdrawal' />
+                {/* <InfoCard iconName='moneys-debit' isLoading={false} value='CA$ 0.00' header='AjoHome Withdrawal' />
+                <InfoCard iconName='moneys-debit' isLoading={false} value='CA$ 0.00' header='AjoBusiness Withdrawal' /> */}
             </div>
 
 
