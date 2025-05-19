@@ -60,7 +60,7 @@ const Payment = () => {
         },
         {
             header: "Status",
-            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.paymentStatus === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : row.paymentStatus === 'upcoming' ? "text-[#92610E] bg-[#FDF1DC]" : "text-red-500 bg-red-100"}`}> {row.paymentStatus === 'completed' ? "Successful" : row.paymentStatus === 'upcoming' ? "Upcoming" : "Pending"}</span>
+            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.paymentStatus === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : (row.paymentStatus === 'upcoming' || row.paymentStatus === 'pending') ? "text-[#92610E] bg-[#FDF1DC]" : "text-blue-500 bg-blue-100"}`}> {row.paymentStatus === 'completed' ? "Successful" : row.paymentStatus === 'upcoming' ? "Upcoming" :  row.paymentStatus === 'pending' ? "Pending" : "Submitted"}</span>
 
         },
     ];
