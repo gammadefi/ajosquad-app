@@ -47,11 +47,7 @@ const Payment = () => {
         },
         {
             header: "Status",
-            view: (row: any) => <span className={clsx(
-                "px-3 text-xs border py-1 rounded-lg",
-                row.paymentStatus === "success" && "bg-[#E7F6EC] text-[#036B26]",
-                row.paymentStatus === "pending" && "bg-[#FDF1DC] text-[#AD3307]",
-            )}>{row?.paymentStatus}</span>,
+            view: (row: any) => <span className={`px-3 py-0.5 rounded-xl font-medium ${row.paymentStatus === 'completed' ? "text-[#036B26] bg-[#E7F6EC]" : (row.paymentStatus === 'upcoming' || row.paymentStatus === 'pending') ? "text-[#92610E] bg-[#FDF1DC]" : "text-blue-500 bg-blue-100"}`}> {row.paymentStatus === 'completed' ? "Successful" : row.paymentStatus === 'upcoming' ? "Upcoming" :  row.paymentStatus === 'pending' ? "Pending" : "Submitted"}</span>
         },
     ];
 
